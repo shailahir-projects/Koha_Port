@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.shailahir.koha</groupId>
+    <artifactId>koha-port</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Koha Port Root</name>
+    <description>Root Maven project for Java migration and original Koha source.</description>
+
+    <modules>
+        <module>koha-java-catalog</module>
+        <module>koha-java-auth</module>
+        <module>koha-java-patron</module>
+        <module>koha-java-search</module>
+        <module>koha-java-admin</module>
+        <module>koha-java-circulation</module>
+        <module>koha-java-holds</module>
+        <module>koha-java-finance</module>
+        <module>koha-java-notification</module>
+        <module>koha-java-acquisitions</module>
+        <module>koha-java-serials</module>
+        <module>koha-java-erm</module>
+        <module>koha-java-ill</module>
+        <module>koha-java-reporting</module>
+        <module>koha-java-batch</module>
+        <module>koha-java-opac-gateway</module>
+        <module>koha-java-intranet-gateway</module>
+    </modules>
+</project>
+
