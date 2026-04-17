@@ -16,6 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -179,10 +184,78 @@ public class AcquisitionsController {
     @GetMapping("/acquisitions/funds/users")
     public ResponseEntity<List<Map<String, Object>>> listFundsUsers() { return ResponseEntity.ok(List.of()); }
 
+    /**
+     * Returns the budget_amount for a given budget_id.
+     * Ports check_budget_total.pl — used as an AJAX helper when the user changes
+     * the fund on the order form to show the available budget total.
+     *
+     * @param budgetId the budget_id to look up
+     * @return {@code { "budget_amount": 1234.56 }} or 404 when not found
+     */
+    @GetMapping("/acquisitions/budgets/{budget_id}/amount")
+    public ResponseEntity<Map<String, Object>> getBudgetAmount(
+            @PathVariable("budget_id") Long budgetId) {
+        return budgetRepository.getBudgetAmount(budgetId)
+                .map(amount -> ResponseEntity.ok(Map.<String, Object>of("budget_amount", amount)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Checks whether given field/value pairs already exist in the items table.
+     * Ports check_uniqueness.pl — called by the add-item JavaScript (check_additem).
+     * <p>
+     * Accepts parallel lists of {@code field[]} and {@code value[]} query parameters.
+     * Only fields from a fixed allow-list are queried to prevent SQL injection.
+     * <p>
+     * Returns a JSON map of {@code { fieldName: [duplicate_value, ...] }}
+     * containing only the pairs where a duplicate was found.
+     * <p>
+     * Example request: {@code ?field[]=barcode&value[]=1234&field[]=barcode&value[]=1235}
+     * Example response: {@code {"barcode":["1234","1235"]}}
+     *
+     * @param fields parallel list of items-table field names to check
+     * @param values parallel list of values corresponding to each field
+     * @return map of field → list of duplicate values found
+     */
+    @GetMapping("/acquisitions/items/check-uniqueness")
+    public ResponseEntity<Map<String, List<String>>> checkItemUniqueness(
+            @RequestParam(value = "field[]", required = false) List<String> fields,
+            @RequestParam(value = "value[]", required = false) List<String> values) {
+
+        // Allow-list of item fields that may be checked (mirrors what Koha uses)
+        java.util.Set<String> ALLOWED_FIELDS = java.util.Set.of(
+                "barcode", "stocknumber", "itemnumber");
+
+        Map<String, List<String>> result = new java.util.LinkedHashMap<>();
+
+        if (fields == null || values == null || fields.size() != values.size()) {
+            return ResponseEntity.ok(result);
+        }
+
+        for (int i = 0; i < fields.size(); i++) {
+            String field = fields.get(i);
+            String value = values.get(i);
+
+            if (!ALLOWED_FIELDS.contains(field) || value == null || value.isBlank()) {
+                continue;
+            }
+
+            // Safe: field is from allow-list only
+            Integer count = budgetRepository.getJdbc().queryForObject(
+                    "SELECT COUNT(*) FROM items WHERE " + field + " = ?",
+                    Integer.class, value);
+
+            if (count != null && count > 0) {
+                result.computeIfAbsent(field, k -> new java.util.ArrayList<>()).add(value);
+            }
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
     // ── EDI files ──────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/edifiles")
-    public ResponseEntity<List<Map<String, Object>>> listEdifactFiles(Pageable pageable) { return ResponseEntity.ok(List.of()); }
+    // ── EDIFACT files (stub — full implementation in EdifactMsgsController) ──────
 
     // ── Quotes ─────────────────────────────────────────────────────────────────
 
