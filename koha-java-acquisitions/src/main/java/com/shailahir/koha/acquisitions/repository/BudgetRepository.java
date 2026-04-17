@@ -23,7 +23,25 @@ public class BudgetRepository {
 
     private final JdbcTemplate jdbc;
 
+    /** Exposes the underlying JdbcTemplate for ad-hoc queries in controllers. */
+    public JdbcTemplate getJdbc() { return jdbc; }
+
     // ── Budget ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Returns just the budget_amount for a given budget_id.
+     * Mirrors GetBudget($budget_id)->{'budget_amount'} used by check_budget_total.pl.
+     */
+    public Optional<BigDecimal> getBudgetAmount(Long budgetId) {
+        try {
+            BigDecimal amount = jdbc.queryForObject(
+                    "SELECT budget_amount FROM aqbudgets WHERE budget_id = ?",
+                    BigDecimal.class, budgetId);
+            return Optional.ofNullable(amount);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
 
     public Optional<Map<String, Object>> findBudgetById(Long budgetId) {
         try {
