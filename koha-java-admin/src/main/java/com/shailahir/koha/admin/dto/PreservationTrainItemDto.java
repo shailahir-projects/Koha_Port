@@ -1,0 +1,21 @@
+package com.shailahir.koha.admin.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
+public class PreservationTrainItemDto {
+    private Long trainItemId;
+    private Long trainId;
+    private Long itemId;
+    private Long processingId;
+    private LocalDateTime addedOn;
+    private List<Map<String, Object>> attributes;
+    private Long userNotes;
+}
+
