@@ -39,6 +39,7 @@ public class DuplicateOrderRepository {
             .title(rs.getString("title"))
             .author(rs.getString("author"))
             .isbn(rs.getString("isbn"))
+            .issn(rs.getString("issn"))
             .booksellerid(rs.getObject("booksellerid") != null ? rs.getLong("booksellerid") : null)
             .name(rs.getString("vendorname"))
             .quantity(rs.getObject("quantity") != null ? rs.getInt("quantity") : null)
@@ -78,7 +79,7 @@ public class DuplicateOrderRepository {
                        b.basketname, b.basketgroupid, b.booksellerid,
                        bg.name AS basketgroupname,
                        bib.title, bib.author,
-                       bi.isbn,
+                       bi.isbn, bi.issn,
                        v.name AS vendorname,
                        aq.budget_name,
                        inv.invoicenumber,
@@ -136,6 +137,41 @@ public class DuplicateOrderRepository {
         if (notBlank(f.getOrdernumber())) {
             sql.append(" AND o.ordernumber = ?"); params.add(Long.parseLong(f.getOrdernumber().trim()));
         }
+        // ── Extra filters (histsearch.pl) ──────────────────────────────────────
+        if (notBlank(f.getIssn())) {
+            sql.append(" AND bi.issn LIKE ?"); params.add("%" + f.getIssn() + "%");
+        }
+        if (notBlank(f.getInternalnote())) {
+            sql.append(" AND o.order_internalnote LIKE ?"); params.add("%" + f.getInternalnote() + "%");
+        }
+        if (notBlank(f.getVendornote())) {
+            sql.append(" AND o.order_vendornote LIKE ?"); params.add("%" + f.getVendornote() + "%");
+        }
+        if (Boolean.TRUE.equals(f.getIsStanding())) {
+            sql.append(" AND b.is_standing = 1");
+        }
+        if (notBlank(f.getManagingLibrary())) {
+            sql.append(" AND b.branch = ?"); params.add(f.getManagingLibrary());
+        }
+        // Additional fields (searchable aqbasket additional fields)
+        if (f.getAdditionalFields() != null) {
+            for (java.util.Map<String, Object> af : f.getAdditionalFields()) {
+                Object afId  = af.get("id");
+                Object afVal = af.get("value");
+                if (afId != null && afVal != null && !afVal.toString().isBlank()) {
+                    sql.append("""
+                             AND EXISTS (
+                                SELECT 1 FROM additional_field_values afv
+                                 WHERE afv.record_id = b.basketno
+                                   AND afv.field_id  = ?
+                                   AND afv.value LIKE ?
+                             )
+                            """);
+                    params.add(afId);
+                    params.add("%" + afVal + "%");
+                }
+            }
+        }
         if (f.getCreatedBy() != null && !f.getCreatedBy().isEmpty()) {
             String placeholders = String.join(",", f.getCreatedBy().stream().map(x -> "?").toList());
             sql.append(" AND b.authorisedby IN (").append(placeholders).append(")");
@@ -170,7 +206,7 @@ public class DuplicateOrderRepository {
                        b.basketname, b.basketgroupid, b.booksellerid,
                        bg.name AS basketgroupname,
                        bib.title, bib.author,
-                       bi.isbn,
+                       bi.isbn, bi.issn,
                        v.name AS vendorname,
                        aq.budget_name,
                        inv.invoicenumber,

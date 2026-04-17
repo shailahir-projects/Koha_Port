@@ -14,9 +14,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * REST controller porting duplicate_orders.pl.
+ * REST controller porting duplicate_orders.pl and histsearch.pl.
  *
  * <pre>
+ *  GET  /acquisitions/orders/history                                — histsearch.pl
  *  GET  /acquisitions/baskets/{basketno}/duplicate-orders/search    — op=search/select
  *  POST /acquisitions/baskets/{basketno}/duplicate-orders           — op=cud-do_duplicate
  * </pre>
@@ -136,7 +137,45 @@ public class DuplicateOrdersController {
         ));
     }
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+    // ── histsearch.pl ──────────────────────────────────────────────────────────
+
+    /**
+     * Order history search — ports histsearch.pl.
+     * <p>
+     * Returns orders matching the supplied filters. When {@code do_search=false}
+     * (default) no results are returned, mirroring histsearch.pl's behaviour of
+     * only running GetHistory() when the form was submitted.
+     * <p>
+     * Supports all histsearch.pl filter parameters including the extras not in
+     * duplicate_orders.pl: issn, internalnote, vendornote, is_standing,
+     * managing_library, and additional_fields.
+     *
+     * @param doSearch  pass {@code true} to execute the search; {@code false} returns empty results
+     * @param filter    all optional filter parameters
+     */
+    @GetMapping("/acquisitions/orders/history")
+    public ResponseEntity<Map<String, Object>> orderHistory(
+            @RequestParam(value = "do_search", defaultValue = "false") boolean doSearch,
+            @ModelAttribute OrderHistoryFilter filter) {
+
+        applyDefaultDates(filter);
+
+        // mirrors: if ($filters->{orderstatus} eq "any") { $filters->{get_canceled_order} = 1 }
+        // already handled inside getHistory() — "any" removes the cancelled filter
+
+        List<OrderHistoryDto> orders = doSearch
+                ? dupeRepo.getHistory(filter)
+                : List.of();
+
+        return ResponseEntity.ok(Map.of(
+                "orders",      orders,
+                "count",       orders.size(),
+                "filters",     filter,
+                "search_done", doSearch
+        ));
+    }
+
+    // ── duplicate_orders.pl ────────────────────────────────────────────────────
 
     private void applyDefaultDates(OrderHistoryFilter filter) {
         if (filter.getFromPlacedOn() == null || filter.getFromPlacedOn().isBlank()) {

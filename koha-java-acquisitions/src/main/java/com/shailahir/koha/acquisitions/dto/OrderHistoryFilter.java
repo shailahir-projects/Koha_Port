@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Filter parameters for order history search.
@@ -63,5 +64,32 @@ public class OrderHistoryFilter {
     /** ISO date string for end of placed-on range (defaults to today) */
     @JsonProperty("to_placed_on")
     private String toPlacedOn;
+
+    // ── Extra filters present in histsearch.pl but not duplicate_orders.pl ──
+
+    @JsonProperty("issn")
+    private String issn;
+
+    @JsonProperty("internalnote")
+    private String internalnote;
+
+    @JsonProperty("vendornote")
+    private String vendornote;
+
+    /** Filter to standing orders only when true */
+    @JsonProperty("is_standing")
+    private Boolean isStanding;
+
+    /** Branch code of the managing library */
+    @JsonProperty("managing_library")
+    private String managingLibrary;
+
+    /**
+     * Additional field filters for searchable aqbasket additional fields.
+     * Each entry is {@code { "id": fieldId, "value": "..." }}.
+     * Mirrors the additional_field_filters list in histsearch.pl.
+     */
+    @JsonProperty("additional_fields")
+    private List<Map<String, Object>> additionalFields;
 }
 

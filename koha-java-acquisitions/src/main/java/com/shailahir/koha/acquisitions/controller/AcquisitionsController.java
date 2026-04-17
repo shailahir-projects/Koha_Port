@@ -255,8 +255,7 @@ public class AcquisitionsController {
 
     // ── EDI files ──────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/edifiles")
-    public ResponseEntity<List<Map<String, Object>>> listEdifactFiles(Pageable pageable) { return ResponseEntity.ok(List.of()); }
+    // ── EDIFACT files (stub — full implementation in EdifactMsgsController) ──────
 
     // ── Quotes ─────────────────────────────────────────────────────────────────
 

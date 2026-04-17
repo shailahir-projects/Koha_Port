@@ -46,6 +46,9 @@ public class OrderHistoryDto {
     @JsonProperty("isbn")
     private String isbn;
 
+    @JsonProperty("issn")
+    private String issn;
+
     @JsonProperty("booksellerid")
     private Long booksellerid;
 
