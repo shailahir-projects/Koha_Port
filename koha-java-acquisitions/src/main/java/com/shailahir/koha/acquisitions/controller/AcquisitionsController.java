@@ -8,6 +8,7 @@ import com.shailahir.koha.acquisitions.repository.BudgetRepository;
 import com.shailahir.koha.acquisitions.service.BudgetExceededException;
 import com.shailahir.koha.acquisitions.service.DuplicateBiblioException;
 import com.shailahir.koha.acquisitions.service.OrderService;
+import com.shailahir.koha.acquisitions.service.BasketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,23 +29,24 @@ import java.util.Map;
 public class AcquisitionsController {
 
     private final OrderService orderService;
+    private final BasketService basketService;
     private final BudgetRepository budgetRepository;
 
     // ── Baskets ────────────────────────────────────────────────────────────────
 
     @GetMapping("/acquisitions/baskets")
     public ResponseEntity<List<BasketDto>> listBaskets(Pageable pageable) {
-        return ResponseEntity.ok(orderService.listBaskets(pageable.getPageNumber(), pageable.getPageSize()));
+        return ResponseEntity.ok(basketService.listBaskets(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
     @PostMapping("/acquisitions/baskets")
     public ResponseEntity<BasketDto> addBasket(@RequestBody @Valid BasketDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addBasket(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(basketService.addBasket(dto));
     }
 
     @GetMapping("/acquisitions/baskets/managers")
     public ResponseEntity<List<BasketDto>> listBasketsManagers() {
-        return ResponseEntity.ok(orderService.listBasketManagers());
+        return ResponseEntity.ok(List.of());
     }
 
     // ── Orders ─────────────────────────────────────────────────────────────────
