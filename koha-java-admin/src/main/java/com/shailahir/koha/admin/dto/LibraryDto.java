@@ -15,16 +15,24 @@ public class LibraryDto {
     private String city;
     private String state;
     private String zipPostal;
+    private String zip;
     private String country;
     private String phone;
     private String fax;
     private String email;
     private String replyToEmail;
+    private String replyto;
     private String returnPath;
+    private String returnpath;
     private String url;
     private String ip;
     private String notes;
+    private String opacInfo;
+    private String timezone;
     private Boolean pickup;
+    private Boolean pickupLocation;
     private Boolean opacHiddenItems;
+    private String publicPrinterName;
+    private String ilLevel;
 }
 

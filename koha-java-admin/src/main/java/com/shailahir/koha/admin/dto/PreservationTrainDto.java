@@ -12,8 +12,11 @@ public class PreservationTrainDto {
     private Long trainId;
     private String name;
     private String description;
-    private LocalDate closedDate;
+    private String branchcode;
     private Long defaultProcessingId;
+    private LocalDate closedDate;
+    private java.time.LocalDateTime createdDate;
+    private java.time.LocalDateTime sentDate;
+    private java.time.LocalDateTime receivedDate;
     private List<PreservationTrainItemDto> items;
 }
-

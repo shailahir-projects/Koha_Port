@@ -15,7 +15,7 @@ public class PreservationTrainItemDto {
     private Long itemId;
     private Long processingId;
     private LocalDateTime addedOn;
+    private LocalDateTime removedOn;
     private List<Map<String, Object>> attributes;
     private Long userNotes;
 }
-

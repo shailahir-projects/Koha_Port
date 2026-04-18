@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingResultDto {
+    private Long biblioId;
     private Number rating;
     private Double average;
     private Integer count;
 }
-

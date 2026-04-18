@@ -11,5 +11,5 @@ public class PreservationWaitingListItemDto {
     private String barcode;
     private Long biblioId;
     private String branchcode;
+    private java.time.LocalDateTime addedOn;
 }
-

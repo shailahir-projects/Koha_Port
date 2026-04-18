@@ -11,10 +11,14 @@ public class TicketDto {
     private Long ticketId;
     private Long reporterId;
     private Long biblioId;
+    private Long biblionumber;
+    private Long assigneeId;
     private String title;
     private String body;
     private String status;
     private LocalDateTime creationDate;
+    private LocalDateTime createdDate;
     private LocalDateTime updateDate;
+    private LocalDateTime updatedDate;
 }
 

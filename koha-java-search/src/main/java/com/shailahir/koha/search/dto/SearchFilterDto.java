@@ -12,5 +12,6 @@ public class SearchFilterDto {
     private String name;
     private String query;
     private Boolean shared;
+    private String libraryId;
+    private Boolean active;
 }
-

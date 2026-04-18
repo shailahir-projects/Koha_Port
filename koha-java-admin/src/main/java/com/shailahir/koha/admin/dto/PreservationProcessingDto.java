@@ -11,6 +11,6 @@ import java.util.Map;
 public class PreservationProcessingDto {
     private Long processingId;
     private String name;
+    private String location;
     private List<Map<String, Object>> attributes;
 }
-

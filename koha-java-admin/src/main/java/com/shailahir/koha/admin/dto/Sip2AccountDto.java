@@ -8,8 +8,12 @@ import lombok.NoArgsConstructor;
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class Sip2AccountDto {
     private Long sipAccountId;
+    private Long sip2AccountId;
     private String login;
     private String password;
+    private String description;
+    private String ipRestriction;
+    private Long patronId;
     private String branchcode;
     private Boolean autoCheckin;
     private Long checkoutChargeType;

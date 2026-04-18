@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ItemGroupDto {
     private Long itemGroupId;
     private Long biblioId;
+    private String displayTitle;
     private String description;
     private Integer displayOrder;
 }
-

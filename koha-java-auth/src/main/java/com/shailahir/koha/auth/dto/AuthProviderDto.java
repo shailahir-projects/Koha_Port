@@ -12,5 +12,10 @@ public class AuthProviderDto {
     private String description;
     private String protocol;
     private String config;
+    private String mappingConfig;
+    private Boolean enabled;
+    private Boolean autoRegister;
+    private Boolean updateOnAuth;
+    private String defaultLibraryId;
+    private String defaultCategory;
 }
-

@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 public class Sip2SystemPreferenceOverrideDto {
     private Long overrideId;
     private Long sipAccountId;
+    private Long sip2AccountId;
     private String variable;
+    private String preference;
     private String value;
 }
 

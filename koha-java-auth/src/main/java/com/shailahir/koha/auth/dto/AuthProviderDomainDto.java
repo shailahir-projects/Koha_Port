@@ -13,7 +13,8 @@ public class AuthProviderDomainDto {
     private Boolean autoRegister;
     private Boolean updateOnAuth;
     private Long defaultCategoryId;
-    private Long defaultLibraryId;
+    private String defaultLibraryId;
+    private String defaultCategory;
     private Integer matchpoint;
+    private Boolean enabled;
 }
-

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class AdvancedEditorMacroDto {
     private Long macroId;
     private Long borrowernumber;
+    private Long patronId;
     private String name;
     private String content;
     private Boolean shared;

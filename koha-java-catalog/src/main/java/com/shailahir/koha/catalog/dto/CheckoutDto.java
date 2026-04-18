@@ -15,6 +15,7 @@ public class CheckoutDto {
     private Long checkoutId;
     private Long patronId;
     private Long itemId;
+    private Long biblioId;
     private LocalDateTime dueDate;
     private String branchCode;
     private LocalDateTime issueDate;
@@ -28,4 +29,3 @@ public class CheckoutDto {
     private String note;
     private Boolean checkedIn;
 }
-

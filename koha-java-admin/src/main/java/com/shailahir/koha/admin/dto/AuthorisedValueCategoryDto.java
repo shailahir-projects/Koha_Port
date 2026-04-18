@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 public class AuthorisedValueCategoryDto {
     private String categoryName;
     private Boolean isSystemCategory;
+    private Boolean isSystem;
 }
 

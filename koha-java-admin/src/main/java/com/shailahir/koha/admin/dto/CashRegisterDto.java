@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 public class CashRegisterDto {
     private Long cashRegisterId;
     private String name;
+    private String description;
     private String branch;
+    private String libraryId;
     private Double currentBalance;
     private Double initialAmount;
+    private java.math.BigDecimal initialFloat;
+    private String accountType;
     private Boolean archived;
 }
 
