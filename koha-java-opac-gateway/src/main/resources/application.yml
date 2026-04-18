@@ -28,8 +28,14 @@ spring:
             - Path=/api/v1/patrons/**
         # We assume Docker or Kubernetes DNS handles lb:// mapping
         # but locally we'll map to localhost for simplicity right now
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
