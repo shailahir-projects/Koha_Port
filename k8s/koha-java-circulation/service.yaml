@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: koha-java-circulation
+  namespace: koha
+spec:
+  ports:
+    - port: 8084
+      targetPort: 8080
+  selector:
+    app: koha-java-circulation

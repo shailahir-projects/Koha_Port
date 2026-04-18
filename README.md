@@ -1,17 +1,40 @@
+# Koha Port Workspace
 
-## Koha is a free software integrated library system (ILS).
+This repository is organized so the workspace root is the main Java project entry point while preserving the original Koha codebase.
 
-Koha is distributed under the GNU GPL version 3 or later.
+## Structure
 
-**Note:** Koha does not accept pull requests from git hosting sites.
+- `koha-java-catalog/`: Catalog microservice scaffold.
+- `koha-java-auth/`: Authentication microservice scaffold.
+- `koha-java-patron/`: Patron microservice scaffold.
+- `koha-java-search/`: Search microservice scaffold.
+- `koha-java-admin/`: Administration microservice scaffold.
+- `koha-java-circulation/`: Circulation microservice scaffold.
+- `koha-java-holds/`: Holds microservice scaffold.
+- `koha-java-finance/`: Finance microservice scaffold.
+- `koha-java-notification/`: Notification microservice scaffold.
+- `koha-java-acquisitions/`: Acquisitions microservice scaffold.
+- `koha-java-serials/`: Serials microservice scaffold.
+- `koha-java-erm/`: ERM microservice scaffold.
+- `koha-java-ill/`: ILL microservice scaffold.
+- `koha-java-reporting/`: Reporting microservice scaffold.
+- `koha-java-batch/`: Batch microservice scaffold.
+- `koha-java-opac-gateway/`: OPAC gateway scaffold.
+- `koha-java-intranet-gateway/`: Intranet gateway scaffold.
+- `koha-original/`: Original Koha codebase kept for reference and phased migration.
+- `MIGRATION_MODULE_PLAN.md`: Wave plan and Swagger path ownership map.
 
-**Note:** This project has its own bug tracker, to report a bug or submit a patch visit https://bugs.koha-community.org.
+## Root Maven Entry Point
 
-For guidelines on submitting patches for Koha please visit https://wiki.koha-community.org/wiki/SubmitingAPatch
+The root `pom.xml` is an aggregator project.
 
-The developers handbook can be found at https://wiki.koha-community.org/wiki/Developer_handbook
+- Build all Java modules from root:
+  - `mvn -f pom.xml clean test`
+- Or use the existing wrapper in the Java module:
+  - `koha-java-catalog\\mvnw.cmd -f pom.xml -pl koha-java-catalog -am clean test`
 
-https://koha-community.org/
+## Notes
 
+- `koha-original/` is intentionally kept side-by-side and not modified by the Java build.
+- You can import the repository root into IntelliJ as a Maven project and manage `koha-java-catalog` as a module.
 
-![Koha Logo](https://wiki.koha-community.org/w/images/KohaILS.png)

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koha-java-search
+  namespace: koha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: koha-java-search
+  template:
+    metadata:
+      labels:
+        app: koha-java-search
+    spec:
+      containers:
+        - name: koha-java-search
+          image: shailahir/koha-java-search:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: koha-java-search-config
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10

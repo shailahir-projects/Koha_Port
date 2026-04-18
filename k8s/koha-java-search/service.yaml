@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: koha-java-search
+  namespace: koha
+spec:
+  ports:
+    - port: 8086
+      targetPort: 8080
+  selector:
+    app: koha-java-search

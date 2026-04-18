@@ -1,0 +1,261 @@
+{
+  "koha-java-acquisitions": {
+    "java_files": 146,
+    "controllers": [
+      "AcquisitionsController.java",
+      "AcquisitionsHomeController.java",
+      "AuthorisedValueController.java",
+      "BasketDetailController.java",
+      "BasketGroupController.java",
+      "BasketHeaderController.java",
+      "BooksellersController.java",
+      "CancelOrderController.java",
+      "DuplicateOrdersController.java",
+      "EdifactMsgsController.java",
+      "FinishReceiveController.java",
+      "InvoiceController.java",
+      "InvoiceFilesController.java",
+      "LateOrdersController.java",
+      "MarcImportOrderController.java",
+      "ModDeliveryDateController.java",
+      "ModOrderNotesController.java",
+      "NewOrderController.java",
+      "OrderedController.java",
+      "OrderReceiveViewController.java",
+      "ParcelController.java",
+      "SpentController.java",
+      "TransferOrderController.java",
+      "UncertainPriceController.java",
+      "VendorIssuesController.java",
+      "VendorsController.java",
+      "Z3950SearchController.java"
+    ],
+    "services": 13,
+    "impls": 13,
+    "repos": 25,
+    "dtos": 46,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-admin": {
+    "java_files": 28,
+    "controllers": [
+      "AdminController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 2,
+    "dtos": 20,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-auth": {
+    "java_files": 18,
+    "controllers": [
+      "AuthController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 9,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-batch": {
+    "java_files": 9,
+    "controllers": [
+      "BatchController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 2,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-catalog": {
+    "java_files": 43,
+    "controllers": [
+      "CatalogController.java",
+      "AuthorityController.java",
+      "BiblioController.java",
+      "CatalogAdminController.java",
+      "ImportBatchController.java",
+      "ItemController.java",
+      "ItemGroupController.java",
+      "ItemTypeController.java",
+      "RecordSourceController.java"
+    ],
+    "services": 7,
+    "impls": 7,
+    "repos": 1,
+    "dtos": 16,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-circulation": {
+    "java_files": 14,
+    "controllers": [
+      "CirculationController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 7,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-erm": {
+    "java_files": 11,
+    "controllers": [
+      "ErmController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 4,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-finance": {
+    "java_files": 12,
+    "controllers": [
+      "FinanceController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 5,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-holds": {
+    "java_files": 11,
+    "controllers": [
+      "HoldsController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 4,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-ill": {
+    "java_files": 14,
+    "controllers": [
+      "IllController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 7,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-intranet-gateway": {
+    "java_files": 4,
+    "controllers": [
+      "IntranetGatewayController.java"
+    ],
+    "services": 0,
+    "impls": 0,
+    "repos": 0,
+    "dtos": 1,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-notification": {
+    "java_files": 10,
+    "controllers": [
+      "NotificationController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 3,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-opac-gateway": {
+    "java_files": 4,
+    "controllers": [
+      "OpacGatewayController.java"
+    ],
+    "services": 0,
+    "impls": 0,
+    "repos": 0,
+    "dtos": 1,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-patron": {
+    "java_files": 37,
+    "controllers": [
+      "PatronAccountController.java",
+      "PatronAdminController.java",
+      "PatronController.java",
+      "PatronFilesController.java",
+      "PatronHistoryController.java"
+    ],
+    "services": 5,
+    "impls": 5,
+    "repos": 4,
+    "dtos": 14,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-reporting": {
+    "java_files": 10,
+    "controllers": [
+      "ReportingController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 3,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-search": {
+    "java_files": 8,
+    "controllers": [
+      "SearchFilterController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 0,
+    "dtos": 2,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  },
+  "koha-java-serials": {
+    "java_files": 12,
+    "controllers": [
+      "SerialsController.java"
+    ],
+    "services": 1,
+    "impls": 1,
+    "repos": 1,
+    "dtos": 5,
+    "dockerfile": true,
+    "app_yml": true,
+    "xml_dep": true
+  }
+}
