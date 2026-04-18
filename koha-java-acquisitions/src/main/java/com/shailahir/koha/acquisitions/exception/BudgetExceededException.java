@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.exception;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BudgetCheckResult;
 
@@ -6,6 +7,7 @@ import com.shailahir.koha.acquisitions.dto.BudgetCheckResult;
  * Thrown when an order total exceeds the available budget.
  * Ported from Koha's budget validation logic in addorder.pl.
  */
+@Slf4j
 public class BudgetExceededException extends AcquisitionException {
 
     private final BudgetCheckResult checkResult;
@@ -21,6 +23,7 @@ public class BudgetExceededException extends AcquisitionException {
     }
 
     public BudgetCheckResult getCheckResult() {
+        log.debug("Entering getCheckResult");
         return checkResult;
     }
 }

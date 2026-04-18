@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketInfoDto;
 import com.shailahir.koha.acquisitions.dto.VendorBasketsDto;
@@ -24,6 +25,7 @@ import java.util.NoSuchElementException;
  * per-basket enrichment (total_items, total_biblios, expected_items,
  * basket group linkage, authorisedby patron name), and has_budgets flag.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BooksellersController {
@@ -49,6 +51,7 @@ public class BooksellersController {
     public ResponseEntity<VendorBasketsDto> getVendorBaskets(
             @PathVariable Long booksellerid,
             @RequestParam(value = "allbaskets", defaultValue = "0") int allbaskets) {
+        log.debug("Entering getVendorBaskets - {}, {}", booksellerid, allbaskets);
 
         Map<String, Object> vendor = vendorRepository.findVendorById(booksellerid)
                 .orElseThrow(() -> new NoSuchElementException("Vendor not found: " + booksellerid));
@@ -71,6 +74,7 @@ public class BooksellersController {
     }
 
     private Boolean intToBool(Object v) {
+        log.debug("Entering intToBool - {}", v);
         if (v == null) return false;
         if (v instanceof Boolean b) return b;
         return Integer.parseInt(v.toString()) != 0;

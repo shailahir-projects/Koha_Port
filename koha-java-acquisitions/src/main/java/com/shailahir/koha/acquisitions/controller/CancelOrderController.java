@@ -35,6 +35,7 @@ public class CancelOrderController {
     @GetMapping("/acquisitions/orders/{ordernumber}/cancel", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getCancelForm(
             @PathVariable Long ordernumber) {
+        log.debug("Entering getCancelForm - {}", ordernumber);
 
         Map<String, Object> order = cancelOrderRepo.findOrderById(ordernumber)
                 .orElseThrow(() -> new NoSuchElementException("Order not found: " + ordernumber));
@@ -70,6 +71,7 @@ public class CancelOrderController {
     public ResponseEntity<CancelOrderResult> confirmCancel(
             @PathVariable Long ordernumber,
             @RequestBody CancelOrderRequest request) {
+        log.debug("Entering confirmCancel - {}, {}", ordernumber, request);
 
         // ── 1. Validate order ──────────────────────────────────────────────────
         Map<String, Object> order = cancelOrderRepo.findOrderById(ordernumber)
@@ -138,6 +140,7 @@ public class CancelOrderController {
     }
 
     private Long toLong(Object v) {
+        log.debug("Entering toLong - {}", v);
         if (v == null) return null;
         if (v instanceof Long l) return l;
         if (v instanceof Number n) return n.longValue();

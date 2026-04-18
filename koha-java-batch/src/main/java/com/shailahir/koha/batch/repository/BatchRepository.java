@@ -1,4 +1,5 @@
 package com.shailahir.koha.batch.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.batch.dto.JobDto;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for Batch Job data access.
  * Mirrors: Koha/BackgroundJob.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BatchRepository {
@@ -28,6 +30,7 @@ public class BatchRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<JobDto> JOB_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         JobDto dto = new JobDto();
         dto.setJobId(rs.getLong("id"));
         dto.setType(rs.getString("type"));
@@ -43,6 +46,7 @@ public class BatchRepository {
     };
 
     public Page<JobDto> findAllJobs(String query, Pageable pageable) {
+        log.debug("Entering findAllJobs - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE type ILIKE ? OR status ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -55,6 +59,7 @@ public class BatchRepository {
     }
 
     public Optional<JobDto> findJobById(Long id) {
+        log.debug("Entering findJobById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM background_jobs WHERE id = ?", JOB_MAPPER, id));
@@ -64,6 +69,7 @@ public class BatchRepository {
     }
 
     public JobDto insertJob(JobDto dto) {
+        log.debug("Entering insertJob - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -81,6 +87,7 @@ public class BatchRepository {
     }
 
     public JobDto updateJob(Long id, JobDto dto) {
+        log.debug("Entering updateJob - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE background_jobs SET status=?, progress=?, error=?, started_on=?, ended_on=NOW()
                 WHERE id=?
@@ -90,10 +97,12 @@ public class BatchRepository {
     }
 
     public void deleteJob(Long id) {
+        log.debug("Entering deleteJob - {}", id);
         jdbc.update("DELETE FROM background_jobs WHERE id = ?", id);
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

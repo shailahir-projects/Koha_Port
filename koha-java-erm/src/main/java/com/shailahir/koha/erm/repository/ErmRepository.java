@@ -1,4 +1,5 @@
 package com.shailahir.koha.erm.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.erm.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * Repository for ERM data access.
  * Mirrors: erm/*, Koha/ERM/Agreement.pm, Koha/ERM/License.pm, Koha/ERM/EHoldings/Package.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ErmRepository {
@@ -33,6 +35,7 @@ public class ErmRepository {
     // ── Agreements ────────────────────────────────────────────────────────────
 
     private static final RowMapper<AgreementDto> AGREEMENT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         AgreementDto dto = new AgreementDto();
         dto.setAgreementId(rs.getLong("agreement_id"));
         dto.setName(rs.getString("name"));
@@ -47,6 +50,7 @@ public class ErmRepository {
     };
 
     public Page<AgreementDto> findAllAgreements(String query, Pageable pageable) {
+        log.debug("Entering findAllAgreements - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM erm_agreements" + where, Integer.class, params);
@@ -58,6 +62,7 @@ public class ErmRepository {
     }
 
     public Optional<AgreementDto> findAgreementById(Long id) {
+        log.debug("Entering findAgreementById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM erm_agreements WHERE agreement_id = ?", AGREEMENT_MAPPER, id));
@@ -67,6 +72,7 @@ public class ErmRepository {
     }
 
     public AgreementDto insertAgreement(AgreementDto dto) {
+        log.debug("Entering insertAgreement - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -88,6 +94,7 @@ public class ErmRepository {
     }
 
     public AgreementDto updateAgreement(Long id, AgreementDto dto) {
+        log.debug("Entering updateAgreement - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE erm_agreements SET name=?, description=?, status=?, renewal_priority=?,
                     start_date=?, end_date=?, vendor_id=?, license_id=?
@@ -99,12 +106,14 @@ public class ErmRepository {
     }
 
     public void deleteAgreement(Long id) {
+        log.debug("Entering deleteAgreement - {}", id);
         jdbc.update("DELETE FROM erm_agreements WHERE agreement_id = ?", id);
     }
 
     // ── Licenses ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<LicenseDto> LICENSE_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         LicenseDto dto = new LicenseDto();
         dto.setLicenseId(rs.getLong("license_id"));
         dto.setName(rs.getString("name"));
@@ -120,6 +129,7 @@ public class ErmRepository {
     };
 
     public Page<LicenseDto> findAllLicenses(String query, Pageable pageable) {
+        log.debug("Entering findAllLicenses - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM erm_licenses" + where, Integer.class, params);
@@ -131,6 +141,7 @@ public class ErmRepository {
     }
 
     public Optional<LicenseDto> findLicenseById(Long id) {
+        log.debug("Entering findLicenseById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM erm_licenses WHERE license_id = ?", LICENSE_MAPPER, id));
@@ -140,6 +151,7 @@ public class ErmRepository {
     }
 
     public LicenseDto insertLicense(LicenseDto dto) {
+        log.debug("Entering insertLicense - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -162,6 +174,7 @@ public class ErmRepository {
     }
 
     public LicenseDto updateLicense(Long id, LicenseDto dto) {
+        log.debug("Entering updateLicense - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE erm_licenses SET name=?, description=?, status=?, type=?,
                     start_date=?, end_date=?, vendor_id=?, url=?, notes=?
@@ -173,12 +186,14 @@ public class ErmRepository {
     }
 
     public void deleteLicense(Long id) {
+        log.debug("Entering deleteLicense - {}", id);
         jdbc.update("DELETE FROM erm_licenses WHERE license_id = ?", id);
     }
 
     // ── eHoldings Packages ────────────────────────────────────────────────────
 
     private static final RowMapper<ErmPackageDto> PACKAGE_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         ErmPackageDto dto = new ErmPackageDto();
         dto.setPackageId(rs.getLong("package_id"));
         dto.setName(rs.getString("name"));
@@ -192,6 +207,7 @@ public class ErmRepository {
     };
 
     public Page<ErmPackageDto> findAllPackages(String query, Pageable pageable) {
+        log.debug("Entering findAllPackages - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM erm_eholdings_packages" + where, Integer.class, params);
@@ -203,6 +219,7 @@ public class ErmRepository {
     }
 
     public Optional<ErmPackageDto> findPackageById(Long id) {
+        log.debug("Entering findPackageById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM erm_eholdings_packages WHERE package_id = ?", PACKAGE_MAPPER, id));
@@ -212,6 +229,7 @@ public class ErmRepository {
     }
 
     public ErmPackageDto insertPackage(ErmPackageDto dto) {
+        log.debug("Entering insertPackage - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -232,6 +250,7 @@ public class ErmRepository {
     }
 
     public ErmPackageDto updatePackage(Long id, ErmPackageDto dto) {
+        log.debug("Entering updatePackage - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE erm_eholdings_packages SET name=?, content_type=?, status=?, vendor_id=?,
                     package_type=?, is_selected=?, notes=?
@@ -243,12 +262,14 @@ public class ErmRepository {
     }
 
     public void deletePackage(Long id) {
+        log.debug("Entering deletePackage - {}", id);
         jdbc.update("DELETE FROM erm_eholdings_packages WHERE package_id = ?", id);
     }
 
     // ── Generic CRUD helpers ─────────────────────────────────────────────────
 
     public Page<Map<String, Object>> pageQuery(String table, String orderColumn, Pageable pageable) {
+        log.debug("Entering pageQuery - {}, {}, {}", table, orderColumn, pageable);
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class);
         List<Map<String, Object>> rows = jdbc.queryForList(
                 "SELECT * FROM " + table + " ORDER BY " + orderColumn + " DESC LIMIT ? OFFSET ?",
@@ -258,6 +279,7 @@ public class ErmRepository {
 
     public Page<Map<String, Object>> pageQueryByForeignKey(
             String table, String orderColumn, String foreignKeyColumn, Long foreignKeyValue, Pageable pageable) {
+        log.debug("Entering pageQueryByForeignKey - {}, {}, {}, {}, {}", table, orderColumn, foreignKeyColumn, foreignKeyValue, pageable);
         Integer total = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM " + table + " WHERE " + foreignKeyColumn + " = ?",
                 Integer.class, foreignKeyValue);
@@ -268,6 +290,7 @@ public class ErmRepository {
     }
 
     public Map<String, Object> getRow(String table, String idColumn, Long id) {
+        log.debug("Entering getRow - {}, {}, {}", table, idColumn, id);
         try {
             return jdbc.queryForMap("SELECT * FROM " + table + " WHERE " + idColumn + " = ?", id);
         } catch (EmptyResultDataAccessException e) {
@@ -276,6 +299,7 @@ public class ErmRepository {
     }
 
     public long insertRow(String table, Map<String, Object> body, String idColumn) {
+        log.debug("Entering insertRow - {}, {}, {}", table, body, idColumn);
         List<String> keys = new ArrayList<>(body.keySet());
         String columns = String.join(", ", keys);
         String placeholders = String.join(", ", keys.stream().map(k -> "?").toList());
@@ -298,6 +322,7 @@ public class ErmRepository {
     }
 
     public void updateRow(String table, String idColumn, Long id, Map<String, Object> body) {
+        log.debug("Entering updateRow - {}, {}, {}, {}", table, idColumn, id, body);
         if (body == null || body.isEmpty()) {
             return;
         }
@@ -312,34 +337,41 @@ public class ErmRepository {
     }
 
     public void deleteRow(String table, String idColumn, Long id) {
+        log.debug("Entering deleteRow - {}, {}, {}", table, idColumn, id);
         jdbc.update("DELETE FROM " + table + " WHERE " + idColumn + " = ?", id);
     }
 
     public void updatePackageSelected(Long id, Object isSelected) {
+        log.debug("Entering updatePackageSelected - {}, {}", id, isSelected);
         jdbc.update("UPDATE erm_eholdings_packages SET is_selected = ? WHERE package_id = ?", isSelected, id);
     }
 
     public List<Map<String, Object>> findCounterRegistries() {
+        log.debug("Entering findCounterRegistries");
         return jdbc.queryForList(
                 "SELECT DISTINCT service_url, report_release, customer_id FROM erm_usage_data_providers WHERE service_url IS NOT NULL");
     }
 
     public List<Map<String, Object>> findCustomReports() {
+        log.debug("Entering findCustomReports");
         return jdbc.queryForList(
                 "SELECT id, report_name, notes FROM saved_sql WHERE report_group ILIKE 'ERM%' ORDER BY id DESC");
     }
 
     public List<Map<String, Object>> findSushiServices() {
+        log.debug("Entering findSushiServices");
         return jdbc.queryForList(
                 "SELECT erm_usage_data_provider_id, name, service_url, service_type, report_release FROM erm_usage_data_providers ORDER BY erm_usage_data_provider_id DESC");
     }
 
     public List<Map<String, Object>> findExtendedAttributeTypes() {
+        log.debug("Entering findExtendedAttributeTypes");
         return jdbc.queryForList(
                 "SELECT * FROM additional_field_types WHERE tablename ILIKE 'erm_%' ORDER BY id");
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

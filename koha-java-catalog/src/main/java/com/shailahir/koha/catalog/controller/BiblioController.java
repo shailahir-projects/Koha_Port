@@ -1,4 +1,5 @@
 package com.shailahir.koha.catalog.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.catalog.dto.*;
 import com.shailahir.koha.catalog.service.BiblioService;
@@ -22,6 +23,7 @@ import java.util.List;
  * /public/biblios/{biblio_id}/ratings,
  * /deleted/biblios, /deleted/biblios/{biblio_id}
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BiblioController {
@@ -37,6 +39,7 @@ public class BiblioController {
             @RequestHeader(value = "x-marc-schema", required = false) String marcSchema,
             @RequestHeader(value = "x-confirm-not-duplicate", required = false) Boolean confirmNotDuplicate,
             @RequestHeader(value = "x-record-source-id", required = false) Long recordSourceId) {
+        log.debug("Entering addBiblio - {}, {}, {}, {}, {}", biblio, frameworkId, marcSchema, confirmNotDuplicate, recordSourceId);
         BiblioDto created = biblioService.addBiblio(biblio, frameworkId, marcSchema, confirmNotDuplicate, recordSourceId);
         return ResponseEntity.ok(created);
     }
@@ -45,6 +48,7 @@ public class BiblioController {
     public ResponseEntity<Page<BiblioDto>> listBiblios(
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listBiblios - {}, {}", query, pageable);
         return ResponseEntity.ok(biblioService.listBiblios(query, pageable));
     }
 
@@ -52,6 +56,7 @@ public class BiblioController {
 
     @GetMapping("/biblios/{biblio_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BiblioDto> getBiblio(@PathVariable("biblio_id") Long biblioId) {
+        log.debug("Entering getBiblio - {}", biblioId);
         return ResponseEntity.ok(biblioService.getBiblio(biblioId));
     }
 
@@ -63,11 +68,13 @@ public class BiblioController {
             @RequestHeader(value = "x-marc-schema", required = false) String marcSchema,
             @RequestHeader(value = "x-confirm-not-duplicate", required = false) Boolean confirmNotDuplicate,
             @RequestHeader(value = "x-record-source-id", required = false) Long recordSourceId) {
+        log.debug("Entering updateBiblio - {}, {}, {}, {}, {}, {}", biblioId, biblio, frameworkId, marcSchema, confirmNotDuplicate, recordSourceId);
         return ResponseEntity.ok(biblioService.updateBiblio(biblioId, biblio, frameworkId, marcSchema, confirmNotDuplicate, recordSourceId));
     }
 
     @DeleteMapping("/biblios/{biblio_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteBiblio(@PathVariable("biblio_id") Long biblioId) {
+        log.debug("Entering deleteBiblio - {}", biblioId);
         biblioService.deleteBiblio(biblioId);
         return ResponseEntity.noContent().build();
     }
@@ -80,6 +87,7 @@ public class BiblioController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getBiblioBookings - {}, {}, {}, {}", biblioId, embed, query, pageable);
         return ResponseEntity.ok(biblioService.getBiblioBookings(biblioId, query, pageable));
     }
 
@@ -92,6 +100,7 @@ public class BiblioController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getBiblioCheckouts - {}, {}, {}, {}, {}", biblioId, checkedIn, embed, query, pageable);
         return ResponseEntity.ok(biblioService.getBiblioCheckouts(biblioId, checkedIn, query, pageable));
     }
 
@@ -104,6 +113,7 @@ public class BiblioController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getBiblioItems - {}, {}, {}, {}, {}", biblioId, bookable, embed, query, pageable);
         return ResponseEntity.ok(biblioService.getBiblioItems(biblioId, bookable, query, pageable));
     }
 
@@ -111,6 +121,7 @@ public class BiblioController {
     public ResponseEntity<ItemDto> addBiblioItem(
             @PathVariable("biblio_id") Long biblioId,
             @RequestBody ItemDto item) {
+        log.debug("Entering addBiblioItem - {}, {}", biblioId, item);
         return ResponseEntity.status(HttpStatus.CREATED).body(biblioService.addBiblioItem(biblioId, item));
     }
 
@@ -121,6 +132,7 @@ public class BiblioController {
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_id") Long itemId,
             @RequestBody ItemDto item) {
+        log.debug("Entering updateBiblioItem - {}, {}, {}", biblioId, itemId, item);
         return ResponseEntity.ok(biblioService.updateBiblioItem(biblioId, itemId, item));
     }
 
@@ -132,6 +144,7 @@ public class BiblioController {
             @RequestParam("patron_id") Long patronId,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getBiblioPickupLocations - {}, {}, {}, {}", biblioId, patronId, query, pageable);
         return ResponseEntity.ok(biblioService.getBiblioPickupLocations(biblioId, patronId, query, pageable));
     }
 
@@ -141,6 +154,7 @@ public class BiblioController {
     public ResponseEntity<BiblioDto> mergeBiblio(
             @PathVariable("biblio_id") Long biblioId,
             @RequestBody MergeBibliosDto mergeRequest) {
+        log.debug("Entering mergeBiblio - {}, {}", biblioId, mergeRequest);
         return ResponseEntity.ok(biblioService.mergeBiblio(biblioId, mergeRequest));
     }
 
@@ -148,6 +162,7 @@ public class BiblioController {
 
     @GetMapping("/public/biblios/{biblio_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BiblioDto> getBiblioPublic(@PathVariable("biblio_id") Long biblioId) {
+        log.debug("Entering getBiblioPublic - {}", biblioId);
         return ResponseEntity.ok(biblioService.getPublicBiblio(biblioId));
     }
 
@@ -159,6 +174,7 @@ public class BiblioController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getBiblioItemsPublic - {}, {}, {}, {}", biblioId, embed, query, pageable);
         return ResponseEntity.ok(biblioService.getPublicBiblioItems(biblioId, query, pageable));
     }
 
@@ -168,6 +184,7 @@ public class BiblioController {
     public ResponseEntity<RatingResultDto> setRating(
             @PathVariable("biblio_id") Long biblioId,
             @RequestBody RatingDto rating) {
+        log.debug("Entering setRating - {}, {}", biblioId, rating);
         return ResponseEntity.ok(biblioService.setRating(biblioId, rating));
     }
 
@@ -177,11 +194,13 @@ public class BiblioController {
     public ResponseEntity<Page<BiblioDto>> listDeletedBiblios(
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listDeletedBiblios - {}, {}", query, pageable);
         return ResponseEntity.ok(biblioService.listDeletedBiblios(query, pageable));
     }
 
     @GetMapping("/deleted/biblios/{biblio_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BiblioDto> getDeletedBiblio(@PathVariable("biblio_id") Long biblioId) {
+        log.debug("Entering getDeletedBiblio - {}", biblioId);
         return ResponseEntity.ok(biblioService.getDeletedBiblio(biblioId));
     }
 }

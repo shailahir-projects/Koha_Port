@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,6 +23,7 @@ import java.util.Optional;
  *   file_id, tabletag, recordid, file_name, file_type,
  *   file_description, file_content, date_uploaded
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class InvoiceFilesRepository {
@@ -35,6 +37,7 @@ public class InvoiceFilesRepository {
      * Mirrors Koha::Misc::Files->GetFilesInfo().
      */
     public List<Map<String, Object>> getFilesInfo(Long invoiceid) {
+        log.debug("Entering getFilesInfo - {}", invoiceid);
         return jdbc.queryForList("""
                 SELECT file_id, tabletag, recordid, file_name, file_type,
                        file_description, date_uploaded
@@ -52,6 +55,7 @@ public class InvoiceFilesRepository {
      * Mirrors Koha::Misc::Files->GetFile(id => $file_id).
      */
     public Optional<Map<String, Object>> getFile(Long fileId, Long invoiceid) {
+        log.debug("Entering getFile - {}, {}", fileId, invoiceid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("""
@@ -77,6 +81,7 @@ public class InvoiceFilesRepository {
      */
     public Long addFile(Long invoiceid, String fileName, String fileType,
                         byte[] fileContent, String description) {
+        log.debug("Entering addFile - {}, {}, {}, {}, {}", invoiceid, fileName, fileType, fileContent, description);
         String sql = """
                 INSERT INTO misc_files
                     (tabletag, recordid, file_name, file_type, file_content,
@@ -103,6 +108,7 @@ public class InvoiceFilesRepository {
      * Mirrors Koha::Misc::Files->DelFile(id => $file_id).
      */
     public void deleteFile(Long fileId, Long invoiceid) {
+        log.debug("Entering deleteFile - {}, {}", fileId, invoiceid);
         jdbc.update("""
                 DELETE FROM misc_files
                  WHERE file_id  = ?

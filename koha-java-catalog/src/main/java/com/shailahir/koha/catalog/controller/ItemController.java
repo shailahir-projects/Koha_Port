@@ -1,4 +1,5 @@
 package com.shailahir.koha.catalog.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.catalog.dto.BookingDto;
 import com.shailahir.koha.catalog.dto.BundleLinkDto;
@@ -21,6 +22,7 @@ import java.util.List;
  * /items/{item_id}/bundled_items/{bundled_item_id}, /items/{item_id}/bookings,
  * /items/{item_id}/pickup_locations, /public/items
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemController {
@@ -33,6 +35,7 @@ public class ItemController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listItems - {}, {}, {}, {}", externalId, embed, query, pageable);
         return ResponseEntity.ok(itemService.listItems(externalId, query, pageable));
     }
 
@@ -40,11 +43,13 @@ public class ItemController {
     public ResponseEntity<ItemDto> getItem(
             @PathVariable("item_id") Long itemId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed) {
+        log.debug("Entering getItem - {}, {}", itemId, embed);
         return ResponseEntity.ok(itemService.getItem(itemId));
     }
 
     @DeleteMapping("/items/{item_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteItem(@PathVariable("item_id") Long itemId) {
+        log.debug("Entering deleteItem - {}", itemId);
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
     }
@@ -55,6 +60,7 @@ public class ItemController {
     public ResponseEntity<ItemDto> addToBundle(
             @PathVariable("item_id") Long itemId,
             @RequestBody BundleLinkDto bundleLink) {
+        log.debug("Entering addToBundle - {}, {}", itemId, bundleLink);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemService.addToBundle(itemId, bundleLink));
     }
 
@@ -65,6 +71,7 @@ public class ItemController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listBundledItems - {}, {}, {}, {}, {}", itemId, externalId, embed, query, pageable);
         return ResponseEntity.ok(itemService.listBundledItems(itemId, externalId, query, pageable));
     }
 
@@ -72,6 +79,7 @@ public class ItemController {
     public ResponseEntity<Void> removeFromBundle(
             @PathVariable("item_id") Long itemId,
             @PathVariable("bundled_item_id") String bundledItemId) {
+        log.debug("Entering removeFromBundle - {}, {}", itemId, bundledItemId);
         itemService.removeFromBundle(itemId, bundledItemId);
         return ResponseEntity.noContent().build();
     }
@@ -83,6 +91,7 @@ public class ItemController {
             @PathVariable("item_id") Long itemId,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getItemBookings - {}, {}, {}", itemId, query, pageable);
         return ResponseEntity.ok(itemService.getItemBookings(itemId, query, pageable));
     }
 
@@ -94,6 +103,7 @@ public class ItemController {
             @RequestParam("patron_id") Long patronId,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering getItemPickupLocations - {}, {}, {}, {}", itemId, patronId, query, pageable);
         return ResponseEntity.ok(itemService.getItemPickupLocations(itemId, patronId, query, pageable));
     }
 
@@ -105,6 +115,7 @@ public class ItemController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listItemsPublic - {}, {}, {}, {}", externalId, embed, query, pageable);
         return ResponseEntity.ok(itemService.listItemsPublic(externalId, query, pageable));
     }
 }

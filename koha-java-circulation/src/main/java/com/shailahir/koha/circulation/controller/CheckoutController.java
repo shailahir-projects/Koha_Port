@@ -18,16 +18,19 @@ public class CheckoutController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> list(Pageable pageable) {
+        log.debug("Entering list - {}", pageable);
         return ResponseEntity.ok(Collections.emptyList());
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> getById(@PathVariable Long id) {
+        log.debug("Entering getById - {}", id);
         return ResponseEntity.ok(Collections.emptyMap());
     }
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> create(@Valid @RequestBody Object request) {
+        log.debug("Entering create - {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Collections.emptyMap());
     }
 }

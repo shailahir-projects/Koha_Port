@@ -18,22 +18,27 @@ public class AuthorisedValueController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> list(Pageable pageable) {
+        log.debug("Entering list - {}", pageable);
         return ResponseEntity.ok(Collections.emptyList());
     }
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> getById(@PathVariable Long id) {
+        log.debug("Entering getById - {}", id);
         return ResponseEntity.ok(Collections.emptyMap());
     }
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> create(@Valid @RequestBody Object request) {
+        log.debug("Entering create - {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Collections.emptyMap());
     }
     @PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Object request) {
+        log.debug("Entering update - {}, {}", id, request);
         return ResponseEntity.ok(Collections.emptyMap());
     }
     @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.debug("Entering delete - {}", id);
         return ResponseEntity.noContent().build();
     }
 }

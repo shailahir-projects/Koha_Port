@@ -1,4 +1,5 @@
 package com.shailahir.koha.notification.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.notification.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for Notification data access.
  * Mirrors: Koha/Notice/Template.pm, additional_contents table
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class NotificationRepository {
@@ -30,6 +32,7 @@ public class NotificationRepository {
     // ── Notice Templates ──────────────────────────────────────────────────────
 
     private static final RowMapper<NoticeTemplateDto> NOTICE_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         NoticeTemplateDto dto = new NoticeTemplateDto();
         dto.setId(rs.getLong("id"));
         dto.setCode(rs.getString("code"));
@@ -46,6 +49,7 @@ public class NotificationRepository {
     };
 
     public Page<NoticeTemplateDto> findAllNotices(String query, Pageable pageable) {
+        log.debug("Entering findAllNotices - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ? OR code ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -58,6 +62,7 @@ public class NotificationRepository {
     }
 
     public Optional<NoticeTemplateDto> findNoticeById(Long id) {
+        log.debug("Entering findNoticeById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM letter WHERE id = ?", NOTICE_MAPPER, id));
@@ -67,6 +72,7 @@ public class NotificationRepository {
     }
 
     public NoticeTemplateDto insertNotice(NoticeTemplateDto dto) {
+        log.debug("Entering insertNotice - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -88,6 +94,7 @@ public class NotificationRepository {
     }
 
     public NoticeTemplateDto updateNotice(Long id, NoticeTemplateDto dto) {
+        log.debug("Entering updateNotice - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE letter SET name=?, title=?, content=?, content_html=?, message_transport_type=?, last_updated=NOW()
                 WHERE id=?
@@ -97,12 +104,14 @@ public class NotificationRepository {
     }
 
     public void deleteNotice(Long id) {
+        log.debug("Entering deleteNotice - {}", id);
         jdbc.update("DELETE FROM letter WHERE id = ?", id);
     }
 
     // ── Additional Contents ───────────────────────────────────────────────────
 
     private static final RowMapper<AdditionalContentDto> CONTENT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         AdditionalContentDto dto = new AdditionalContentDto();
         dto.setId(rs.getLong("id"));
         dto.setIdnew(rs.getString("idnew"));
@@ -119,6 +128,7 @@ public class NotificationRepository {
     };
 
     public Page<AdditionalContentDto> findAllContent(String query, Pageable pageable) {
+        log.debug("Entering findAllContent - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE code ILIKE ? OR title ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -131,6 +141,7 @@ public class NotificationRepository {
     }
 
     public Optional<AdditionalContentDto> findContentById(Long id) {
+        log.debug("Entering findContentById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM additional_contents WHERE id = ?", CONTENT_MAPPER, id));
@@ -140,6 +151,7 @@ public class NotificationRepository {
     }
 
     public AdditionalContentDto insertContent(AdditionalContentDto dto) {
+        log.debug("Entering insertContent - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -161,6 +173,7 @@ public class NotificationRepository {
     }
 
     public AdditionalContentDto updateContent(Long id, AdditionalContentDto dto) {
+        log.debug("Entering updateContent - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE additional_contents SET title=?, content=?, content_html=?, category=?, location=?, lang=?, last_updated=NOW()
                 WHERE id=?
@@ -170,10 +183,12 @@ public class NotificationRepository {
     }
 
     public void deleteContent(Long id) {
+        log.debug("Entering deleteContent - {}", id);
         jdbc.update("DELETE FROM additional_contents WHERE id = ?", id);
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

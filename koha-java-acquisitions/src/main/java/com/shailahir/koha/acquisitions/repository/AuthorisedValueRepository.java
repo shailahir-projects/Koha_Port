@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.AuthorisedValueDto;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
  * JDBC repository for the authorised_values table.
  * Mirrors Koha::AuthorisedValues->search_with_library_limits().
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AuthorisedValueRepository {
@@ -44,6 +46,7 @@ public class AuthorisedValueRepository {
      * @return ordered list of authorised values
      */
     public List<AuthorisedValueDto> findByCategory(String category, String branchcode) {
+        log.debug("Entering findByCategory - {}, {}", category, branchcode);
         if (branchcode != null && !branchcode.isBlank()) {
             // Return values that are either not restricted to any branch,
             // or are explicitly allowed for this branch

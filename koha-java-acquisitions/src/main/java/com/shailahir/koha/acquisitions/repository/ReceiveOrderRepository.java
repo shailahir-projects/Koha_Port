@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,6 +21,7 @@ import java.util.Optional;
  * Mirrors ModReceiveOrder(), populate_with_prices_for_receiving(),
  * and the item/suggestion updates in finishreceive.pl.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ReceiveOrderRepository {
@@ -29,6 +31,7 @@ public class ReceiveOrderRepository {
     // ── Order lookup ───────────────────────────────────────────────────────────
 
     public Optional<Map<String, Object>> findOrder(Long ordernumber) {
+        log.debug("Entering findOrder - {}", ordernumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqorders WHERE ordernumber = ?", ordernumber));
@@ -38,6 +41,7 @@ public class ReceiveOrderRepository {
     }
 
     public Optional<Map<String, Object>> findBasket(Long basketno) {
+        log.debug("Entering findBasket - {}", basketno);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqbasket WHERE basketno = ?", basketno));
@@ -47,6 +51,7 @@ public class ReceiveOrderRepository {
     }
 
     public Optional<Map<String, Object>> findInvoice(Long invoiceid) {
+        log.debug("Entering findInvoice - {}", invoiceid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqinvoices WHERE invoiceid = ?", invoiceid));
@@ -64,6 +69,7 @@ public class ReceiveOrderRepository {
      * receiving unitprice.
      */
     public BigDecimal[] calculateReceivingPrices(BigDecimal unitprice, BigDecimal taxRate, boolean listIncGst) {
+        log.debug("Entering calculateReceivingPrices - {}, {}, {}", unitprice, taxRate, listIncGst);
         BigDecimal rate = taxRate != null ? taxRate : BigDecimal.ZERO;
         BigDecimal unitExcl, unitIncl, taxValue;
 
@@ -107,6 +113,7 @@ public class ReceiveOrderRepository {
                                 String internalnote,
                                 BigDecimal invoiceUnitprice,
                                 String invoiceCurrency) {
+        log.debug("Entering modReceiveOrder - {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}", order, quantityReceived, invoiceid, budgetId, datereceived, unitpriceTaxExcluded, unitpriceTaxIncluded, taxValueOnReceiving, taxRate, unitprice, replacementprice, internalnote, invoiceUnitprice, invoiceCurrency);
 
         Long ordernumber = toLong(order.get("ordernumber"));
         int orderedQty   = toInt(order.get("quantity"));
@@ -176,6 +183,7 @@ public class ReceiveOrderRepository {
 
     /** Creates a new "remainder" order by copying the original with a new quantity. */
     private Long cloneOrderWithQty(Map<String, Object> orig, int qty, Long budgetId) {
+        log.debug("Entering cloneOrderWithQty - {}, {}, {}", orig, qty, budgetId);
         String sql = """
                 INSERT INTO aqorders
                     (basketno, biblionumber, quantity, listprice, ecost,
@@ -223,6 +231,7 @@ public class ReceiveOrderRepository {
      */
     public void updateOrderItems(Long ordernumber, Long booksellerid, String datereceived,
                                  BigDecimal unitprice, BigDecimal replacementprice) {
+        log.debug("Entering updateOrderItems - {}, {}, {}, {}, {}", ordernumber, booksellerid, datereceived, unitprice, replacementprice);
         List<Long> itemnumbers = jdbc.queryForList(
                 "SELECT itemnumber FROM aqorders_items WHERE ordernumber = ?",
                 Long.class, ordernumber);
@@ -250,6 +259,7 @@ public class ReceiveOrderRepository {
      * Field/subfield updates are stored as column name = value in items table.
      */
     public void applyReceiveSubfields(List<Long> itemnumbers, List<String[]> fieldValuePairs) {
+        log.debug("Entering applyReceiveSubfields - {}, {}", itemnumbers, fieldValuePairs);
         if (itemnumbers == null || itemnumbers.isEmpty() || fieldValuePairs == null) return;
         for (Long itemnumber : itemnumbers) {
             for (String[] fv : fieldValuePairs) {
@@ -268,6 +278,7 @@ public class ReceiveOrderRepository {
     // ── Suggestion update ──────────────────────────────────────────────────────
 
     public void updateSuggestionReason(Long suggestionId, String reason) {
+        log.debug("Entering updateSuggestionReason - {}, {}", suggestionId, reason);
         jdbc.update("UPDATE suggestions SET reason = ? WHERE suggestionid = ?",
                 reason, suggestionId);
     }
@@ -275,6 +286,7 @@ public class ReceiveOrderRepository {
     // ── Acquisition log ────────────────────────────────────────────────────────
 
     public void logReceipt(Long ordernumber, String info) {
+        log.debug("Entering logReceipt - {}, {}", ordernumber, info);
         jdbc.update("""
                 INSERT INTO action_logs (timestamp, user, module, action, object, info)
                 VALUES (NOW(), 0, 'ACQUISITIONS', 'RECEIVE_ORDER', ?, ?)
@@ -284,6 +296,7 @@ public class ReceiveOrderRepository {
     // ── Vendor listincgst ──────────────────────────────────────────────────────
 
     public boolean vendorListIncGst(Long booksellerid) {
+        log.debug("Entering vendorListIncGst - {}", booksellerid);
         try {
             Integer val = jdbc.queryForObject(
                     "SELECT listincgst FROM aqbooksellers WHERE id = ?", Integer.class, booksellerid);
@@ -296,6 +309,7 @@ public class ReceiveOrderRepository {
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     private Long toLong(Object v) {
+        log.debug("Entering toLong - {}", v);
         if (v == null) return null;
         if (v instanceof Long l) return l;
         if (v instanceof Number n) return n.longValue();
@@ -303,6 +317,7 @@ public class ReceiveOrderRepository {
     }
 
     private int toInt(Object v) {
+        log.debug("Entering toInt - {}", v);
         Long l = toLong(v);
         return l != null ? l.intValue() : 0;
     }

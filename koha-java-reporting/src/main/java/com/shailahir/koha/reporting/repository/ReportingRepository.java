@@ -1,4 +1,5 @@
 package com.shailahir.koha.reporting.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.reporting.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * Repository for saved reports data access.
  * Mirrors: reports/guided_reports.pl, Koha/Report.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ReportingRepository {
@@ -31,6 +33,7 @@ public class ReportingRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<SavedReportDto> REPORT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         SavedReportDto dto = new SavedReportDto();
         dto.setReportId(rs.getLong("id"));
         dto.setReportName(rs.getString("report_name"));
@@ -47,6 +50,7 @@ public class ReportingRepository {
     };
 
     public Page<SavedReportDto> findAllReports(String query, Pageable pageable) {
+        log.debug("Entering findAllReports - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE report_name ILIKE ? OR notes ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -59,6 +63,7 @@ public class ReportingRepository {
     }
 
     public Optional<SavedReportDto> findReportById(Long id) {
+        log.debug("Entering findReportById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM saved_sql WHERE id = ?", REPORT_MAPPER, id));
@@ -68,6 +73,7 @@ public class ReportingRepository {
     }
 
     public SavedReportDto insertReport(SavedReportDto dto) {
+        log.debug("Entering insertReport - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -88,6 +94,7 @@ public class ReportingRepository {
     }
 
     public SavedReportDto updateReport(Long id, SavedReportDto dto) {
+        log.debug("Entering updateReport - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE saved_sql SET report_name=?, type=?, notes=?, savedsql=?, public=?, last_modified=NOW(), report_group=?, report_subgroup=?
                 WHERE id=?
@@ -98,10 +105,12 @@ public class ReportingRepository {
     }
 
     public void deleteReport(Long id) {
+        log.debug("Entering deleteReport - {}", id);
         jdbc.update("DELETE FROM saved_sql WHERE id = ?", id);
     }
 
     public ReportResultDto executeReport(Long reportId, Map<String, String> params) {
+        log.debug("Entering executeReport - {}, {}", reportId, params);
         SavedReportDto report = findReportById(reportId)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
                         org.springframework.http.HttpStatus.NOT_FOUND, "Report not found"));
@@ -137,6 +146,7 @@ public class ReportingRepository {
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

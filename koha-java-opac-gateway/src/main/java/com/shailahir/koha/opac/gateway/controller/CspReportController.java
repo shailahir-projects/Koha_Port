@@ -18,6 +18,7 @@ public class CspReportController {
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> create(@Valid @RequestBody Object request) {
+        log.debug("Entering create - {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Collections.emptyMap());
     }
 }

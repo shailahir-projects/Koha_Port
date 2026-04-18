@@ -27,6 +27,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
 
     @Override
     public BasketGroupPageDto getPage(Long booksellerid) {
+        log.debug("Entering getPage - {}", booksellerid);
         boolean listIncGst = repo.vendorListIncGst(booksellerid);
         String vendorName  = repo.findVendorName(booksellerid).orElse("");
 
@@ -66,6 +67,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
 
     @Override
     public BasketGroupDto getBasketGroup(Long basketgroupid) {
+        log.debug("Entering getBasketGroup - {}", basketgroupid);
         BasketGroupDto g = repo.findById(basketgroupid)
                 .orElseThrow(() -> new NoSuchElementException("Basket group not found: " + basketgroupid));
 
@@ -84,6 +86,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
     @Override
     @Transactional
     public BasketGroupDto saveBasketGroup(Long basketgroupid, BasketGroupRequest request) {
+        log.debug("Entering saveBasketGroup - {}, {}", basketgroupid, request);
         Long id;
         if (basketgroupid != null) {
             // Modify existing
@@ -124,6 +127,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
     @Override
     @Transactional
     public void deleteBasketGroup(Long basketgroupid) {
+        log.debug("Entering deleteBasketGroup - {}", basketgroupid);
         repo.delete(basketgroupid);
         log.info("Deleted basket group {}", basketgroupid);
     }
@@ -133,6 +137,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
     @Override
     @Transactional
     public void closeBasketGroup(Long basketgroupid) {
+        log.debug("Entering closeBasketGroup - {}", basketgroupid);
         repo.close(basketgroupid);
         log.info("Closed basket group {}", basketgroupid);
     }
@@ -142,6 +147,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
     @Override
     @Transactional
     public void reopenBasketGroup(Long basketgroupid) {
+        log.debug("Entering reopenBasketGroup - {}", basketgroupid);
         repo.reopen(basketgroupid);
         log.info("Reopened basket group {}", basketgroupid);
     }
@@ -151,6 +157,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
     @Override
     @Transactional
     public void assignBasketToGroup(Long basketno, Long basketgroupid) {
+        log.debug("Entering assignBasketToGroup - {}, {}", basketno, basketgroupid);
         repo.assignBasket(basketno, basketgroupid);
         log.info("Basket {} assigned to group {}", basketno, basketgroupid);
     }
@@ -159,6 +166,7 @@ public class BasketGroupServiceImpl implements BasketGroupService {
 
     @Override
     public String exportAsCsv(Long basketgroupid) {
+        log.debug("Entering exportAsCsv - {}", basketgroupid);
         return repo.exportAsCsv(basketgroupid);
     }
 }

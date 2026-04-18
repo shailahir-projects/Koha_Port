@@ -1,4 +1,5 @@
 package com.shailahir.koha.ill.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.ill.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for ILL (Interlibrary Loan) data access.
  * Mirrors: ill/*, Koha/Illrequest.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class IllRepository {
@@ -28,6 +30,7 @@ public class IllRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<IllRequestDto> REQUEST_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllRequestDto dto = new IllRequestDto();
         dto.setIllRequestId(rs.getLong("illrequest_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -47,6 +50,7 @@ public class IllRepository {
     };
 
     public Page<IllRequestDto> findAllRequests(String query, Pageable pageable) {
+        log.debug("Entering findAllRequests - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE status ILIKE ? OR backend ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -59,6 +63,7 @@ public class IllRepository {
     }
 
     public Optional<IllRequestDto> findRequestById(Long id) {
+        log.debug("Entering findRequestById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM illrequests WHERE illrequest_id = ?", REQUEST_MAPPER, id));
@@ -68,6 +73,7 @@ public class IllRepository {
     }
 
     public IllRequestDto insertRequest(IllRequestDto dto) {
+        log.debug("Entering insertRequest - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -92,6 +98,7 @@ public class IllRepository {
     }
 
     public IllRequestDto updateRequest(Long id, IllRequestDto dto) {
+        log.debug("Entering updateRequest - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE illrequests SET status=?, borrowernote=?, notesopac=?, notesstaff=?, updated=NOW()
                 WHERE illrequest_id=?
@@ -101,12 +108,14 @@ public class IllRepository {
     }
 
     public void deleteRequest(Long id) {
+        log.debug("Entering deleteRequest - {}", id);
         jdbc.update("DELETE FROM illrequests WHERE illrequest_id = ?", id);
     }
 
     // ── Comments ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllRequestCommentDto> COMMENT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllRequestCommentDto dto = new IllRequestCommentDto();
         dto.setCommentId(rs.getLong("id"));
         dto.setIllRequestId(rs.getLong("illrequest_id"));
@@ -117,12 +126,14 @@ public class IllRepository {
     };
 
     public List<IllRequestCommentDto> findCommentsByRequestId(Long requestId) {
+        log.debug("Entering findCommentsByRequestId - {}", requestId);
         return jdbc.query(
                 "SELECT * FROM illrequestattributes WHERE illrequest_id = ? AND type = 'COMMENT' ORDER BY id",
                 COMMENT_MAPPER, requestId);
     }
 
     public IllRequestCommentDto insertComment(Long requestId, IllRequestCommentDto dto) {
+        log.debug("Entering insertComment - {}, {}", requestId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -142,6 +153,7 @@ public class IllRepository {
     // ── Batches ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBatchDto> BATCH_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllBatchDto dto = new IllBatchDto();
         dto.setIllBatchId(rs.getLong("ill_batch_id"));
         dto.setName(rs.getString("name"));
@@ -153,6 +165,7 @@ public class IllRepository {
     };
 
     public Page<IllBatchDto> findAllBatches(String query, Pageable pageable) {
+        log.debug("Entering findAllBatches - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ? OR backend ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -165,6 +178,7 @@ public class IllRepository {
     }
 
     public Optional<IllBatchDto> findBatchById(Long id) {
+        log.debug("Entering findBatchById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM illbatches WHERE ill_batch_id = ?", BATCH_MAPPER, id));
@@ -174,6 +188,7 @@ public class IllRepository {
     }
 
     public IllBatchDto insertBatch(IllBatchDto dto) {
+        log.debug("Entering insertBatch - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -192,6 +207,7 @@ public class IllRepository {
     }
 
     public IllBatchDto updateBatch(Long id, IllBatchDto dto) {
+        log.debug("Entering updateBatch - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE illbatches SET name=?, backend=?, patron_id=?, library_id=?, status_code=?
                 WHERE ill_batch_id=?
@@ -201,12 +217,14 @@ public class IllRepository {
     }
 
     public void deleteBatch(Long id) {
+        log.debug("Entering deleteBatch - {}", id);
         jdbc.update("DELETE FROM illbatches WHERE ill_batch_id = ?", id);
     }
 
     // ── Batch Statuses ────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBatchStatusDto> BATCH_STATUS_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllBatchStatusDto dto = new IllBatchStatusDto();
         dto.setId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -216,10 +234,12 @@ public class IllRepository {
     };
 
     public List<IllBatchStatusDto> findAllBatchStatuses() {
+        log.debug("Entering findAllBatchStatuses");
         return jdbc.query("SELECT * FROM illbatch_statuses ORDER BY id", BATCH_STATUS_MAPPER);
     }
 
     public Optional<IllBatchStatusDto> findBatchStatusByCode(String code) {
+        log.debug("Entering findBatchStatusByCode - {}", code);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM illbatch_statuses WHERE code = ?", BATCH_STATUS_MAPPER, code));
@@ -229,6 +249,7 @@ public class IllRepository {
     }
 
     public IllBatchStatusDto insertBatchStatus(IllBatchStatusDto dto) {
+        log.debug("Entering insertBatchStatus - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -245,6 +266,7 @@ public class IllRepository {
     }
 
     public IllBatchStatusDto updateBatchStatus(String code, IllBatchStatusDto dto) {
+        log.debug("Entering updateBatchStatus - {}, {}", code, dto);
         jdbc.update("UPDATE illbatch_statuses SET name=?, is_system=? WHERE code=?",
                 dto.getName(), dto.getSystem(), code);
         dto.setCode(code);
@@ -252,12 +274,14 @@ public class IllRepository {
     }
 
     public void deleteBatchStatus(String code) {
+        log.debug("Entering deleteBatchStatus - {}", code);
         jdbc.update("DELETE FROM illbatch_statuses WHERE code = ?", code);
     }
 
     // ── Backends ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBackendDto> BACKEND_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllBackendDto dto = new IllBackendDto();
         dto.setBackendId(rs.getString("backend"));
         dto.setName(rs.getString("backend"));
@@ -266,6 +290,7 @@ public class IllRepository {
     };
 
     public List<IllBackendDto> findAllBackends() {
+        log.debug("Entering findAllBackends");
         return jdbc.query("""
                 SELECT backend, COUNT(*) AS request_count
                 FROM illrequests
@@ -276,6 +301,7 @@ public class IllRepository {
     }
 
     public Optional<IllBackendDto> findBackendById(String id) {
+        log.debug("Entering findBackendById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject("""
                     SELECT backend, COUNT(*) AS request_count
@@ -291,6 +317,7 @@ public class IllRepository {
     // ── Users ─────────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllUserDto> USER_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         IllUserDto dto = new IllUserDto();
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setCardnumber(rs.getString("cardnumber"));
@@ -302,6 +329,7 @@ public class IllRepository {
     };
 
     public Page<IllUserDto> findAllUsers(String query, Pageable pageable) {
+        log.debug("Entering findAllUsers - {}, {}", query, pageable);
         String where = "";
         Object[] params = new Object[]{};
         if (query != null && !query.isBlank()) {
@@ -318,6 +346,7 @@ public class IllRepository {
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

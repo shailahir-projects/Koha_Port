@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.exception.PatronNotFoundException;
 import com.shailahir.koha.patron.repository.PatronRepository;
@@ -22,6 +23,7 @@ import java.util.UUID;
 /**
  * Service implementation for patron file attachments, API keys, housebound, and message preferences.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatronFilesServiceImpl implements PatronFilesService {
@@ -31,6 +33,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
 
     @Override
     public List<Map<String, Object>> listFiles(Long patronId) {
+        log.debug("Entering listFiles - {}", patronId);
         ensurePatronExists(patronId);
         try {
             return jdbc.queryForList("""
@@ -46,6 +49,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public Map<String, Object> uploadFile(Long patronId, MultipartFile file, String description) {
+        log.debug("Entering uploadFile - {}, {}, {}", patronId, file, description);
         ensurePatronExists(patronId);
         try {
             byte[] fileBytes = file.getBytes();
@@ -72,6 +76,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
 
     @Override
     public byte[] downloadFile(Long patronId, Long fileId) {
+        log.debug("Entering downloadFile - {}, {}", patronId, fileId);
         ensurePatronExists(patronId);
         try {
             return jdbc.queryForObject(
@@ -85,11 +90,13 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public void deleteFile(Long patronId, Long fileId) {
+        log.debug("Entering deleteFile - {}, {}", patronId, fileId);
         jdbc.update("DELETE FROM borrower_files WHERE id = ? AND borrowernumber = ?", fileId, patronId);
     }
 
     @Override
     public List<Map<String, Object>> listApiKeys(Long patronId) {
+        log.debug("Entering listApiKeys - {}", patronId);
         ensurePatronExists(patronId);
         try {
             return jdbc.queryForList("""
@@ -105,6 +112,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public Map<String, Object> generateApiKey(Long patronId) {
+        log.debug("Entering generateApiKey - {}", patronId);
         ensurePatronExists(patronId);
         String key = UUID.randomUUID().toString().replace("-", "");
         KeyHolder kh = new GeneratedKeyHolder();
@@ -126,11 +134,13 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public void revokeApiKey(Long patronId, Long apiKeyId) {
+        log.debug("Entering revokeApiKey - {}, {}", patronId, apiKeyId);
         jdbc.update("UPDATE api_keys SET active = 0 WHERE api_key_id = ? AND patron_id = ?", apiKeyId, patronId);
     }
 
     @Override
     public Map<String, Object> getHouseboundProfile(Long patronId) {
+        log.debug("Entering getHouseboundProfile - {}", patronId);
         ensurePatronExists(patronId);
         try {
             return jdbc.queryForMap("SELECT * FROM housebound_profile WHERE borrowernumber = ?", patronId);
@@ -145,6 +155,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public void updateHouseboundProfile(Long patronId, Map<String, Object> profile) {
+        log.debug("Entering updateHouseboundProfile - {}, {}", patronId, profile);
         ensurePatronExists(patronId);
         try {
             int count = jdbc.queryForObject(
@@ -171,6 +182,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
 
     @Override
     public Map<String, Object> getMessagePreferences(Long patronId) {
+        log.debug("Entering getMessagePreferences - {}", patronId);
         ensurePatronExists(patronId);
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("patron_id", patronId);
@@ -192,6 +204,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     @Override
     @Transactional
     public void updateMessagePreferences(Long patronId, Map<String, Object> prefs) {
+        log.debug("Entering updateMessagePreferences - {}, {}", patronId, prefs);
         ensurePatronExists(patronId);
         // Delete and re-insert message preferences
         jdbc.update("""
@@ -203,6 +216,7 @@ public class PatronFilesServiceImpl implements PatronFilesService {
     }
 
     private void ensurePatronExists(Long patronId) {
+        log.debug("Entering ensurePatronExists - {}", patronId);
         if (!patronRepository.exists(patronId)) {
             throw new PatronNotFoundException(patronId);
         }

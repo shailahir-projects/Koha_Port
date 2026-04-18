@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.transformer;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.OrderDto;
 import com.shailahir.koha.acquisitions.dto.OrderHistoryDto;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  *
  * <p>Mirrors the field-mapping Koha does in addorder.pl and histsearch.pl.
  */
+@Slf4j
 @Component
 public class OrderTransformer {
 
@@ -29,6 +31,7 @@ public class OrderTransformer {
      * @return dto ready for repository insert/update
      */
     public OrderDto fromRequest(OrderRequest req) {
+        log.debug("Entering fromRequest - {}", req);
         if (req == null) return null;
         return OrderDto.builder()
                 .ordernumber(req.getOrdernumber())
@@ -62,6 +65,7 @@ public class OrderTransformer {
      * @return history dto (summary view)
      */
     public OrderHistoryDto toHistoryDto(OrderDto dto) {
+        log.debug("Entering toHistoryDto - {}", dto);
         if (dto == null) return null;
         return OrderHistoryDto.builder()
                 .ordernumber(dto.getOrdernumber())
@@ -83,6 +87,7 @@ public class OrderTransformer {
      * Batch convert a list of {@link OrderDto} to {@link OrderHistoryDto}.
      */
     public List<OrderHistoryDto> toHistoryDtoList(List<OrderDto> orders) {
+        log.debug("Entering toHistoryDtoList - {}", orders);
         if (orders == null) return Collections.emptyList();
         return orders.stream().map(this::toHistoryDto).collect(Collectors.toList());
     }

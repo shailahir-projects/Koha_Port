@@ -41,6 +41,7 @@ public class EdifactMsgsController {
      */
     @GetMapping("/acquisitions/edifact-messages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<EdifactMessageDto>> listMessages() {
+        log.debug("Entering listMessages");
         return ResponseEntity.ok(edifactRepo.findAll());
     }
 
@@ -50,6 +51,7 @@ public class EdifactMsgsController {
      */
     @GetMapping("/acquisitions/edifact-messages/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<EdifactMessageDto> getMessage(@PathVariable Long id) {
+        log.debug("Entering getMessage - {}", id);
         return edifactRepo.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -61,6 +63,7 @@ public class EdifactMsgsController {
      */
     @GetMapping("/acquisitions/edifact-messages/{id}/raw", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<String> getRawMessage(@PathVariable Long id) {
+        log.debug("Entering getRawMessage - {}", id);
         String raw = edifactRepo.getRawMsg(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
         return ResponseEntity.ok()
@@ -83,6 +86,7 @@ public class EdifactMsgsController {
      */
     @GetMapping("/acquisitions/edifact-messages/{id}/segments", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getSegments(@PathVariable Long id) {
+        log.debug("Entering getSegments - {}", id);
         edifactRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
 
@@ -103,6 +107,7 @@ public class EdifactMsgsController {
     @DeleteMapping("/acquisitions/edifact-messages/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+        log.debug("Entering deleteMessage - {}", id);
         edifactRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
         edifactRepo.softDelete(id);
@@ -128,6 +133,7 @@ public class EdifactMsgsController {
     @PostMapping("/acquisitions/edifact-messages/{id}/import", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Map<String, Object>> importMessage(@PathVariable Long id) {
+        log.debug("Entering importMessage - {}", id);
         EdifactMessageDto msg = edifactRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
 
@@ -161,6 +167,7 @@ public class EdifactMsgsController {
      * segment terminator that was consumed as a delimiter.
      */
     private List<String> segmentize(String raw) {
+        log.debug("Entering segmentize - {}", raw);
         List<String> segments = new ArrayList<>();
         if (raw == null || raw.isBlank()) return segments;
         // Match runs of: escaped-pair (?.) OR any char that is not ' or ?

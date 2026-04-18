@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.LateOrderDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Map;
  * JDBC repository for late order operations.
  * Mirrors Koha::Acquisition::Orders->filter_by_lates() and $order->claim().
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class LateOrderRepository {
@@ -51,6 +53,7 @@ public class LateOrderRepository {
     public List<LateOrderDto> filterByLates(int delay, LocalDate estimatedFrom,
                                             LocalDate estimatedTo, Long booksellerid,
                                             String branch) {
+        log.debug("Entering filterByLates - {}, {}, {}, {}, {}", delay, estimatedFrom, estimatedTo, booksellerid, branch);
         StringBuilder sql = new StringBuilder("""
                 SELECT o.ordernumber, o.basketno, o.biblionumber,
                        o.quantity, o.quantityreceived,
@@ -133,6 +136,7 @@ public class LateOrderRepository {
      * {@code $self->claimed_date(dt_from_string()); $self->claims_count($self->claims_count + 1);}
      */
     public void claimOrder(Long ordernumber) {
+        log.debug("Entering claimOrder - {}", ordernumber);
         jdbc.update("""
                 UPDATE aqorders
                    SET claimed_date  = CURRENT_DATE,
@@ -152,6 +156,7 @@ public class LateOrderRepository {
      * internal note, vendor note.
      */
     public List<Map<String, Object>> getOrdersForExport(List<Long> ordernumbers) {
+        log.debug("Entering getOrdersForExport - {}", ordernumbers);
         if (ordernumbers == null || ordernumbers.isEmpty()) return List.of();
         String placeholders = String.join(",", ordernumbers.stream().map(x -> "?").toList());
         String sql = """
@@ -190,6 +195,7 @@ public class LateOrderRepository {
      * Mirrors GetLetters({ module => "claimacquisition" }).
      */
     public List<Map<String, Object>> getClaimLetters() {
+        log.debug("Entering getClaimLetters");
         return jdbc.queryForList("""
                 SELECT code, name
                   FROM letter
@@ -205,6 +211,7 @@ public class LateOrderRepository {
      * Needed to validate that claim alerts can be sent (mirrors "no_email" error).
      */
     public String getVendorEmail(Long ordernumber) {
+        log.debug("Entering getVendorEmail - {}", ordernumber);
         try {
             return jdbc.queryForObject("""
                     SELECT v.booksellerfax
@@ -222,6 +229,7 @@ public class LateOrderRepository {
      * Logs a claim action in the action_logs table.
      */
     public void logClaim(Long ordernumber) {
+        log.debug("Entering logClaim - {}", ordernumber);
         jdbc.update("""
                 INSERT INTO action_logs (timestamp, user, module, action, object, info)
                 VALUES (NOW(), 0, 'ACQUISITIONS', 'CLAIM_ORDER', ?, '')

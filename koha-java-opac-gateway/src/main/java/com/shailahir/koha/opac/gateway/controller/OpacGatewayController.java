@@ -1,4 +1,5 @@
 package com.shailahir.koha.opac.gateway.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,17 +16,20 @@ import java.util.Map;
  * - /public/oauth/login/{provider_code}/{interface} (GET)
  * - Public patron actions (already in patron module, duplicated here as edge proxy)
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class OpacGatewayController {
 
     @GetMapping("/status/version", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getStatusVersion() {
+        log.debug("Entering getStatusVersion");
         return ResponseEntity.ok(Map.of("version", "24.11", "status", "ok"));
     }
 
     @PostMapping("/public/csp-reports", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> addCspReport(@RequestBody Map<String, Object> report) {
+        log.debug("Entering addCspReport - {}", report);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

@@ -47,11 +47,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Optional<InvoiceDetailDto> getInvoice(Long invoiceid) {
+        log.debug("Entering getInvoice - {}", invoiceid);
         return invoiceRepo.findInvoice(invoiceid).map(transformer::fromRow);
     }
 
     @Override
     public List<InvoiceOrderLineDto> getOrdersByInvoice(Long invoiceid) {
+        log.debug("Entering getOrdersByInvoice - {}", invoiceid);
         return invoiceRepo.findOrdersByInvoice(invoiceid);
     }
 
@@ -98,39 +100,46 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<InvoiceAdjustmentDto> getAdjustments(Long invoiceid) {
+        log.debug("Entering getAdjustments - {}", invoiceid);
         return invoiceRepo.findAdjustments(invoiceid);
     }
 
     @Override
     public Optional<InvoiceAdjustmentDto> getAdjustment(Long adjustmentId) {
+        log.debug("Entering getAdjustment - {}", adjustmentId);
         return invoiceRepo.findAdjustmentById(adjustmentId);
     }
 
     @Override
     @Transactional
     public Long createAdjustment(InvoiceAdjustmentDto dto) {
+        log.debug("Entering createAdjustment - {}", dto);
         return invoiceRepo.createAdjustment(dto);
     }
 
     @Override
     @Transactional
     public void updateAdjustment(InvoiceAdjustmentDto dto) {
+        log.debug("Entering updateAdjustment - {}", dto);
         invoiceRepo.updateAdjustment(dto);
     }
 
     @Override
     @Transactional
     public void deleteAdjustment(Long adjustmentId) {
+        log.debug("Entering deleteAdjustment - {}", adjustmentId);
         invoiceRepo.deleteAdjustment(adjustmentId);
     }
 
     @Override
     public List<Map<String, Object>> getFiles(Long invoiceid) {
+        log.debug("Entering getFiles - {}", invoiceid);
         return filesRepo.getFilesInfo(invoiceid);
     }
 
     @Override
     public Optional<Map<String, Object>> getFile(Long fileId, Long invoiceid) {
+        log.debug("Entering getFile - {}, {}", fileId, invoiceid);
         return filesRepo.getFile(fileId, invoiceid);
     }
 
@@ -138,6 +147,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     public Long addFile(Long invoiceid, String fileName, String fileType,
             String description, byte[] content, Long uploadedBy) {
+        log.debug("Entering addFile - {}, {}, {}, {}, {}, {}", invoiceid, fileName, fileType, description, content, uploadedBy);
         // InvoiceFilesRepository.addFile(invoiceid, fileName, fileType, content, description)
         return filesRepo.addFile(invoiceid, fileName, fileType, content, description);
     }
@@ -145,6 +155,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public void deleteFile(Long fileId, Long invoiceid) {
+        log.debug("Entering deleteFile - {}, {}", fileId, invoiceid);
         filesRepo.deleteFile(fileId, invoiceid);
     }
 }

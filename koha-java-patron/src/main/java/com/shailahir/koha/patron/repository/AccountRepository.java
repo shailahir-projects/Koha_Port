@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.AccountLineDto;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
  *          members/mancredit.pl, members/maninvoice.pl, members/cancel-charge.pl,
  *          members/accountline-details.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AccountRepository {
@@ -25,6 +27,7 @@ public class AccountRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<AccountLineDto> ROW_MAPPER = (rs, rowNum) -> {
+        log.debug("Entering = - {}, {}", rs, rowNum);
         AccountLineDto dto = new AccountLineDto();
         dto.setAccountlines_id(rs.getLong("accountlines_id"));
         dto.setBorrowernumber(rs.getLong("borrowernumber"));
@@ -46,12 +49,14 @@ public class AccountRepository {
     };
 
     public List<AccountLineDto> findByPatronId(Long patronId) {
+        log.debug("Entering findByPatronId - {}", patronId);
         return jdbc.query(
             "SELECT * FROM accountlines WHERE borrowernumber = ? ORDER BY date DESC",
             ROW_MAPPER, patronId);
     }
 
     public AccountLineDto findById(Long accountlinesId) {
+        log.debug("Entering findById - {}", accountlinesId);
         return jdbc.queryForObject(
             "SELECT * FROM accountlines WHERE accountlines_id = ?",
             ROW_MAPPER, accountlinesId);
@@ -61,6 +66,7 @@ public class AccountRepository {
      * Manual credit (mancredit.pl) - add a credit to patron account.
      */
     public AccountLineDto addManualCredit(Long patronId, AccountLineDto dto) {
+        log.debug("Entering addManualCredit - {}, {}", patronId, dto);
         String sql = """
             INSERT INTO accountlines (borrowernumber, itemnumber, date, amount, description,
                 accounttype, status, amountoutstanding, note, manager_id, interface, branchcode)
@@ -87,6 +93,7 @@ public class AccountRepository {
      * Manual invoice (maninvoice.pl) - add a debit/charge to patron account.
      */
     public AccountLineDto addManualInvoice(Long patronId, AccountLineDto dto) {
+        log.debug("Entering addManualInvoice - {}, {}", patronId, dto);
         String sql = """
             INSERT INTO accountlines (borrowernumber, itemnumber, date, amount, description,
                 accounttype, amountoutstanding, note, manager_id, interface, branchcode)
@@ -114,6 +121,7 @@ public class AccountRepository {
      * Cancel/void a charge (cancel-charge.pl)
      */
     public void cancelCharge(Long accountlinesId) {
+        log.debug("Entering cancelCharge - {}", accountlinesId);
         jdbc.update("""
             UPDATE accountlines SET amountoutstanding = 0, status = 'VOID'
             WHERE accountlines_id = ?
@@ -125,6 +133,7 @@ public class AccountRepository {
      * Mirrors: members/pay.pl, members/paycollect.pl
      */
     public void applyPayment(Long patronId, java.math.BigDecimal amount, String paymentType, String branchcode) {
+        log.debug("Entering applyPayment - {}, {}, {}, {}", patronId, amount, paymentType, branchcode);
         // Fetch outstanding debits ordered by date
         List<AccountLineDto> debits = jdbc.query("""
             SELECT * FROM accountlines WHERE borrowernumber = ? AND amountoutstanding > 0

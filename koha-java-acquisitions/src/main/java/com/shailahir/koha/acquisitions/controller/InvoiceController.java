@@ -78,6 +78,7 @@ public class InvoiceController {
             @RequestParam(value = "branch",           required = false) String branch,
             @RequestParam(value = "message_id",       required = false) Long messageId,
             @RequestParam(value = "additional_fields", required = false) String additionalFieldsJson) {
+        log.debug("Entering searchInvoices - {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}", doSearch, invoicenumber, supplierid, shipmentdatefrom, shipmentdateto, billingdatefrom, billingdateto, isbneanissn, title, author, publisher, publicationyear, branch, messageId, additionalFieldsJson);
 
         if (!doSearch) {
             return ResponseEntity.ok(Map.of(
@@ -130,6 +131,7 @@ public class InvoiceController {
      */
     @GetMapping("/acquisitions/invoices/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<InvoiceDetailDto> getInvoice(@PathVariable Long id) {
+        log.debug("Entering getInvoice - {}", id);
         Map<String, Object> inv = invoiceRepo.findInvoice(id)
                 .orElse(null);
         if (inv == null) return ResponseEntity.notFound().build();
@@ -202,6 +204,7 @@ public class InvoiceController {
     @PostMapping("/acquisitions/invoices/{id}/close", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> closeInvoice(@PathVariable Long id) {
+        log.debug("Entering closeInvoice - {}", id);
         ensureExists(id);
         invoiceRepo.closeInvoice(id);
         log.info("Invoice {} closed", id);
@@ -212,6 +215,7 @@ public class InvoiceController {
     @PostMapping("/acquisitions/invoices/{id}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> reopenInvoice(@PathVariable Long id) {
+        log.debug("Entering reopenInvoice - {}", id);
         ensureExists(id);
         invoiceRepo.reopenInvoice(id);
         log.info("Invoice {} reopened", id);
@@ -228,6 +232,7 @@ public class InvoiceController {
     public ResponseEntity<InvoiceDetailDto> modifyInvoice(
             @PathVariable Long id,
             @RequestBody InvoiceModRequest req) {
+        log.debug("Entering modifyInvoice - {}, {}", id, req);
 
         ensureExists(id);
         invoiceRepo.modifyInvoice(id, req.getInvoicenumber(),
@@ -254,6 +259,7 @@ public class InvoiceController {
     @DeleteMapping("/acquisitions/invoices/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
+        log.debug("Entering deleteInvoice - {}", id);
         ensureExists(id);
         invoiceRepo.deleteInvoice(id);
         log.info("Invoice {} deleted", id);
@@ -265,6 +271,7 @@ public class InvoiceController {
     /** Returns all adjustments for this invoice. */
     @GetMapping("/acquisitions/invoices/{id}/adjustments", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<InvoiceAdjustmentDto>> getAdjustments(@PathVariable Long id) {
+        log.debug("Entering getAdjustments - {}", id);
         return ResponseEntity.ok(invoiceRepo.findAdjustments(id));
     }
 
@@ -277,6 +284,7 @@ public class InvoiceController {
     public ResponseEntity<InvoiceAdjustmentDto> createAdjustment(
             @PathVariable Long id,
             @RequestBody InvoiceAdjustmentDto dto) {
+        log.debug("Entering createAdjustment - {}, {}", id, dto);
 
         dto.setInvoiceid(id);
         Long newId = invoiceRepo.createAdjustment(dto);
@@ -300,6 +308,7 @@ public class InvoiceController {
             @PathVariable Long id,
             @PathVariable Long adjId,
             @RequestBody InvoiceAdjustmentDto dto) {
+        log.debug("Entering updateAdjustment - {}, {}, {}", id, adjId, dto);
 
         InvoiceAdjustmentDto old = invoiceRepo.findAdjustmentById(adjId)
                 .orElseThrow(() -> new NoSuchElementException("Adjustment not found: " + adjId));
@@ -337,6 +346,7 @@ public class InvoiceController {
     public ResponseEntity<Void> deleteAdjustment(
             @PathVariable Long id,
             @PathVariable Long adjId) {
+        log.debug("Entering deleteAdjustment - {}, {}", id, adjId);
 
         InvoiceAdjustmentDto adj = invoiceRepo.findAdjustmentById(adjId)
                 .orElseThrow(() -> new NoSuchElementException("Adjustment not found: " + adjId));
@@ -351,15 +361,18 @@ public class InvoiceController {
     // ── Helpers ────────────────────────────────────────────────────────────────
 
     private void ensureExists(Long id) {
+        log.debug("Entering ensureExists - {}", id);
         invoiceRepo.findInvoice(id)
                 .orElseThrow(() -> new NoSuchElementException("Invoice not found: " + id));
     }
 
     private BigDecimal round(BigDecimal v) {
+        log.debug("Entering round - {}", v);
         return v == null ? BigDecimal.ZERO : v.setScale(2, RoundingMode.HALF_UP);
     }
 
     private Long toLong(Object v) {
+        log.debug("Entering toLong - {}", v);
         if (v == null) return null;
         if (v instanceof Long l) return l;
         if (v instanceof Number n) return n.longValue();
@@ -367,6 +380,7 @@ public class InvoiceController {
     }
 
     private int toInt(Object v) {
+        log.debug("Entering toInt - {}", v);
         Long l = toLong(v); return l != null ? l.intValue() : 0;
     }
 

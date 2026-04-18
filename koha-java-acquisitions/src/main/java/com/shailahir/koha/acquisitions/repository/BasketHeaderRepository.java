@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.ContractDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Optional;
  * JDBC repository for aqcontract and basket-header update operations.
  * Mirrors GetContracts, GetContract, ModBasketHeader, NewBasket.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BasketHeaderRepository {
@@ -38,6 +40,7 @@ public class BasketHeaderRepository {
      * "Active" = contractenddate >= today or NULL.
      */
     public List<ContractDto> findActiveContractsByVendor(Long booksellerid) {
+        log.debug("Entering findActiveContractsByVendor - {}", booksellerid);
         String sql = """
                 SELECT contractnumber, contractname, contractdescription,
                        booksellerid, contractstartdate, contractenddate
@@ -50,6 +53,7 @@ public class BasketHeaderRepository {
     }
 
     public Optional<ContractDto> findContractById(Long contractnumber) {
+        log.debug("Entering findContractById - {}", contractnumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -71,6 +75,7 @@ public class BasketHeaderRepository {
                              Long booksellerid, String deliveryplace,
                              String billingplace, Boolean isStanding,
                              String createItems) {
+        log.debug("Entering updateHeader - {}, {}, {}, {}, {}, {}, {}, {}, {}, {}", basketno, basketname, note, booksellernote, contractnumber, booksellerid, deliveryplace, billingplace, isStanding, createItems);
         jdbc.update("""
                 UPDATE aqbasket
                    SET basketname    = ?,
@@ -107,6 +112,7 @@ public class BasketHeaderRepository {
                              Long contractnumber, String deliveryplace,
                              String billingplace, Boolean isStanding,
                              String createItems) {
+        log.debug("Entering createBasket - {}, {}, {}, {}, {}, {}, {}, {}, {}, {}", booksellerid, authorisedby, basketname, note, booksellernote, contractnumber, deliveryplace, billingplace, isStanding, createItems);
         String sql = """
                 INSERT INTO aqbasket
                     (booksellerid, authorisedby, basketname, note, booksellernote,
@@ -136,6 +142,7 @@ public class BasketHeaderRepository {
     // ── Vendor name ────────────────────────────────────────────────────────────
 
     public Optional<String> findVendorName(Long booksellerid) {
+        log.debug("Entering findVendorName - {}", booksellerid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT name FROM aqbooksellers WHERE id = ?",
@@ -153,6 +160,7 @@ public class BasketHeaderRepository {
      * Mirrors the basket_name_readonly logic in basketheader.pl.
      */
     public boolean isBasketNameReadonly(Long basketno) {
+        log.debug("Entering isBasketNameReadonly - {}", basketno);
         try {
             // Check if this basket has an associated EDI QUOTE message
             Integer edifactMsg = jdbc.queryForObject(
@@ -182,6 +190,7 @@ public class BasketHeaderRepository {
      * has po_is_basketname enabled (used during save to prevent name override).
      */
     public boolean hasEdiOrderWithPoBasketname(Long basketno, Long booksellerid) {
+        log.debug("Entering hasEdiOrderWithPoBasketname - {}, {}", basketno, booksellerid);
         try {
             Integer edifactMsg = jdbc.queryForObject(
                     """
@@ -201,6 +210,7 @@ public class BasketHeaderRepository {
 
     /** Returns the current basket name for a given basketno. */
     public Optional<String> findBasketName(Long basketno) {
+        log.debug("Entering findBasketName - {}", basketno);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT basketname FROM aqbasket WHERE basketno = ?",

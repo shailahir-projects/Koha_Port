@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,6 +13,7 @@ import java.util.Optional;
  * JDBC repository for order cancellation operations.
  * Mirrors $order->cancel({ reason => ..., delete_biblio => ... }) in Koha.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CancelOrderRepository {
@@ -21,6 +23,7 @@ public class CancelOrderRepository {
     // ── Order state checks ─────────────────────────────────────────────────────
 
     public Optional<Map<String, Object>> findOrderById(Long ordernumber) {
+        log.debug("Entering findOrderById - {}", ordernumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqorders WHERE ordernumber = ?", ordernumber));
@@ -41,6 +44,7 @@ public class CancelOrderRepository {
      * Mirrors the SQL that Koha::Acquisition::Order->cancel() executes.
      */
     public void cancelOrder(Long ordernumber, String reason) {
+        log.debug("Entering cancelOrder - {}, {}", ordernumber, reason);
         jdbc.update("""
                 UPDATE aqorders
                    SET orderstatus             = 'cancelled',
@@ -58,6 +62,7 @@ public class CancelOrderRepository {
      * Used to decide if items can be safely deleted.
      */
     public int countDeletableItems(Long ordernumber) {
+        log.debug("Entering countDeletableItems - {}", ordernumber);
         Integer c = jdbc.queryForObject(
                 """
                 SELECT COUNT(*) FROM aqorders_items oi
@@ -79,6 +84,7 @@ public class CancelOrderRepository {
      * Mirrors the item-deletion logic inside Koha::Acquisition::Order->cancel().
      */
     public boolean deleteOrderItems(Long ordernumber) {
+        log.debug("Entering deleteOrderItems - {}", ordernumber);
         // Find items linked only to this order and having no holds
         var itemnumbers = jdbc.queryForList(
                 """
@@ -116,6 +122,7 @@ public class CancelOrderRepository {
      * Mirrors the delete_biblio branch in Koha::Acquisition::Order->cancel().
      */
     public String tryDeleteBiblio(Long biblionumber) {
+        log.debug("Entering tryDeleteBiblio - {}", biblionumber);
         if (biblionumber == null) return null;
 
         // Check for remaining items
@@ -156,6 +163,7 @@ public class CancelOrderRepository {
     // ── Acquisition log ────────────────────────────────────────────────────────
 
     public void logCancellation(Long ordernumber) {
+        log.debug("Entering logCancellation - {}", ordernumber);
         jdbc.update("""
                 INSERT INTO action_logs (timestamp, user, module, action, object, info)
                 VALUES (NOW(), 0, 'ACQUISITIONS', 'CANCEL_ORDER', ?, '')

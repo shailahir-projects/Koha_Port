@@ -18,11 +18,13 @@ public class CashupController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> list(Pageable pageable) {
+        log.debug("Entering list - {}", pageable);
         return ResponseEntity.ok(Collections.emptyList());
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> getById(@PathVariable Long id) {
+        log.debug("Entering getById - {}", id);
         return ResponseEntity.ok(Collections.emptyMap());
     }
 }

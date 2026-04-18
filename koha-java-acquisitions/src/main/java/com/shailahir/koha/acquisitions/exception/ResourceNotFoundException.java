@@ -1,8 +1,10 @@
 package com.shailahir.koha.acquisitions.exception;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Thrown when a requested resource (order, basket, vendor, invoice, etc.) is not found.
  */
+@Slf4j
 public class ResourceNotFoundException extends AcquisitionException {
 
     private final String resourceType;

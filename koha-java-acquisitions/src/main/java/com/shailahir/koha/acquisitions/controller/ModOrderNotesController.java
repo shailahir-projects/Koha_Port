@@ -61,6 +61,7 @@ public class ModOrderNotesController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
     public ResponseEntity<OrderDto> getNotes(@PathVariable Long ordernumber) {
+        log.debug("Entering getNotes - {}", ordernumber);
         return orderRepo.findById(ordernumber)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

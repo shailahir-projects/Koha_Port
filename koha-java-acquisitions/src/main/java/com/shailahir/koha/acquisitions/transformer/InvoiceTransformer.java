@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.transformer;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.InvoiceDetailDto;
 import com.shailahir.koha.acquisitions.dto.InvoiceModRequest;
@@ -12,6 +13,7 @@ import java.util.Map;
  *
  * <p>Mirrors field-mapping done in invoice.pl and invoices.pl.
  */
+@Slf4j
 @Component
 public class InvoiceTransformer {
 
@@ -22,6 +24,7 @@ public class InvoiceTransformer {
      * @return invoice detail DTO
      */
     public InvoiceDetailDto fromRow(Map<String, Object> row) {
+        log.debug("Entering fromRow - {}", row);
         if (row == null) return null;
         return InvoiceDetailDto.builder()
                 .invoiceid(toLong(row, "invoiceid"))
@@ -41,6 +44,7 @@ public class InvoiceTransformer {
      * Converts an {@link InvoiceModRequest} into a parameter map for the update call.
      */
     public Map<String, Object> toUpdateParams(Long invoiceid, InvoiceModRequest req) {
+        log.debug("Entering toUpdateParams - {}, {}", invoiceid, req);
         return Map.of(
                 "invoiceid",             invoiceid,
                 "invoicenumber",         req.getInvoicenumber() != null ? req.getInvoicenumber() : "",
@@ -54,16 +58,19 @@ public class InvoiceTransformer {
     // ── helpers ───────────────────────────────────────────────────────────────
 
     private Long toLong(Map<String, Object> row, String key) {
+        log.debug("Entering toLong - {}, {}", row, key);
         Object v = row.get(key);
         return v != null ? ((Number) v).longValue() : null;
     }
 
     private String toString(Map<String, Object> row, String key) {
+        log.debug("Entering toString - {}, {}", row, key);
         Object v = row.get(key);
         return v != null ? v.toString() : null;
     }
 
     private LocalDate toLocalDate(Map<String, Object> row, String key) {
+        log.debug("Entering toLocalDate - {}, {}", row, key);
         Object v = row.get(key);
         if (v == null) return null;
         if (v instanceof LocalDate ld) return ld;

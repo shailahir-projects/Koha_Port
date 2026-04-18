@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.service.PatronHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Map;
  *          members/summary-print.pl, members/routing-lists.pl,
  *          members/statistics.pl, members/purchase-suggestions.pl
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -31,6 +33,7 @@ public class PatronHistoryController {
     public ResponseEntity<List<Map<String, Object>>> getReadingRecord(
             @PathVariable("patron_id") Long patronId,
             Pageable pageable) {
+        log.debug("Entering getReadingRecord - {}, {}", patronId, pageable);
         return ResponseEntity.ok(patronHistoryService.getReadingRecord(patronId, pageable));
     }
 
@@ -39,6 +42,7 @@ public class PatronHistoryController {
     public ResponseEntity<List<Map<String, Object>>> getHoldsHistory(
             @PathVariable("patron_id") Long patronId,
             Pageable pageable) {
+        log.debug("Entering getHoldsHistory - {}, {}", patronId, pageable);
         return ResponseEntity.ok(patronHistoryService.getHoldsHistory(patronId, pageable));
     }
 
@@ -46,6 +50,7 @@ public class PatronHistoryController {
     @GetMapping("/patrons/{patron_id}/recalls/history")
     public ResponseEntity<List<Map<String, Object>>> getRecallsHistory(
             @PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getRecallsHistory - {}", patronId);
         return ResponseEntity.ok(patronHistoryService.getRecallsHistory(patronId));
     }
 
@@ -54,6 +59,7 @@ public class PatronHistoryController {
     public ResponseEntity<List<Map<String, Object>>> getNotices(
             @PathVariable("patron_id") Long patronId,
             Pageable pageable) {
+        log.debug("Entering getNotices - {}, {}", patronId, pageable);
         return ResponseEntity.ok(patronHistoryService.getNotices(patronId, pageable));
     }
 
@@ -61,6 +67,7 @@ public class PatronHistoryController {
     @GetMapping("/patrons/{patron_id}/alert_subscriptions")
     public ResponseEntity<List<Map<String, Object>>> getAlertSubscriptions(
             @PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getAlertSubscriptions - {}", patronId);
         return ResponseEntity.ok(patronHistoryService.getAlertSubscriptions(patronId));
     }
 
@@ -68,6 +75,7 @@ public class PatronHistoryController {
     public ResponseEntity<Void> cancelAlertSubscription(
             @PathVariable("patron_id") Long patronId,
             @PathVariable("subscription_id") Long subscriptionId) {
+        log.debug("Entering cancelAlertSubscription - {}, {}", patronId, subscriptionId);
         patronHistoryService.cancelAlertSubscription(patronId, subscriptionId);
         return ResponseEntity.noContent().build();
     }
@@ -76,6 +84,7 @@ public class PatronHistoryController {
     @GetMapping("/patrons/{patron_id}/routing_lists")
     public ResponseEntity<List<Map<String, Object>>> getRoutingLists(
             @PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getRoutingLists - {}", patronId);
         return ResponseEntity.ok(patronHistoryService.getRoutingLists(patronId));
     }
 
@@ -84,6 +93,7 @@ public class PatronHistoryController {
     public ResponseEntity<List<Map<String, Object>>> getPurchaseSuggestions(
             @PathVariable("patron_id") Long patronId,
             Pageable pageable) {
+        log.debug("Entering getPurchaseSuggestions - {}, {}", patronId, pageable);
         return ResponseEntity.ok(patronHistoryService.getPurchaseSuggestions(patronId, pageable));
     }
 
@@ -91,6 +101,7 @@ public class PatronHistoryController {
     @GetMapping("/patrons/{patron_id}/statistics")
     public ResponseEntity<Map<String, Object>> getPatronStatistics(
             @PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getPatronStatistics - {}", patronId);
         return ResponseEntity.ok(patronHistoryService.getStatistics(patronId));
     }
 }

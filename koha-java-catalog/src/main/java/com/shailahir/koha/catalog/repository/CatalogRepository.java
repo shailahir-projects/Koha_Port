@@ -1,4 +1,5 @@
 package com.shailahir.koha.catalog.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.catalog.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * Mirrors: catalogue/detail.pl, cataloguing/addbiblio.pl, cataloguing/additem.pl,
  *          catalogue/merge.pl, authorities/authorities.pl, etc.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CatalogRepository {
@@ -32,6 +34,7 @@ public class CatalogRepository {
     // ── Bibliographic records ──────────────────────────────────────────────────
 
     private static final RowMapper<BiblioDto> BIBLIO_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         BiblioDto dto = new BiblioDto();
         dto.setBiblioId(rs.getLong("biblionumber"));
         dto.setBiblionumber(rs.getString("biblionumber"));
@@ -50,6 +53,7 @@ public class CatalogRepository {
     };
 
     public Page<BiblioDto> findAllBiblios(String query, Pageable pageable) {
+        log.debug("Entering findAllBiblios - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE title ILIKE ? OR author ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -62,6 +66,7 @@ public class CatalogRepository {
     }
 
     public Optional<BiblioDto> findBiblioById(Long biblioId) {
+        log.debug("Entering findBiblioById - {}", biblioId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM biblio WHERE biblionumber = ?", BIBLIO_MAPPER, biblioId));
@@ -71,6 +76,7 @@ public class CatalogRepository {
     }
 
     public BiblioDto insertBiblio(BiblioDto dto) {
+        log.debug("Entering insertBiblio - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -93,6 +99,7 @@ public class CatalogRepository {
     }
 
     public BiblioDto updateBiblio(Long biblioId, BiblioDto dto) {
+        log.debug("Entering updateBiblio - {}, {}", biblioId, dto);
         jdbc.update("""
                 UPDATE biblio SET title=?, author=?, frameworkcode=?, notes=?, medium=?, subtitle=?, part_number=?, part_name=?, abstract=?
                 WHERE biblionumber=?
@@ -104,10 +111,12 @@ public class CatalogRepository {
     }
 
     public void deleteBiblio(Long biblioId) {
+        log.debug("Entering deleteBiblio - {}", biblioId);
         jdbc.update("DELETE FROM biblio WHERE biblionumber = ?", biblioId);
     }
 
     public BiblioDto mergeBiblios(Long targetBiblioId, Long fromBiblioId) {
+        log.debug("Entering mergeBiblios - {}, {}", targetBiblioId, fromBiblioId);
         jdbc.update("UPDATE items SET biblionumber = ? WHERE biblionumber = ?", targetBiblioId, fromBiblioId);
         jdbc.update("UPDATE reserves SET biblionumber = ? WHERE biblionumber = ?", targetBiblioId, fromBiblioId);
         jdbc.update("DELETE FROM biblio WHERE biblionumber = ?", fromBiblioId);
@@ -115,6 +124,7 @@ public class CatalogRepository {
     }
 
     public Page<BiblioDto> findDeletedBiblios(String query, Pageable pageable) {
+        log.debug("Entering findDeletedBiblios - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE title ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM deletedbiblio" + where, Integer.class, params);
@@ -127,6 +137,7 @@ public class CatalogRepository {
     }
 
     public Optional<BiblioDto> findDeletedBiblioById(Long biblioId) {
+        log.debug("Entering findDeletedBiblioById - {}", biblioId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT *, '' as medium, '' as subtitle, '' as part_number, '' as part_name, '' as abstract FROM deletedbiblio WHERE biblionumber = ?",
@@ -139,6 +150,7 @@ public class CatalogRepository {
     // ── Items ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<ItemDto> ITEM_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         ItemDto dto = new ItemDto();
         dto.setItemId(rs.getLong("itemnumber"));
         dto.setBiblioId(rs.getLong("biblionumber"));
@@ -161,6 +173,7 @@ public class CatalogRepository {
     };
 
     public Page<ItemDto> findAllItems(String query, Pageable pageable) {
+        log.debug("Entering findAllItems - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE barcode ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM items" + where, Integer.class, params);
@@ -172,6 +185,7 @@ public class CatalogRepository {
     }
 
     public List<ItemDto> findItemsByBiblioId(Long biblioId, Boolean bookable) {
+        log.debug("Entering findItemsByBiblioId - {}, {}", biblioId, bookable);
         String sql = "SELECT * FROM items WHERE biblionumber = ?";
         if (Boolean.TRUE.equals(bookable)) {
             sql += " AND bookable = true";
@@ -180,6 +194,7 @@ public class CatalogRepository {
     }
 
     public Optional<ItemDto> findItemById(Long itemId) {
+        log.debug("Entering findItemById - {}", itemId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM items WHERE itemnumber = ?", ITEM_MAPPER, itemId));
@@ -189,6 +204,7 @@ public class CatalogRepository {
     }
 
     public ItemDto insertItem(Long biblioId, ItemDto dto) {
+        log.debug("Entering insertItem - {}, {}", biblioId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -220,6 +236,7 @@ public class CatalogRepository {
     }
 
     public ItemDto updateItem(Long biblioId, Long itemId, ItemDto dto) {
+        log.debug("Entering updateItem - {}, {}, {}", biblioId, itemId, dto);
         jdbc.update("""
                 UPDATE items SET barcode=?, homebranch=?, holdingbranch=?, itemcallnumber=?, itype=?,
                     notforloan=?, damaged=?, withdrawn=?, itemlost=?, itemnotes=?, itemnotes_nonpublic=?,
@@ -236,12 +253,14 @@ public class CatalogRepository {
     }
 
     public void deleteItem(Long itemId) {
+        log.debug("Entering deleteItem - {}", itemId);
         jdbc.update("DELETE FROM items WHERE itemnumber = ?", itemId);
     }
 
     // ── Authorities ────────────────────────────────────────────────────────────
 
     private static final RowMapper<AuthorityDto> AUTHORITY_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         AuthorityDto dto = new AuthorityDto();
         dto.setAuthorityId(rs.getLong("authid"));
         dto.setAuthorityType(rs.getString("authtypecode"));
@@ -252,6 +271,7 @@ public class CatalogRepository {
     };
 
     public Page<AuthorityDto> findAllAuthorities(String query, String type, Pageable pageable) {
+        log.debug("Entering findAllAuthorities - {}, {}, {}", query, type, pageable);
         StringBuilder where = new StringBuilder(" WHERE 1=1");
         List<Object> params = new ArrayList<>();
         if (query != null && !query.isBlank()) {
@@ -272,6 +292,7 @@ public class CatalogRepository {
     }
 
     public Optional<AuthorityDto> findAuthorityById(Long authorityId) {
+        log.debug("Entering findAuthorityById - {}", authorityId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM auth_header WHERE authid = ?", AUTHORITY_MAPPER, authorityId));
@@ -281,6 +302,7 @@ public class CatalogRepository {
     }
 
     public AuthorityDto insertAuthority(AuthorityDto dto) {
+        log.debug("Entering insertAuthority - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -296,6 +318,7 @@ public class CatalogRepository {
     }
 
     public AuthorityDto updateAuthority(Long authorityId, AuthorityDto dto) {
+        log.debug("Entering updateAuthority - {}, {}", authorityId, dto);
         jdbc.update("""
                 UPDATE auth_header SET authtypecode=?, authtrees=?, modification_date=NOW()
                 WHERE authid=?
@@ -305,12 +328,14 @@ public class CatalogRepository {
     }
 
     public void deleteAuthority(Long authorityId) {
+        log.debug("Entering deleteAuthority - {}", authorityId);
         jdbc.update("DELETE FROM auth_header WHERE authid = ?", authorityId);
     }
 
     // ── Item Groups ────────────────────────────────────────────────────────────
 
     private static final RowMapper<ItemGroupDto> IG_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         ItemGroupDto dto = new ItemGroupDto();
         dto.setItemGroupId(rs.getLong("item_group_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -321,10 +346,12 @@ public class CatalogRepository {
     };
 
     public List<ItemGroupDto> findItemGroupsByBiblioId(Long biblioId) {
+        log.debug("Entering findItemGroupsByBiblioId - {}", biblioId);
         return jdbc.query("SELECT * FROM item_groups WHERE biblio_id = ? ORDER BY display_order", IG_MAPPER, biblioId);
     }
 
     public Optional<ItemGroupDto> findItemGroupById(Long biblioId, Long groupId) {
+        log.debug("Entering findItemGroupById - {}, {}", biblioId, groupId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM item_groups WHERE item_group_id = ? AND biblio_id = ?", IG_MAPPER, groupId, biblioId));
@@ -334,6 +361,7 @@ public class CatalogRepository {
     }
 
     public ItemGroupDto insertItemGroup(Long biblioId, ItemGroupDto dto) {
+        log.debug("Entering insertItemGroup - {}, {}", biblioId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -352,6 +380,7 @@ public class CatalogRepository {
     }
 
     public ItemGroupDto updateItemGroup(Long biblioId, Long groupId, ItemGroupDto dto) {
+        log.debug("Entering updateItemGroup - {}, {}, {}", biblioId, groupId, dto);
         jdbc.update("""
                 UPDATE item_groups SET display_title=?, description=?, display_order=?
                 WHERE item_group_id=? AND biblio_id=?
@@ -362,22 +391,26 @@ public class CatalogRepository {
     }
 
     public void deleteItemGroup(Long biblioId, Long groupId) {
+        log.debug("Entering deleteItemGroup - {}, {}", biblioId, groupId);
         jdbc.update("DELETE FROM item_groups WHERE item_group_id = ? AND biblio_id = ?", groupId, biblioId);
     }
 
     public void addItemToGroup(Long groupId, Long itemId) {
+        log.debug("Entering addItemToGroup - {}, {}", groupId, itemId);
         jdbc.update("""
                 INSERT INTO item_group_items (item_group_id, item_id) VALUES (?, ?) ON CONFLICT DO NOTHING
                 """, groupId, itemId);
     }
 
     public void removeItemFromGroup(Long groupId, Long itemId) {
+        log.debug("Entering removeItemFromGroup - {}, {}", groupId, itemId);
         jdbc.update("DELETE FROM item_group_items WHERE item_group_id = ? AND item_id = ?", groupId, itemId);
     }
 
     // ── Record Sources ────────────────────────────────────────────────────────
 
     private static final RowMapper<RecordSourceDto> RS_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         RecordSourceDto dto = new RecordSourceDto();
         dto.setRecordSourceId(rs.getLong("record_source_id"));
         dto.setName(rs.getString("name"));
@@ -386,6 +419,7 @@ public class CatalogRepository {
     };
 
     public Page<RecordSourceDto> findAllRecordSources(String query, Pageable pageable) {
+        log.debug("Entering findAllRecordSources - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank()) ? new Object[]{"%" + query + "%"} : new Object[]{};
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM record_sources" + where, Integer.class, params);
@@ -397,6 +431,7 @@ public class CatalogRepository {
     }
 
     public Optional<RecordSourceDto> findRecordSourceById(Long id) {
+        log.debug("Entering findRecordSourceById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM record_sources WHERE record_source_id = ?", RS_MAPPER, id));
@@ -406,6 +441,7 @@ public class CatalogRepository {
     }
 
     public RecordSourceDto insertRecordSource(RecordSourceDto dto) {
+        log.debug("Entering insertRecordSource - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -420,6 +456,7 @@ public class CatalogRepository {
     }
 
     public RecordSourceDto updateRecordSource(Long id, RecordSourceDto dto) {
+        log.debug("Entering updateRecordSource - {}, {}", id, dto);
         jdbc.update("UPDATE record_sources SET name=?, can_be_edited=? WHERE record_source_id=?",
                 dto.getName(), dto.getCanBeEdited(), id);
         dto.setRecordSourceId(id);
@@ -427,12 +464,14 @@ public class CatalogRepository {
     }
 
     public void deleteRecordSource(Long id) {
+        log.debug("Entering deleteRecordSource - {}", id);
         jdbc.update("DELETE FROM record_sources WHERE record_source_id = ?", id);
     }
 
     // ── Bookings ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<BookingDto> BOOKING_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         BookingDto dto = new BookingDto();
         dto.setBookingId(rs.getLong("booking_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -446,16 +485,19 @@ public class CatalogRepository {
     };
 
     public List<BookingDto> findBookingsByBiblioId(Long biblioId) {
+        log.debug("Entering findBookingsByBiblioId - {}", biblioId);
         return jdbc.query("SELECT * FROM bookings WHERE biblio_id = ? ORDER BY start_date", BOOKING_MAPPER, biblioId);
     }
 
     public List<BookingDto> findBookingsByItemId(Long itemId) {
+        log.debug("Entering findBookingsByItemId - {}", itemId);
         return jdbc.query("SELECT * FROM bookings WHERE item_id = ? ORDER BY start_date", BOOKING_MAPPER, itemId);
     }
 
     // ── Checkouts ─────────────────────────────────────────────────────────────
 
     private static final RowMapper<CheckoutDto> CHECKOUT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         CheckoutDto dto = new CheckoutDto();
         dto.setCheckoutId(rs.getLong("issue_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -468,12 +510,14 @@ public class CatalogRepository {
     };
 
     public List<CheckoutDto> findCheckoutsByBiblioId(Long biblioId, Boolean checkedIn) {
+        log.debug("Entering findCheckoutsByBiblioId - {}, {}", biblioId, checkedIn);
         String table = Boolean.TRUE.equals(checkedIn) ? "old_issues i JOIN items it ON it.itemnumber=i.itemnumber" : "issues i JOIN items it ON it.itemnumber=i.itemnumber";
         return jdbc.query("SELECT i.*, it.biblionumber FROM " + table + " WHERE it.biblionumber = ? ORDER BY i.issuedate DESC",
                 CHECKOUT_MAPPER, biblioId);
     }
 
     public List<CheckoutDto> findCheckoutsByItemId(Long itemId) {
+        log.debug("Entering findCheckoutsByItemId - {}", itemId);
         return jdbc.query("SELECT *, NULL as biblionumber FROM issues WHERE itemnumber = ? ORDER BY issuedate DESC",
                 CHECKOUT_MAPPER, itemId);
     }
@@ -481,6 +525,7 @@ public class CatalogRepository {
     // ── Pickup Locations ──────────────────────────────────────────────────────
 
     private static final RowMapper<LibraryDto> LIBRARY_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         LibraryDto dto = new LibraryDto();
         dto.setLibraryId(rs.getString("branchcode"));
         dto.setName(rs.getString("branchname"));
@@ -492,12 +537,14 @@ public class CatalogRepository {
     };
 
     public List<LibraryDto> findPickupLocations() {
+        log.debug("Entering findPickupLocations");
         return jdbc.query("SELECT * FROM branches WHERE pickup_location = true ORDER BY branchname", LIBRARY_MAPPER);
     }
 
     // ── Ratings ───────────────────────────────────────────────────────────────
 
     public RatingResultDto setRating(Long biblioId, Long borrowerNumber, Integer rating) {
+        log.debug("Entering setRating - {}, {}, {}", biblioId, borrowerNumber, rating);
         jdbc.update("""
                 INSERT INTO ratings (borrowernumber, biblionumber, rating_value, timestamp)
                 VALUES (?, ?, ?, NOW())
@@ -516,6 +563,7 @@ public class CatalogRepository {
     // ── Helper ────────────────────────────────────────────────────────────────
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

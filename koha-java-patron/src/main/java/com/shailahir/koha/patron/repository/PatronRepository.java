@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * Repository for patron (borrowers) data access.
  * Mirrors: members/moremember.pl, members/memberentry.pl, members/deletemem.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PatronRepository {
@@ -29,6 +31,7 @@ public class PatronRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<PatronDto> PATRON_ROW_MAPPER = (rs, rowNum) -> {
+        log.debug("Entering = - {}, {}", rs, rowNum);
         PatronDto dto = new PatronDto();
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setCardnumber(rs.getString("cardnumber"));
@@ -95,6 +98,7 @@ public class PatronRepository {
     };
 
     public Page<PatronDto> findAll(String query, Pageable pageable) {
+        log.debug("Entering findAll - {}, {}", query, pageable);
         String whereClause = "";
         Object[] params;
         if (query != null && !query.isBlank()) {
@@ -114,6 +118,7 @@ public class PatronRepository {
     }
 
     public Optional<PatronDto> findById(Long patronId) {
+        log.debug("Entering findById - {}", patronId);
         try {
             PatronDto dto = jdbc.queryForObject("SELECT * FROM borrowers WHERE borrowernumber = ?", PATRON_ROW_MAPPER, patronId);
             return Optional.ofNullable(dto);
@@ -123,6 +128,7 @@ public class PatronRepository {
     }
 
     public PatronDto insert(PatronDto dto) {
+        log.debug("Entering insert - {}", dto);
         String sql = """
             INSERT INTO borrowers (cardnumber, surname, firstname, middle, title, othernames, initials,
                 streetnumber, streettype, address, address2, city, state, zipcode, country,
@@ -183,6 +189,7 @@ public class PatronRepository {
     }
 
     public PatronDto update(Long patronId, PatronDto dto) {
+        log.debug("Entering update - {}, {}", patronId, dto);
         jdbc.update("""
             UPDATE borrowers SET cardnumber=?, surname=?, firstname=?, middle=?, title=?,
                 email=?, phone=?, mobile=?, branchcode=?, categorycode=?,
@@ -201,23 +208,28 @@ public class PatronRepository {
     }
 
     public void delete(Long patronId) {
+        log.debug("Entering delete - {}", patronId);
         jdbc.update("DELETE FROM borrowers WHERE borrowernumber = ?", patronId);
     }
 
     public boolean exists(Long patronId) {
+        log.debug("Entering exists - {}", patronId);
         Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM borrowers WHERE borrowernumber = ?", Integer.class, patronId);
         return count != null && count > 0;
     }
 
     public void updatePassword(Long patronId, String hashedPassword) {
+        log.debug("Entering updatePassword - {}, {}", patronId, hashedPassword);
         jdbc.update("UPDATE borrowers SET password = ?, login_attempts = 0 WHERE borrowernumber = ?", hashedPassword, patronId);
     }
 
     public void updatePasswordExpiration(Long patronId, LocalDate expirationDate) {
+        log.debug("Entering updatePasswordExpiration - {}, {}", patronId, expirationDate);
         jdbc.update("UPDATE borrowers SET password_expiration_date = ? WHERE borrowernumber = ?", expirationDate, patronId);
     }
 
     public void updateStatus(Long patronId, Boolean lost, Boolean gonenoaddress, LocalDate debarred, String debarredComment) {
+        log.debug("Entering updateStatus - {}, {}, {}, {}, {}", patronId, lost, gonenoaddress, debarred, debarredComment);
         jdbc.update("""
             UPDATE borrowers SET lost=?, gonenoaddress=?, debarred=?, debarredcomment=?
             WHERE borrowernumber=?
@@ -225,6 +237,7 @@ public class PatronRepository {
     }
 
     public void mergePatrons(Long keepPatronId, Long deletePatronId) {
+        log.debug("Entering mergePatrons - {}, {}", keepPatronId, deletePatronId);
         // Update foreign-key references to keep patron, then delete the other
         jdbc.update("UPDATE issues SET borrowernumber = ? WHERE borrowernumber = ?", keepPatronId, deletePatronId);
         jdbc.update("UPDATE reserves SET borrowernumber = ? WHERE borrowernumber = ?", keepPatronId, deletePatronId);
@@ -233,6 +246,7 @@ public class PatronRepository {
     }
 
     private Object[] appendPageParams(Object[] base, Pageable pageable) {
+        log.debug("Entering appendPageParams - {}, {}", base, pageable);
         Object[] result = new Object[base.length + 2];
         System.arraycopy(base, 0, result, 0, base.length);
         result[base.length] = pageable.getPageSize();

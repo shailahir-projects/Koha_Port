@@ -1,4 +1,5 @@
 package com.shailahir.koha.catalog.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.catalog.dto.ItemGroupDto;
 import com.shailahir.koha.catalog.dto.ItemGroupItemLinkDto;
@@ -19,6 +20,7 @@ import java.util.List;
  * /biblios/{biblio_id}/item_groups/{item_group_id}/items,
  * /biblios/{biblio_id}/item_groups/{item_group_id}/items/{item_id}
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemGroupController {
@@ -31,6 +33,7 @@ public class ItemGroupController {
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
+        log.debug("Entering listItemGroups - {}, {}, {}, {}", biblioId, embed, query, pageable);
         return ResponseEntity.ok(itemGroupService.listItemGroups(biblioId, query, pageable));
     }
 
@@ -38,6 +41,7 @@ public class ItemGroupController {
     public ResponseEntity<ItemGroupDto> addItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @RequestBody ItemGroupDto itemGroup) {
+        log.debug("Entering addItemGroup - {}, {}", biblioId, itemGroup);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemGroupService.addItemGroup(biblioId, itemGroup));
     }
 
@@ -46,6 +50,7 @@ public class ItemGroupController {
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed) {
+        log.debug("Entering getItemGroup - {}, {}, {}", biblioId, itemGroupId, embed);
         return ResponseEntity.ok(itemGroupService.getItemGroup(biblioId, itemGroupId));
     }
 
@@ -55,6 +60,7 @@ public class ItemGroupController {
             @PathVariable("item_group_id") Long itemGroupId,
             @RequestBody ItemGroupDto itemGroup,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed) {
+        log.debug("Entering updateItemGroup - {}, {}, {}, {}", biblioId, itemGroupId, itemGroup, embed);
         return ResponseEntity.ok(itemGroupService.updateItemGroup(biblioId, itemGroupId, itemGroup));
     }
 
@@ -62,6 +68,7 @@ public class ItemGroupController {
     public ResponseEntity<Void> deleteItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId) {
+        log.debug("Entering deleteItemGroup - {}, {}", biblioId, itemGroupId);
         itemGroupService.deleteItemGroup(biblioId, itemGroupId);
         return ResponseEntity.noContent().build();
     }
@@ -72,6 +79,7 @@ public class ItemGroupController {
             @PathVariable("item_group_id") Long itemGroupId,
             @RequestBody ItemGroupItemLinkDto link,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed) {
+        log.debug("Entering addItemToGroup - {}, {}, {}, {}", biblioId, itemGroupId, link, embed);
         return ResponseEntity.status(HttpStatus.CREATED).body(itemGroupService.addItemToGroup(biblioId, itemGroupId, link));
     }
 
@@ -80,6 +88,7 @@ public class ItemGroupController {
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,
             @PathVariable("item_id") Long itemId) {
+        log.debug("Entering removeItemFromGroup - {}, {}, {}", biblioId, itemGroupId, itemId);
         itemGroupService.removeItemFromGroup(biblioId, itemGroupId, itemId);
         return ResponseEntity.noContent().build();
     }

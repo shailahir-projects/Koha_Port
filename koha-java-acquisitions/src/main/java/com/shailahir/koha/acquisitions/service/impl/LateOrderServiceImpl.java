@@ -43,11 +43,13 @@ public class LateOrderServiceImpl implements LateOrderService {
 
     @Override
     public List<Map<String, Object>> exportOrders(List<Long> ordernumbers) {
+        log.debug("Entering exportOrders - {}", ordernumbers);
         return lateOrderRepo.getOrdersForExport(ordernumbers);
     }
 
     @Override
     public List<Map<String, Object>> getClaimLetters() {
+        log.debug("Entering getClaimLetters");
         return lateOrderRepo.getClaimLetters();
     }
 }

@@ -18,6 +18,7 @@ public class PatronCategoryController {
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> list(Pageable pageable) {
+        log.debug("Entering list - {}", pageable);
         return ResponseEntity.ok(Collections.emptyList());
     }
 }

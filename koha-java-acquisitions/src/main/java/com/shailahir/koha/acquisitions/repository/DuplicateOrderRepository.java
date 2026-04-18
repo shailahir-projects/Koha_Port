@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.OrderHistoryDto;
 import com.shailahir.koha.acquisitions.dto.OrderHistoryFilter;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * Mirrors GetHistory() from C4::Acquisition and
  * Koha::Acquisition::Order->duplicate_to().
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class DuplicateOrderRepository {
@@ -68,6 +70,7 @@ public class DuplicateOrderRepository {
      * Mirrors C4::Acquisition::GetHistory().
      */
     public List<OrderHistoryDto> getHistory(OrderHistoryFilter f) {
+        log.debug("Entering getHistory - {}", f);
         StringBuilder sql = new StringBuilder("""
                 SELECT o.ordernumber, o.basketno, o.biblionumber,
                        o.quantity, o.quantityreceived,
@@ -193,6 +196,7 @@ public class DuplicateOrderRepository {
      * Mirrors GetHistory(ordernumbers => \@ordernumbers).
      */
     public List<OrderHistoryDto> getHistoryByOrdernumbers(List<Long> ordernumbers) {
+        log.debug("Entering getHistoryByOrdernumbers - {}", ordernumbers);
         if (ordernumbers == null || ordernumbers.isEmpty()) return List.of();
         String placeholders = String.join(",", ordernumbers.stream().map(x -> "?").toList());
         String sql = """
@@ -239,6 +243,7 @@ public class DuplicateOrderRepository {
      */
     public Long duplicateOrder(Long ordernumber, Long targetBasketno,
                                Map<String, Object> defaults, List<String> copyFields) {
+        log.debug("Entering duplicateOrder - {}, {}, {}, {}", ordernumber, targetBasketno, defaults, copyFields);
         Map<String, Object> orig = jdbc.queryForMap(
                 "SELECT * FROM aqorders WHERE ordernumber = ?", ordernumber);
 
@@ -296,6 +301,7 @@ public class DuplicateOrderRepository {
 
     private String resolve(String field, Map<String, Object> orig,
                            Map<String, Object> defaults, List<String> copyFields) {
+        log.debug("Entering resolve - {}, {}, {}, {}", field, orig, defaults, copyFields);
         if (copyFields != null && copyFields.contains(field)) {
             Object v = orig.get(field);
             return v != null ? v.toString() : null;
@@ -306,6 +312,7 @@ public class DuplicateOrderRepository {
 
     private Object resolveObj(String field, Map<String, Object> orig,
                               Map<String, Object> defaults, List<String> copyFields) {
+        log.debug("Entering resolveObj - {}, {}, {}, {}", field, orig, defaults, copyFields);
         if (copyFields != null && copyFields.contains(field)) return orig.get(field);
         Object v = defaults != null ? defaults.get(field) : null;
         return v != null ? v : orig.get(field);

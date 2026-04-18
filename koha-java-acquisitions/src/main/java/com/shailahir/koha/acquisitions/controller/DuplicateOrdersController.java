@@ -49,6 +49,7 @@ public class DuplicateOrdersController {
             @PathVariable Long basketno,
             @ModelAttribute OrderHistoryFilter filter,
             @RequestParam(value = "ordernumbers", required = false, defaultValue = "") String selectedOrdernumbers) {
+        log.debug("Entering searchOrderHistory - {}, {}, {}", basketno, filter, selectedOrdernumbers);
 
         basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
@@ -99,6 +100,7 @@ public class DuplicateOrdersController {
     public ResponseEntity<Map<String, Object>> duplicateOrders(
             @PathVariable Long basketno,
             @RequestBody DuplicateOrdersRequest request) {
+        log.debug("Entering duplicateOrders - {}, {}", basketno, request);
 
         basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
@@ -158,6 +160,7 @@ public class DuplicateOrdersController {
     public ResponseEntity<Map<String, Object>> orderHistory(
             @RequestParam(value = "do_search", defaultValue = "false") boolean doSearch,
             @ModelAttribute OrderHistoryFilter filter) {
+        log.debug("Entering orderHistory - {}, {}", doSearch, filter);
 
         applyDefaultDates(filter);
 
@@ -179,6 +182,7 @@ public class DuplicateOrdersController {
     // ── duplicate_orders.pl ────────────────────────────────────────────────────
 
     private void applyDefaultDates(OrderHistoryFilter filter) {
+        log.debug("Entering applyDefaultDates - {}", filter);
         if (filter.getFromPlacedOn() == null || filter.getFromPlacedOn().isBlank()) {
             filter.setFromPlacedOn(LocalDate.now().minusYears(1).toString());
         }
@@ -188,6 +192,7 @@ public class DuplicateOrdersController {
     }
 
     private Set<Long> parseOrdernumbers(String csv) {
+        log.debug("Entering parseOrdernumbers - {}", csv);
         if (csv == null || csv.isBlank()) return Set.of();
         return Arrays.stream(csv.split(","))
                 .map(String::trim)

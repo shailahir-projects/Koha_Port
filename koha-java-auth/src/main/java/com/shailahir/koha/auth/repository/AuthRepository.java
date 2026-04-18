@@ -1,4 +1,5 @@
 package com.shailahir.koha.auth.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.auth.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for auth/identity provider data access.
  * Mirrors: Koha/Auth/Identity/Provider.pm and related Perl modules.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AuthRepository {
@@ -30,6 +32,7 @@ public class AuthRepository {
     // ── Auth / Identity Providers ─────────────────────────────────────────────
 
     private static final RowMapper<AuthProviderDto> PROVIDER_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         AuthProviderDto dto = new AuthProviderDto();
         dto.setAuthProviderId(rs.getLong("identity_provider_id"));
         dto.setCode(rs.getString("code"));
@@ -46,6 +49,7 @@ public class AuthRepository {
     };
 
     public Page<AuthProviderDto> findAllProviders(Pageable pageable) {
+        log.debug("Entering findAllProviders - {}", pageable);
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM identity_providers", Integer.class);
         List<AuthProviderDto> list = jdbc.query(
                 "SELECT * FROM identity_providers ORDER BY identity_provider_id LIMIT ? OFFSET ?",
@@ -54,6 +58,7 @@ public class AuthRepository {
     }
 
     public Optional<AuthProviderDto> findProviderById(Long id) {
+        log.debug("Entering findProviderById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM identity_providers WHERE identity_provider_id = ?", PROVIDER_MAPPER, id));
@@ -63,6 +68,7 @@ public class AuthRepository {
     }
 
     public AuthProviderDto insertProvider(AuthProviderDto dto) {
+        log.debug("Entering insertProvider - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -87,6 +93,7 @@ public class AuthRepository {
     }
 
     public AuthProviderDto updateProvider(Long id, AuthProviderDto dto) {
+        log.debug("Entering updateProvider - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE identity_providers SET code=?, description=?, protocol=?, config=?, mapping=?,
                     enabled=?, auto_register=?, update_on_auth=?, default_library_id=?, default_categorycode=?
@@ -99,12 +106,14 @@ public class AuthRepository {
     }
 
     public void deleteProvider(Long id) {
+        log.debug("Entering deleteProvider - {}", id);
         jdbc.update("DELETE FROM identity_providers WHERE identity_provider_id = ?", id);
     }
 
     // ── Provider Domains ──────────────────────────────────────────────────────
 
     private static final RowMapper<AuthProviderDomainDto> DOMAIN_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         AuthProviderDomainDto dto = new AuthProviderDomainDto();
         dto.setDomainId(rs.getLong("identity_provider_domain_id"));
         dto.setAuthProviderId(rs.getLong("identity_provider_id"));
@@ -118,12 +127,14 @@ public class AuthRepository {
     };
 
     public List<AuthProviderDomainDto> findDomainsByProviderId(Long providerId) {
+        log.debug("Entering findDomainsByProviderId - {}", providerId);
         return jdbc.query(
                 "SELECT * FROM identity_provider_domains WHERE identity_provider_id = ? ORDER BY identity_provider_domain_id",
                 DOMAIN_MAPPER, providerId);
     }
 
     public Optional<AuthProviderDomainDto> findDomainById(Long providerId, Long domainId) {
+        log.debug("Entering findDomainById - {}, {}", providerId, domainId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM identity_provider_domains WHERE identity_provider_id = ? AND identity_provider_domain_id = ?",
@@ -134,6 +145,7 @@ public class AuthRepository {
     }
 
     public AuthProviderDomainDto insertDomain(Long providerId, AuthProviderDomainDto dto) {
+        log.debug("Entering insertDomain - {}, {}", providerId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -156,6 +168,7 @@ public class AuthRepository {
     }
 
     public AuthProviderDomainDto updateDomain(Long providerId, Long domainId, AuthProviderDomainDto dto) {
+        log.debug("Entering updateDomain - {}, {}, {}", providerId, domainId, dto);
         jdbc.update("""
                 UPDATE identity_provider_domains SET domain=?, auto_register=?, update_on_auth=?,
                     default_library_id=?, default_categorycode=?, enabled=?
@@ -169,6 +182,7 @@ public class AuthRepository {
     }
 
     public void deleteDomain(Long providerId, Long domainId) {
+        log.debug("Entering deleteDomain - {}, {}", providerId, domainId);
         jdbc.update(
                 "DELETE FROM identity_provider_domains WHERE identity_provider_id = ? AND identity_provider_domain_id = ?",
                 providerId, domainId);
@@ -177,6 +191,7 @@ public class AuthRepository {
     // ── Two-Factor ────────────────────────────────────────────────────────────
 
     public Optional<String> findTwoFactorSecret(Long borrowerNumber) {
+        log.debug("Entering findTwoFactorSecret - {}", borrowerNumber);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT secret FROM borrower_attributes WHERE borrowernumber = ? AND code = 'TOTP_SECRET'",
@@ -189,6 +204,7 @@ public class AuthRepository {
     // ── Password validation ───────────────────────────────────────────────────
 
     public boolean validatePassword(String userid, String password) {
+        log.debug("Entering validatePassword - {}, {}", userid, password);
         try {
             Integer count = jdbc.queryForObject(
                     "SELECT COUNT(*) FROM borrowers WHERE userid = ? AND password = crypt(?, password)",

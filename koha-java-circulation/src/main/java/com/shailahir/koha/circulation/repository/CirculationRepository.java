@@ -1,4 +1,5 @@
 package com.shailahir.koha.circulation.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.circulation.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.Optional;
  *          circ/bookings.pl, circ/smart-rules.pl, circ/rotas.pl,
  *          circ/claim-returned.pl, and others.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CirculationRepository {
@@ -33,6 +35,7 @@ public class CirculationRepository {
     // ── Checkouts ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<CheckoutDto> CHECKOUT_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         CheckoutDto dto = new CheckoutDto();
         dto.setCheckoutId(rs.getLong("issue_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -47,6 +50,7 @@ public class CirculationRepository {
     };
 
     public Page<CheckoutDto> findAllCheckouts(String query, Pageable pageable) {
+        log.debug("Entering findAllCheckouts - {}, {}", query, pageable);
         String where = query != null && !query.isBlank() ? " WHERE borrowernumber::text ILIKE ?" : "";
         Object[] params = query != null && !query.isBlank()
             ? new Object[]{"%" + query + "%"} : new Object[]{};
@@ -62,6 +66,7 @@ public class CirculationRepository {
     }
 
     public Optional<CheckoutDto> findCheckoutById(Long checkoutId) {
+        log.debug("Entering findCheckoutById - {}", checkoutId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM issues WHERE issue_id = ?", CHECKOUT_MAPPER, checkoutId));
@@ -71,6 +76,7 @@ public class CirculationRepository {
     }
 
     public CheckoutDto insertCheckout(CheckoutDto dto) {
+        log.debug("Entering insertCheckout - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -90,6 +96,7 @@ public class CirculationRepository {
     }
 
     public CheckoutDto renewCheckout(Long checkoutId) {
+        log.debug("Entering renewCheckout - {}", checkoutId);
         jdbc.update("""
             UPDATE issues SET renewals_count = renewals_count + 1,
                 date_due = date_due + INTERVAL '2 weeks'
@@ -99,6 +106,7 @@ public class CirculationRepository {
     }
 
     public List<CheckoutDto> getRenewals(Long checkoutId) {
+        log.debug("Entering getRenewals - {}", checkoutId);
         // Return renewal history from old_issues
         return jdbc.query("""
             SELECT * FROM old_issues WHERE issue_id = ? ORDER BY returndate DESC
@@ -106,6 +114,7 @@ public class CirculationRepository {
     }
 
     public Map<String, Object> checkoutAvailability(Long patronId, Long itemId) {
+        log.debug("Entering checkoutAvailability - {}, {}", patronId, itemId);
         // Check if patron can check out the item
         Integer existingCheckouts = jdbc.queryForObject(
             "SELECT COUNT(*) FROM issues WHERE borrowernumber = ? AND itemnumber = ?",
@@ -121,6 +130,7 @@ public class CirculationRepository {
     // ── Bookings ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<BookingDto> BOOKING_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         BookingDto dto = new BookingDto();
         dto.setBookingId(rs.getLong("booking_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -134,6 +144,7 @@ public class CirculationRepository {
     };
 
     public Page<BookingDto> findAllBookings(String query, Pageable pageable) {
+        log.debug("Entering findAllBookings - {}, {}", query, pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM bookings", Integer.class);
         List<BookingDto> list = jdbc.query(
             "SELECT * FROM bookings ORDER BY start_date LIMIT ? OFFSET ?",
@@ -142,6 +153,7 @@ public class CirculationRepository {
     }
 
     public Optional<BookingDto> findBookingById(Long bookingId) {
+        log.debug("Entering findBookingById - {}", bookingId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM bookings WHERE booking_id = ?", BOOKING_MAPPER, bookingId));
@@ -151,6 +163,7 @@ public class CirculationRepository {
     }
 
     public BookingDto insertBooking(BookingDto dto) {
+        log.debug("Entering insertBooking - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -170,6 +183,7 @@ public class CirculationRepository {
     }
 
     public BookingDto updateBooking(Long bookingId, BookingDto dto) {
+        log.debug("Entering updateBooking - {}, {}", bookingId, dto);
         jdbc.update("""
             UPDATE bookings SET pickup_library_id=?, start_date=?, end_date=?, status=?
             WHERE booking_id=?
@@ -179,12 +193,14 @@ public class CirculationRepository {
     }
 
     public void deleteBooking(Long bookingId) {
+        log.debug("Entering deleteBooking - {}", bookingId);
         jdbc.update("DELETE FROM bookings WHERE booking_id = ?", bookingId);
     }
 
     // ── Circulation Rules ──────────────────────────────────────────────────────
 
     private static final RowMapper<CirculationRuleDto> RULE_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         CirculationRuleDto dto = new CirculationRuleDto();
         dto.setBranchcode(rs.getString("branchcode"));
         dto.setCategorycode(rs.getString("categorycode"));
@@ -204,10 +220,12 @@ public class CirculationRepository {
     };
 
     public List<CirculationRuleDto> findAllCirculationRules() {
+        log.debug("Entering findAllCirculationRules");
         return jdbc.query("SELECT * FROM issuingrules ORDER BY branchcode, categorycode, itemtype", RULE_MAPPER);
     }
 
     public void upsertCirculationRule(CirculationRuleDto rule) {
+        log.debug("Entering upsertCirculationRule - {}", rule);
         // Simplified upsert
         jdbc.update("""
             INSERT INTO issuingrules (branchcode, categorycode, itemtype)
@@ -219,6 +237,7 @@ public class CirculationRepository {
     // ── Return Claims ──────────────────────────────────────────────────────────
 
     private static final RowMapper<ReturnClaimDto> CLAIM_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         ReturnClaimDto dto = new ReturnClaimDto();
         dto.setClaimId(rs.getLong("id"));
         dto.setCheckoutId(rs.getObject("issue_id", Long.class));
@@ -232,6 +251,7 @@ public class CirculationRepository {
     };
 
     public ReturnClaimDto insertClaim(ReturnClaimDto dto) {
+        log.debug("Entering insertClaim - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -249,6 +269,7 @@ public class CirculationRepository {
     }
 
     public Optional<ReturnClaimDto> findClaimById(Long claimId) {
+        log.debug("Entering findClaimById - {}", claimId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM return_claims WHERE id = ?", CLAIM_MAPPER, claimId));
@@ -258,15 +279,18 @@ public class CirculationRepository {
     }
 
     public ReturnClaimDto updateClaimNotes(Long claimId, String notes) {
+        log.debug("Entering updateClaimNotes - {}, {}", claimId, notes);
         jdbc.update("UPDATE return_claims SET notes = ? WHERE id = ?", notes, claimId);
         return findClaimById(claimId).orElseThrow();
     }
 
     public void deleteClaim(Long claimId) {
+        log.debug("Entering deleteClaim - {}", claimId);
         jdbc.update("DELETE FROM return_claims WHERE id = ?", claimId);
     }
 
     public ReturnClaimDto resolveClaim(Long claimId, String resolution) {
+        log.debug("Entering resolveClaim - {}, {}", claimId, resolution);
         jdbc.update("UPDATE return_claims SET resolution = ?, resolved_on = NOW() WHERE id = ?", resolution, claimId);
         return findClaimById(claimId).orElseThrow();
     }
@@ -274,6 +298,7 @@ public class CirculationRepository {
     // ── Rotas ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<RotaDto> ROTA_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         RotaDto dto = new RotaDto();
         dto.setRotaId(rs.getLong("rota_id"));
         dto.setTitle(rs.getString("title"));
@@ -284,6 +309,7 @@ public class CirculationRepository {
     };
 
     private static final RowMapper<RotaStageDto> STAGE_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         RotaStageDto dto = new RotaStageDto();
         dto.setStageId(rs.getLong("stage_id"));
         dto.setRotaId(rs.getLong("rota_id"));
@@ -294,6 +320,7 @@ public class CirculationRepository {
     };
 
     public List<RotaDto> findAllRotas() {
+        log.debug("Entering findAllRotas");
         List<RotaDto> rotas = jdbc.query("SELECT * FROM stockrotation_rotas ORDER BY rota_id", ROTA_MAPPER);
         for (RotaDto rota : rotas) {
             rota.setStages(findStagesByRotaId(rota.getRotaId()));
@@ -302,6 +329,7 @@ public class CirculationRepository {
     }
 
     public Optional<RotaDto> findRotaById(Long rotaId) {
+        log.debug("Entering findRotaById - {}", rotaId);
         try {
             RotaDto dto = jdbc.queryForObject(
                 "SELECT * FROM stockrotation_rotas WHERE rota_id = ?", ROTA_MAPPER, rotaId);
@@ -315,12 +343,14 @@ public class CirculationRepository {
     }
 
     public List<RotaStageDto> findStagesByRotaId(Long rotaId) {
+        log.debug("Entering findStagesByRotaId - {}", rotaId);
         return jdbc.query(
             "SELECT * FROM stockrotation_stages WHERE rota_id = ? ORDER BY position",
             STAGE_MAPPER, rotaId);
     }
 
     public RotaDto insertRota(RotaDto dto) {
+        log.debug("Entering insertRota - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -337,6 +367,7 @@ public class CirculationRepository {
     }
 
     public RotaDto updateRota(Long rotaId, RotaDto dto) {
+        log.debug("Entering updateRota - {}, {}", rotaId, dto);
         jdbc.update("UPDATE stockrotation_rotas SET title=?, description=?, active=?, cyclical=? WHERE rota_id=?",
             dto.getTitle(), dto.getDescription(), dto.getActive(), dto.getCyclical(), rotaId);
         dto.setRotaId(rotaId);
@@ -344,10 +375,12 @@ public class CirculationRepository {
     }
 
     public void deleteRota(Long rotaId) {
+        log.debug("Entering deleteRota - {}", rotaId);
         jdbc.update("DELETE FROM stockrotation_rotas WHERE rota_id = ?", rotaId);
     }
 
     public void moveStage(Long rotaId, Long stageId, Integer position) {
+        log.debug("Entering moveStage - {}, {}, {}", rotaId, stageId, position);
         jdbc.update("UPDATE stockrotation_stages SET position = ? WHERE stage_id = ? AND rota_id = ?",
             position, stageId, rotaId);
     }

@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 /**
  * Repository for budget, biblio, suggestion and item operations used by OrderService.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BudgetRepository {
@@ -33,6 +35,7 @@ public class BudgetRepository {
      * Mirrors GetBudget($budget_id)->{'budget_amount'} used by check_budget_total.pl.
      */
     public Optional<BigDecimal> getBudgetAmount(Long budgetId) {
+        log.debug("Entering getBudgetAmount - {}", budgetId);
         try {
             BigDecimal amount = jdbc.queryForObject(
                     "SELECT budget_amount FROM aqbudgets WHERE budget_id = ?",
@@ -44,6 +47,7 @@ public class BudgetRepository {
     }
 
     public Optional<Map<String, Object>> findBudgetById(Long budgetId) {
+        log.debug("Entering findBudgetById - {}", budgetId);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqbudgets WHERE budget_id = ?", budgetId));
@@ -56,6 +60,7 @@ public class BudgetRepository {
      * Returns the total ecost * quantity already spent (received) for a budget.
      */
     public BigDecimal getBudgetSpent(Long budgetId) {
+        log.debug("Entering getBudgetSpent - {}", budgetId);
         String sql = """
                 SELECT COALESCE(SUM(unitprice_tax_included * quantityreceived), 0)
                   FROM aqorders
@@ -70,6 +75,7 @@ public class BudgetRepository {
      * Returns total ecost * quantity ordered (not yet received) for a budget.
      */
     public BigDecimal getBudgetOrdered(Long budgetId) {
+        log.debug("Entering getBudgetOrdered - {}", budgetId);
         String sql = """
                 SELECT COALESCE(SUM(ecost_tax_included * quantity), 0)
                   FROM aqorders
@@ -84,6 +90,7 @@ public class BudgetRepository {
      * Returns the ecost_tax_included and quantity for a specific order (used when modifying).
      */
     public Optional<BigDecimal> getOrderEcostTaxIncluded(Long ordernumber) {
+        log.debug("Entering getOrderEcostTaxIncluded - {}", ordernumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -97,6 +104,7 @@ public class BudgetRepository {
     // ── Active currency ────────────────────────────────────────────────────────
 
     public Optional<String> getActiveCurrencySymbol() {
+        log.debug("Entering getActiveCurrencySymbol");
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -113,6 +121,7 @@ public class BudgetRepository {
      * Returns the biblionumber of any match, or empty.
      */
     public Optional<Long> findDuplicateBiblio(String isbn, String title, String author) {
+        log.debug("Entering findDuplicateBiblio - {}, {}, {}", isbn, title, author);
         if (isbn != null && !isbn.isBlank()) {
             try {
                 Long found = jdbc.queryForObject(
@@ -149,6 +158,7 @@ public class BudgetRepository {
     public Long insertBiblio(String title, String author, String isbn, String ean,
                              String publishercode, String publicationyear,
                              String itemtype, String editionstatement, String series) {
+        log.debug("Entering insertBiblio - {}, {}, {}, {}, {}, {}, {}, {}, {}", title, author, isbn, ean, publishercode, publicationyear, itemtype, editionstatement, series);
         // Insert into biblio
         String biblioSql = """
                 INSERT INTO biblio (title, author, seriestitle, copyrightdate, unititle, notes, serial, frameworkcode, datecreated)
@@ -188,6 +198,7 @@ public class BudgetRepository {
     // ── Suggestion ─────────────────────────────────────────────────────────────
 
     public void updateSuggestionOrdered(Long suggestionid, Long biblionumber) {
+        log.debug("Entering updateSuggestionOrdered - {}, {}", suggestionid, biblionumber);
         jdbc.update("""
                 UPDATE suggestions SET STATUS = 'ORDERED', biblionumber = ?
                  WHERE suggestionid = ?
@@ -203,6 +214,7 @@ public class BudgetRepository {
                            String barcode, String homebranch, String holdingbranch,
                            String itype, String location, BigDecimal replacementprice,
                            String callnumber) {
+        log.debug("Entering insertItem - {}, {}, {}, {}, {}, {}, {}, {}, {}", biblionumber, biblioitemnumber, barcode, homebranch, holdingbranch, itype, location, replacementprice, callnumber);
         String sql = """
                 INSERT INTO items (biblionumber, biblioitemnumber, barcode, homebranch, holdingbranch,
                     itype, location, replacementprice, itemcallnumber, notforloan, damaged, lost, withdrawn, onloan)
@@ -229,6 +241,7 @@ public class BudgetRepository {
      * Returns the biblioitemnumber for a given biblionumber (first match).
      */
     public Optional<Long> getBiblioitemnumber(Long biblionumber) {
+        log.debug("Entering getBiblioitemnumber - {}", biblionumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -242,6 +255,7 @@ public class BudgetRepository {
     // ── Acquisition log ────────────────────────────────────────────────────────
 
     public void insertAcquisitionLog(String module, String action, Long objectNumber, String info) {
+        log.debug("Entering insertAcquisitionLog - {}, {}, {}, {}", module, action, objectNumber, info);
         jdbc.update("""
                 INSERT INTO action_logs (timestamp, user, module, action, object, info)
                 VALUES (NOW(), 0, ?, ?, ?, ?)
@@ -251,11 +265,13 @@ public class BudgetRepository {
     // ── Vendors ───────────────────────────────────────────────────────────────
 
     public List<Map<String, Object>> findAllVendors(int offset, int limit) {
+        log.debug("Entering findAllVendors - {}, {}", offset, limit);
         return jdbc.queryForList(
                 "SELECT * FROM aqbooksellers ORDER BY id DESC LIMIT ? OFFSET ?", limit, offset);
     }
 
     public Optional<Map<String, Object>> findVendorById(Long id) {
+        log.debug("Entering findVendorById - {}", id);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqbooksellers WHERE id = ?", id));
@@ -267,6 +283,7 @@ public class BudgetRepository {
     // ── Funds (read-only) ──────────────────────────────────────────────────────
 
     public List<Map<String, Object>> findAllFunds(int offset, int limit) {
+        log.debug("Entering findAllFunds - {}, {}", offset, limit);
         return jdbc.queryForList(
                 "SELECT * FROM aqbudgets ORDER BY budget_id DESC LIMIT ? OFFSET ?", limit, offset);
     }

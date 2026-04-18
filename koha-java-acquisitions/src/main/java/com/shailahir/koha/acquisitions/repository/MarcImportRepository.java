@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.ImportBatchDto;
 import com.shailahir.koha.acquisitions.dto.ImportBiblioDto;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * JDBC repository for marc_import_batches and marc_import_records tables.
  * Mirrors the DB queries performed by Koha::MarcOrder and C4::ImportBatch.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class MarcImportRepository {
@@ -67,6 +69,7 @@ public class MarcImportRepository {
      * Mirrors Koha::MarcOrder->import_batches_list().
      */
     public List<ImportBatchDto> findImportBatches() {
+        log.debug("Entering findImportBatches");
         String sql = """
                 SELECT *
                   FROM marc_import_batches
@@ -78,6 +81,7 @@ public class MarcImportRepository {
     }
 
     public Optional<ImportBatchDto> findBatchById(Long importBatchId) {
+        log.debug("Entering findBatchById - {}", importBatchId);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT * FROM marc_import_batches WHERE import_batch_id = ?",
@@ -95,6 +99,7 @@ public class MarcImportRepository {
      * Mirrors Koha::MarcOrder->import_biblios_list().
      */
     public List<ImportBiblioDto> findBibliosByBatchId(Long importBatchId) {
+        log.debug("Entering findBibliosByBatchId - {}", importBatchId);
         String sql = """
                 SELECT r.import_record_id,
                        r.import_batch_id,
@@ -116,6 +121,7 @@ public class MarcImportRepository {
     }
 
     public Optional<ImportBiblioDto> findImportRecord(Long importRecordId) {
+        log.debug("Entering findImportRecord - {}", importRecordId);
         String sql = """
                 SELECT r.import_record_id,
                        r.import_batch_id,
@@ -145,6 +151,7 @@ public class MarcImportRepository {
      * Mark a single import record as 'imported'.
      */
     public void markRecordImported(Long importRecordId) {
+        log.debug("Entering markRecordImported - {}", importRecordId);
         jdbc.update("UPDATE marc_import_records SET status = 'imported' WHERE import_record_id = ?",
                 importRecordId);
     }
@@ -154,6 +161,7 @@ public class MarcImportRepository {
      * Mirrors SetImportBatchStatus() from C4::ImportBatch.
      */
     public void updateBatchStatus(Long importBatchId, String status) {
+        log.debug("Entering updateBatchStatus - {}, {}", importBatchId, status);
         jdbc.update("UPDATE marc_import_batches SET import_status = ? WHERE import_batch_id = ?",
                 status, importBatchId);
     }
@@ -162,6 +170,7 @@ public class MarcImportRepository {
      * Count records in the batch with the given status.
      */
     public int countRecordsByStatus(Long importBatchId, String status) {
+        log.debug("Entering countRecordsByStatus - {}, {}", importBatchId, status);
         Integer count = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM marc_import_records WHERE import_batch_id = ? AND status = ?",
                 Integer.class, importBatchId, status);
@@ -172,6 +181,7 @@ public class MarcImportRepository {
      * Count all records in the batch.
      */
     public int countAllRecords(Long importBatchId) {
+        log.debug("Entering countAllRecords - {}", importBatchId);
         Integer count = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM marc_import_records WHERE import_batch_id = ?",
                 Integer.class, importBatchId);
@@ -185,6 +195,7 @@ public class MarcImportRepository {
      * Returns null when no matcher is configured.
      */
     public Optional<String[]> findMatcherInfo(Long matcherId) {
+        log.debug("Entering findMatcherInfo - {}", matcherId);
         if (matcherId == null) return Optional.empty();
         try {
             return Optional.ofNullable(
@@ -202,6 +213,7 @@ public class MarcImportRepository {
      * Returns the biblionumber of the first match.
      */
     public Optional<Long> findMatchingBiblionumber(String isbn, String title, String author) {
+        log.debug("Entering findMatchingBiblionumber - {}, {}, {}", isbn, title, author);
         if (isbn != null && !isbn.isBlank()) {
             try {
                 Long bn = jdbc.queryForObject(
@@ -236,6 +248,7 @@ public class MarcImportRepository {
      * (mirrors the `$budget_id = @$budgets[0]->{'budget_id'}` pattern).
      */
     public Optional<Long> findFirstActiveBudgetId() {
+        log.debug("Entering findFirstActiveBudgetId");
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -256,6 +269,7 @@ public class MarcImportRepository {
      * Returns the budget_id for a given budget_code (used when per-record budget_code is supplied).
      */
     public Optional<Long> findBudgetIdByCode(String budgetCode) {
+        log.debug("Entering findBudgetIdByCode - {}", budgetCode);
         if (budgetCode == null || budgetCode.isBlank()) return Optional.empty();
         try {
             return Optional.ofNullable(

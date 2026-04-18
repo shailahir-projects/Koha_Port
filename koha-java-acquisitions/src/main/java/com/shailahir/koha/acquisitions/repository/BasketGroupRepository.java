@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketGroupDto;
 import com.shailahir.koha.acquisitions.dto.BasketSummaryDto;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * DelBasketgroup, CloseBasketgroup, ReOpenBasketgroup,
  * GetBasketsByBasketgroup, GetBasketsByBookseller, GetBasketGroupAsCSV.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BasketGroupRepository {
@@ -56,6 +58,7 @@ public class BasketGroupRepository {
 
     /** Mirrors GetBasketgroups($booksellerid). */
     public List<BasketGroupDto> findByBookseller(Long booksellerid) {
+        log.debug("Entering findByBookseller - {}", booksellerid);
         return jdbc.query(
                 "SELECT * FROM aqbasketgroups WHERE booksellerid = ? ORDER BY id DESC",
                 GROUP_MAPPER, booksellerid);
@@ -63,6 +66,7 @@ public class BasketGroupRepository {
 
     /** Mirrors GetBasketgroup($basketgroupid). */
     public Optional<BasketGroupDto> findById(Long id) {
+        log.debug("Entering findById - {}", id);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT * FROM aqbasketgroups WHERE id = ?", GROUP_MAPPER, id));
@@ -73,6 +77,7 @@ public class BasketGroupRepository {
 
     /** Mirrors NewBasketgroup(). Returns the new id. */
     public Long insert(BasketGroupDto dto) {
+        log.debug("Entering insert - {}", dto);
         String sql = """
                 INSERT INTO aqbasketgroups
                     (name, booksellerid, deliveryplace, freedeliveryplace, deliverycomment, billingplace, closed)
@@ -95,6 +100,7 @@ public class BasketGroupRepository {
 
     /** Mirrors ModBasketgroup(). */
     public void update(BasketGroupDto dto) {
+        log.debug("Entering update - {}", dto);
         jdbc.update("""
                 UPDATE aqbasketgroups
                    SET name = ?, deliveryplace = ?, freedeliveryplace = ?,
@@ -109,17 +115,20 @@ public class BasketGroupRepository {
 
     /** Mirrors DelBasketgroup(). Unlinks all baskets before deleting. */
     public void delete(Long id) {
+        log.debug("Entering delete - {}", id);
         jdbc.update("UPDATE aqbasket SET basketgroupid = NULL WHERE basketgroupid = ?", id);
         jdbc.update("DELETE FROM aqbasketgroups WHERE id = ?", id);
     }
 
     /** Mirrors CloseBasketgroup(). */
     public void close(Long id) {
+        log.debug("Entering close - {}", id);
         jdbc.update("UPDATE aqbasketgroups SET closed = 1 WHERE id = ?", id);
     }
 
     /** Mirrors ReOpenBasketgroup(). */
     public void reopen(Long id) {
+        log.debug("Entering reopen - {}", id);
         jdbc.update("UPDATE aqbasketgroups SET closed = 0 WHERE id = ?", id);
     }
 
@@ -127,6 +136,7 @@ public class BasketGroupRepository {
 
     /** Mirrors GetBasketsByBasketgroup($basketgroupid). */
     public List<BasketSummaryDto> findBasketsByGroup(Long basketgroupid) {
+        log.debug("Entering findBasketsByGroup - {}", basketgroupid);
         return jdbc.query(
                 "SELECT * FROM aqbasket WHERE basketgroupid = ? ORDER BY basketno",
                 BASKET_MAPPER, basketgroupid);
@@ -137,6 +147,7 @@ public class BasketGroupRepository {
      * Returns ALL baskets for this vendor (open and closed).
      */
     public List<BasketSummaryDto> findBasketsByBookseller(Long booksellerid) {
+        log.debug("Entering findBasketsByBookseller - {}", booksellerid);
         return jdbc.query(
                 "SELECT * FROM aqbasket WHERE booksellerid = ? ORDER BY basketno",
                 BASKET_MAPPER, booksellerid);
@@ -148,6 +159,7 @@ public class BasketGroupRepository {
      * Mirrors the basket assignment logic in ModBasketgroup / cud-attachbasket.
      */
     public void assignBaskets(Long basketgroupid, List<Long> basketList) {
+        log.debug("Entering assignBaskets - {}, {}", basketgroupid, basketList);
         // Detach baskets currently in the group
         jdbc.update("UPDATE aqbasket SET basketgroupid = NULL WHERE basketgroupid = ?", basketgroupid);
         // Re-attach selected baskets
@@ -163,6 +175,7 @@ public class BasketGroupRepository {
      * Mirrors ModBasket({ basketno => ..., basketgroupid => ... }).
      */
     public void assignBasket(Long basketno, Long basketgroupid) {
+        log.debug("Entering assignBasket - {}, {}", basketno, basketgroupid);
         jdbc.update("UPDATE aqbasket SET basketgroupid = ? WHERE basketno = ?", basketgroupid, basketno);
     }
 
@@ -177,6 +190,7 @@ public class BasketGroupRepository {
      * @param listIncGst   whether the vendor prices include GST
      */
     public BigDecimal basketTotal(Long basketno, boolean listIncGst) {
+        log.debug("Entering basketTotal - {}, {}", basketno, listIncGst);
         String field = listIncGst ? "ecost_tax_included" : "ecost_tax_excluded";
         String sql = "SELECT COALESCE(SUM(" + field + " * quantity), 0) FROM aqorders "
                 + "WHERE basketno = ? AND orderstatus != 'cancelled'";
@@ -187,6 +201,7 @@ public class BasketGroupRepository {
     // ── Vendor info ────────────────────────────────────────────────────────────
 
     public Optional<String> findVendorName(Long booksellerid) {
+        log.debug("Entering findVendorName - {}", booksellerid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT name FROM aqbooksellers WHERE id = ?", String.class, booksellerid));
@@ -196,6 +211,7 @@ public class BasketGroupRepository {
     }
 
     public boolean vendorListIncGst(Long booksellerid) {
+        log.debug("Entering vendorListIncGst - {}", booksellerid);
         try {
             Integer val = jdbc.queryForObject(
                     "SELECT listincgst FROM aqbooksellers WHERE id = ?", Integer.class, booksellerid);
@@ -212,6 +228,7 @@ public class BasketGroupRepository {
      * Mirrors GetBasketGroupAsCSV().
      */
     public String exportAsCsv(Long basketgroupid) {
+        log.debug("Entering exportAsCsv - {}", basketgroupid);
         String sql = """
                 SELECT o.ordernumber, b.title, b.author, bi.isbn,
                        o.quantity, o.listprice,
@@ -256,6 +273,7 @@ public class BasketGroupRepository {
     }
 
     private String csv(Object v) {
+        log.debug("Entering csv - {}", v);
         if (v == null) return "";
         String s = v.toString();
         if (s.contains(",") || s.contains("\"") || s.contains("\n")) {

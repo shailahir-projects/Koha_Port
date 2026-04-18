@@ -1,4 +1,5 @@
 package com.shailahir.koha.serials.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.serials.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * Repository for Serials data access.
  * Mirrors: serials/*, Koha/Subscription.pm, Koha/Serial.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class SerialsRepository {
@@ -31,6 +33,7 @@ public class SerialsRepository {
     // ── Subscriptions ─────────────────────────────────────────────────────────
 
     private static final RowMapper<SubscriptionDto> SUBSCRIPTION_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         SubscriptionDto dto = new SubscriptionDto();
         dto.setSubscriptionId(rs.getLong("subscriptionid"));
         dto.setBiblioId(rs.getLong("biblionumber"));
@@ -51,6 +54,7 @@ public class SerialsRepository {
     };
 
     public Page<SubscriptionDto> findAllSubscriptions(String query, Pageable pageable) {
+        log.debug("Entering findAllSubscriptions - {}, {}", query, pageable);
         String where = (query != null && !query.isBlank()) ? " WHERE notes ILIKE ? OR internalnotes ILIKE ?" : "";
         Object[] params = (query != null && !query.isBlank())
                 ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
@@ -63,6 +67,7 @@ public class SerialsRepository {
     }
 
     public Optional<SubscriptionDto> findSubscriptionById(Long id) {
+        log.debug("Entering findSubscriptionById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM subscription WHERE subscriptionid = ?", SUBSCRIPTION_MAPPER, id));
@@ -72,6 +77,7 @@ public class SerialsRepository {
     }
 
     public SubscriptionDto insertSubscription(SubscriptionDto dto) {
+        log.debug("Entering insertSubscription - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -99,6 +105,7 @@ public class SerialsRepository {
     }
 
     public SubscriptionDto updateSubscription(Long id, SubscriptionDto dto) {
+        log.debug("Entering updateSubscription - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE subscription SET notes=?, internalnotes=?, enddate=?, closed=? WHERE subscriptionid=?
                 """, dto.getNotes(), dto.getInternalnotes(), dto.getEndDate(), dto.getStatus(), id);
@@ -107,12 +114,14 @@ public class SerialsRepository {
     }
 
     public void deleteSubscription(Long id) {
+        log.debug("Entering deleteSubscription - {}", id);
         jdbc.update("DELETE FROM subscription WHERE subscriptionid = ?", id);
     }
 
     // ── Serials ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<SerialDto> SERIAL_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         SerialDto dto = new SerialDto();
         dto.setSerialId(rs.getLong("serialid"));
         dto.setSubscriptionId(rs.getLong("subscriptionid"));
@@ -127,6 +136,7 @@ public class SerialsRepository {
     };
 
     public List<SerialDto> findSerialsBySubscriptionId(Long subscriptionId) {
+        log.debug("Entering findSerialsBySubscriptionId - {}", subscriptionId);
         return jdbc.query(
                 "SELECT * FROM serial WHERE subscriptionid = ? ORDER BY serialid DESC",
                 SERIAL_MAPPER, subscriptionId);
@@ -135,6 +145,7 @@ public class SerialsRepository {
     // ── Frequencies ───────────────────────────────────────────────────────────
 
     private static final RowMapper<SubscriptionFrequencyDto> FREQUENCY_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         SubscriptionFrequencyDto dto = new SubscriptionFrequencyDto();
         dto.setId(rs.getLong("id"));
         dto.setDescription(rs.getString("description"));
@@ -146,10 +157,12 @@ public class SerialsRepository {
     };
 
     public List<SubscriptionFrequencyDto> findAllFrequencies() {
+        log.debug("Entering findAllFrequencies");
         return jdbc.query("SELECT * FROM subscription_frequencies ORDER BY displayorder", FREQUENCY_MAPPER);
     }
 
     public Optional<SubscriptionFrequencyDto> findFrequencyById(Long id) {
+        log.debug("Entering findFrequencyById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM subscription_frequencies WHERE id = ?", FREQUENCY_MAPPER, id));
@@ -159,6 +172,7 @@ public class SerialsRepository {
     }
 
     public SubscriptionFrequencyDto insertFrequency(SubscriptionFrequencyDto dto) {
+        log.debug("Entering insertFrequency - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -177,6 +191,7 @@ public class SerialsRepository {
     }
 
     public SubscriptionFrequencyDto updateFrequency(Long id, SubscriptionFrequencyDto dto) {
+        log.debug("Entering updateFrequency - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE subscription_frequencies SET description=?, displayorder=?, unit=?, unitsperissue=?, issuesperunit=? WHERE id=?
                 """, dto.getDescription(), dto.getDisplayorder(), dto.getUnit(), dto.getUnitsperissue(), dto.getIssuesperunit(), id);
@@ -185,12 +200,14 @@ public class SerialsRepository {
     }
 
     public void deleteFrequency(Long id) {
+        log.debug("Entering deleteFrequency - {}", id);
         jdbc.update("DELETE FROM subscription_frequencies WHERE id = ?", id);
     }
 
     // ── Numbering Patterns ────────────────────────────────────────────────────
 
     private static final RowMapper<NumberingPatternDto> PATTERN_MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         NumberingPatternDto dto = new NumberingPatternDto();
         dto.setId(rs.getLong("id"));
         dto.setLabel(rs.getString("label"));
@@ -218,10 +235,12 @@ public class SerialsRepository {
     };
 
     public List<NumberingPatternDto> findAllNumberingPatterns() {
+        log.debug("Entering findAllNumberingPatterns");
         return jdbc.query("SELECT * FROM subscription_numberpatterns ORDER BY id", PATTERN_MAPPER);
     }
 
     public Optional<NumberingPatternDto> findNumberingPatternById(Long id) {
+        log.debug("Entering findNumberingPatternById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM subscription_numberpatterns WHERE id = ?", PATTERN_MAPPER, id));
@@ -231,6 +250,7 @@ public class SerialsRepository {
     }
 
     public NumberingPatternDto insertNumberingPattern(NumberingPatternDto dto) {
+        log.debug("Entering insertNumberingPattern - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -268,6 +288,7 @@ public class SerialsRepository {
     }
 
     public NumberingPatternDto updateNumberingPattern(Long id, NumberingPatternDto dto) {
+        log.debug("Entering updateNumberingPattern - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE subscription_numberpatterns SET label=?, description=?, numberingmethod=?,
                     label1=?, add1=?, every1=?, whenmorethan1=?, setto1=?, numbering1=?,
@@ -283,10 +304,12 @@ public class SerialsRepository {
     }
 
     public void deleteNumberingPattern(Long id) {
+        log.debug("Entering deleteNumberingPattern - {}", id);
         jdbc.update("DELETE FROM subscription_numberpatterns WHERE id = ?", id);
     }
 
     public SubscriptionDto renewSubscription(Long id, SubscriptionDto dto) {
+        log.debug("Entering renewSubscription - {}, {}", id, dto);
         jdbc.update("""
                 UPDATE subscription SET enddate=?, notes=?, internalnotes=? WHERE subscriptionid=?
                 """, dto.getEndDate(), dto.getNotes(), dto.getInternalnotes(), id);
@@ -294,6 +317,7 @@ public class SerialsRepository {
     }
 
     public List<SerialDto> findClaimedSerials(Pageable pageable) {
+        log.debug("Entering findClaimedSerials - {}", pageable);
         return jdbc.query(
                 "SELECT * FROM serial WHERE status ILIKE 'CLAIMED%' ORDER BY serialid DESC LIMIT ? OFFSET ?",
                 SERIAL_MAPPER, pageable.getPageSize(), pageable.getOffset());
@@ -302,53 +326,63 @@ public class SerialsRepository {
     // ── Home / Collection / Routing / Search helpers ─────────────────────────
 
     public Integer countSubscriptions() {
+        log.debug("Entering countSubscriptions");
         return jdbc.queryForObject("SELECT COUNT(*) FROM subscription", Integer.class);
     }
 
     public Integer countSerials() {
+        log.debug("Entering countSerials");
         return jdbc.queryForObject("SELECT COUNT(*) FROM serial", Integer.class);
     }
 
     public List<Map<String, Object>> findSerialCollection(Pageable pageable) {
+        log.debug("Entering findSerialCollection - {}", pageable);
         return jdbc.queryForList(
                 "SELECT serialid, subscriptionid, status, serialseq, publisheddate FROM serial ORDER BY serialid DESC LIMIT ? OFFSET ?",
                 pageable.getPageSize(), pageable.getOffset());
     }
 
     public List<Map<String, Object>> findRoutingListBySubscription(Long subscriptionId) {
+        log.debug("Entering findRoutingListBySubscription - {}", subscriptionId);
         return jdbc.queryForList(
                 "SELECT * FROM subscriptionroutinglist WHERE subscriptionid = ? ORDER BY ranking",
                 subscriptionId);
     }
 
     public void updateRoutingRanking(Object routingId, Object ranking) {
+        log.debug("Entering updateRoutingRanking - {}, {}", routingId, ranking);
         jdbc.update("UPDATE subscriptionroutinglist SET ranking = ? WHERE routingid = ?",
                 ranking, routingId);
     }
 
     public List<Map<String, Object>> searchBiblio(String query) {
+        log.debug("Entering searchBiblio - {}", query);
         return jdbc.queryForList(
                 "SELECT biblionumber, title FROM biblio WHERE title ILIKE ? ORDER BY biblionumber DESC LIMIT 50",
                 "%" + query + "%");
     }
 
     public List<Map<String, Object>> findLateIssues() {
+        log.debug("Entering findLateIssues");
         return jdbc.queryForList(
                 "SELECT serialid, subscriptionid, serialseq, publisheddate FROM serial WHERE status ILIKE 'LATE%' ORDER BY serialid DESC");
     }
 
     public List<Map<String, Object>> findExpiredSubscriptions() {
+        log.debug("Entering findExpiredSubscriptions");
         return jdbc.queryForList(
                 "SELECT subscriptionid, enddate, notes FROM subscription WHERE enddate < CURRENT_DATE ORDER BY enddate DESC");
     }
 
     public List<Map<String, Object>> searchAcquisitions(String query) {
+        log.debug("Entering searchAcquisitions - {}", query);
         return jdbc.queryForList(
                 "SELECT aqbooksellerid, name FROM aqbooksellers WHERE name ILIKE ? ORDER BY aqbooksellerid DESC LIMIT 50",
                 "%" + query + "%");
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
+        log.debug("Entering appendPaging - {}, {}", params, pageable);
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);
         pageParams[params.length] = pageable.getPageSize();

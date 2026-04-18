@@ -1,4 +1,5 @@
 package com.shailahir.koha.search.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.search.dto.SearchFilterDto;
 import com.shailahir.koha.search.service.SearchFilterService;
@@ -22,6 +23,7 @@ import java.util.List;
  * Service implementation for search filters.
  * Mirrors: admin/search_filters.pl
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SearchFilterServiceImpl implements SearchFilterService {
@@ -29,6 +31,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<SearchFilterDto> MAPPER = (rs, rn) -> {
+        log.debug("Entering = - {}, {}", rs, rn);
         SearchFilterDto dto = new SearchFilterDto();
         dto.setSearchFilterId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -40,6 +43,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
 
     @Override
     public Page<SearchFilterDto> listFilters(Pageable pageable) {
+        log.debug("Entering listFilters - {}", pageable);
         try {
             int total = jdbc.queryForObject("SELECT COUNT(*) FROM search_filters", Integer.class);
             List<SearchFilterDto> list = jdbc.query(
@@ -54,6 +58,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
     @Override
     @Transactional
     public SearchFilterDto addSearchFilter(SearchFilterDto dto) {
+        log.debug("Entering addSearchFilter - {}", dto);
         try {
             KeyHolder kh = new GeneratedKeyHolder();
             jdbc.update(con -> {
@@ -75,6 +80,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
 
     @Override
     public SearchFilterDto getSearchFilter(Long id) {
+        log.debug("Entering getSearchFilter - {}", id);
         try {
             return jdbc.queryForObject("SELECT * FROM search_filters WHERE id = ?", MAPPER, id);
         } catch (EmptyResultDataAccessException e) {
@@ -85,6 +91,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
     @Override
     @Transactional
     public SearchFilterDto updateSearchFilter(Long id, SearchFilterDto dto) {
+        log.debug("Entering updateSearchFilter - {}, {}", id, dto);
         jdbc.update("UPDATE search_filters SET name=?, query=?, active=? WHERE id=?",
             dto.getName(), dto.getQuery(), dto.getActive(), id);
         dto.setSearchFilterId(id);
@@ -94,6 +101,7 @@ public class SearchFilterServiceImpl implements SearchFilterService {
     @Override
     @Transactional
     public void deleteSearchFilter(Long id) {
+        log.debug("Entering deleteSearchFilter - {}", id);
         jdbc.update("DELETE FROM search_filters WHERE id = ?", id);
     }
 }
