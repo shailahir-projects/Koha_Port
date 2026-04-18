@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * Mirrors the cud-send_alert form parameters in lateorders.pl.
  */
 @Data
+@JacksonXmlRootElement
 public class ClaimOrderRequest {
 
     /** Order numbers to send claim alerts for */

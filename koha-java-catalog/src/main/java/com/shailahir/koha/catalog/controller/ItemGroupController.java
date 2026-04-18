@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ItemGroupController {
 
     private final ItemGroupService itemGroupService;
 
-    @GetMapping("/biblios/{biblio_id}/item_groups")
+    @GetMapping("/biblios/{biblio_id}/item_groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ItemGroupDto>> listItemGroups(
             @PathVariable("biblio_id") Long biblioId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
@@ -33,14 +34,14 @@ public class ItemGroupController {
         return ResponseEntity.ok(itemGroupService.listItemGroups(biblioId, query, pageable));
     }
 
-    @PostMapping("/biblios/{biblio_id}/item_groups")
+    @PostMapping("/biblios/{biblio_id}/item_groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemGroupDto> addItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @RequestBody ItemGroupDto itemGroup) {
         return ResponseEntity.status(HttpStatus.CREATED).body(itemGroupService.addItemGroup(biblioId, itemGroup));
     }
 
-    @GetMapping("/biblios/{biblio_id}/item_groups/{item_group_id}")
+    @GetMapping("/biblios/{biblio_id}/item_groups/{item_group_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemGroupDto> getItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,
@@ -48,7 +49,7 @@ public class ItemGroupController {
         return ResponseEntity.ok(itemGroupService.getItemGroup(biblioId, itemGroupId));
     }
 
-    @PutMapping("/biblios/{biblio_id}/item_groups/{item_group_id}")
+    @PutMapping("/biblios/{biblio_id}/item_groups/{item_group_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemGroupDto> updateItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,
@@ -57,7 +58,7 @@ public class ItemGroupController {
         return ResponseEntity.ok(itemGroupService.updateItemGroup(biblioId, itemGroupId, itemGroup));
     }
 
-    @DeleteMapping("/biblios/{biblio_id}/item_groups/{item_group_id}")
+    @DeleteMapping("/biblios/{biblio_id}/item_groups/{item_group_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteItemGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId) {
@@ -65,7 +66,7 @@ public class ItemGroupController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/biblios/{biblio_id}/item_groups/{item_group_id}/items")
+    @PostMapping("/biblios/{biblio_id}/item_groups/{item_group_id}/items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemGroupDto> addItemToGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,
@@ -74,7 +75,7 @@ public class ItemGroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(itemGroupService.addItemToGroup(biblioId, itemGroupId, link));
     }
 
-    @DeleteMapping("/biblios/{biblio_id}/item_groups/{item_group_id}/items/{item_id}")
+    @DeleteMapping("/biblios/{biblio_id}/item_groups/{item_group_id}/items/{item_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> removeItemFromGroup(
             @PathVariable("biblio_id") Long biblioId,
             @PathVariable("item_group_id") Long itemGroupId,

@@ -7,10 +7,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.NoSuchElementException;
 
+import com.shailahir.koha.patron.exception.PatronNotFoundException;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException ex) {
+    @ExceptionHandler(PatronNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePatronNotFound(PatronNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder().error(ex.getMessage()).error_code("patron_not_found").build());
+    }
+    @ExceptionHandler({NoSuchElementException.class, EmptyResultDataAccessException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.builder().error(ex.getMessage()).error_code("not_found").build());
     }
     @ExceptionHandler(IllegalArgumentException.class)

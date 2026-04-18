@@ -1,0 +1,13 @@
+server:
+  port: 8090
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: koha-java-serials
+  datasource:
+    url:     username:     password: management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

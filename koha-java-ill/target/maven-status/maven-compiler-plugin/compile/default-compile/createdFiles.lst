@@ -1,0 +1,3 @@
+com\shailahir\koha\ill\controller\GlobalExceptionHandler.class
+com\shailahir\koha\ill\controller\IllController.class
+com\shailahir\koha\ill\KohaJavaIllApplication.class

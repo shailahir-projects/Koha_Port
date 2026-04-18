@@ -39,7 +39,7 @@ public class EdifactMsgsController {
      * Returns all non-deleted EDIFACT messages ordered by transfer_date descending.
      * Used to populate the edifactmsgs.tt listing page.
      */
-    @GetMapping("/acquisitions/edifact-messages")
+    @GetMapping("/acquisitions/edifact-messages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<EdifactMessageDto>> listMessages() {
         return ResponseEntity.ok(edifactRepo.findAll());
     }
@@ -48,7 +48,7 @@ public class EdifactMsgsController {
      * Returns a single EDIFACT message by id.
      * Mirrors edimsg.pl — page load for a known message.
      */
-    @GetMapping("/acquisitions/edifact-messages/{id}")
+    @GetMapping("/acquisitions/edifact-messages/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<EdifactMessageDto> getMessage(@PathVariable Long id) {
         return edifactRepo.findById(id)
                 .map(ResponseEntity::ok)
@@ -59,7 +59,7 @@ public class EdifactMsgsController {
      * Returns the raw EDI transmission for a message.
      * Mirrors edimsg.pl: GET ?id=X&format=raw
      */
-    @GetMapping("/acquisitions/edifact-messages/{id}/raw")
+    @GetMapping("/acquisitions/edifact-messages/{id}/raw", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<String> getRawMessage(@PathVariable Long id) {
         String raw = edifactRepo.getRawMsg(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
@@ -81,7 +81,7 @@ public class EdifactMsgsController {
      * { "segments": ["UNA:+.? '", "UNB+UNOC:3+...'", ...], "id": 42 }
      * </pre>
      */
-    @GetMapping("/acquisitions/edifact-messages/{id}/segments")
+    @GetMapping("/acquisitions/edifact-messages/{id}/segments", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getSegments(@PathVariable Long id) {
         edifactRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("EDIFACT message not found: " + id));
@@ -100,7 +100,7 @@ public class EdifactMsgsController {
      * Sets {@code deleted = 1} on the message row.
      * Mirrors: $msg->deleted(1); $msg->update;
      */
-    @DeleteMapping("/acquisitions/edifact-messages/{id}")
+    @DeleteMapping("/acquisitions/edifact-messages/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         edifactRepo.findById(id)
@@ -125,7 +125,7 @@ public class EdifactMsgsController {
      * @param id EDIFACT message id (must be of type INVOIC)
      * @return message details + raw EDI content for downstream processing
      */
-    @PostMapping("/acquisitions/edifact-messages/{id}/import")
+    @PostMapping("/acquisitions/edifact-messages/{id}/import", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Map<String, Object>> importMessage(@PathVariable Long id) {
         EdifactMessageDto msg = edifactRepo.findById(id)

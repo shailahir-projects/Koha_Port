@@ -42,7 +42,7 @@ public class BasketGroupController {
      * op=display — list all basket groups for a vendor plus unassigned closed baskets.
      * Mirrors displaybasketgroups() + BasketTotal().
      */
-    @GetMapping("/acquisitions/basket-groups")
+    @GetMapping("/acquisitions/basket-groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupPageDto> getPage(
             @RequestParam("booksellerid") Long booksellerid) {
         return ResponseEntity.ok(basketGroupService.getPage(booksellerid));
@@ -51,7 +51,7 @@ public class BasketGroupController {
     /**
      * op=add_form — get single basket group detail with its assigned baskets.
      */
-    @GetMapping("/acquisitions/basket-groups/{id}")
+    @GetMapping("/acquisitions/basket-groups/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupDto> getBasketGroup(@PathVariable Long id) {
         return ResponseEntity.ok(basketGroupService.getBasketGroup(id));
     }
@@ -60,7 +60,7 @@ public class BasketGroupController {
      * op=cud-attachbasket (create) — creates a new basket group and assigns baskets.
      * Mirrors NewBasketgroup() + basket assignment loop.
      */
-    @PostMapping("/acquisitions/basket-groups")
+    @PostMapping("/acquisitions/basket-groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupDto> createBasketGroup(
             @RequestBody BasketGroupRequest request) {
         BasketGroupDto created = basketGroupService.saveBasketGroup(null, request);
@@ -71,7 +71,7 @@ public class BasketGroupController {
      * op=cud-attachbasket (modify) — updates an existing basket group and reassigns baskets.
      * Mirrors ModBasketgroup() + basket assignment loop.
      */
-    @PutMapping("/acquisitions/basket-groups/{id}")
+    @PutMapping("/acquisitions/basket-groups/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupDto> updateBasketGroup(
             @PathVariable Long id,
             @RequestBody BasketGroupRequest request) {
@@ -83,7 +83,7 @@ public class BasketGroupController {
      * Unlinks all its baskets first (sets basketgroupid = NULL).
      * Mirrors DelBasketgroup().
      */
-    @DeleteMapping("/acquisitions/basket-groups/{id}")
+    @DeleteMapping("/acquisitions/basket-groups/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteBasketGroup(@PathVariable Long id) {
         basketGroupService.deleteBasketGroup(id);
         return ResponseEntity.noContent().build();
@@ -95,7 +95,7 @@ public class BasketGroupController {
      * call GET /acquisitions/basket-groups/{id}/export for CSV export instead.
      * Mirrors CloseBasketgroup().
      */
-    @PostMapping("/acquisitions/basket-groups/{id}/close")
+    @PostMapping("/acquisitions/basket-groups/{id}/close", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> closeBasketGroup(@PathVariable Long id) {
         basketGroupService.closeBasketGroup(id);
         return ResponseEntity.ok(Map.of("closed", true, "basketgroupid", id));
@@ -105,7 +105,7 @@ public class BasketGroupController {
      * op=cud-reopen — reopens a closed basket group.
      * Mirrors ReOpenBasketgroup().
      */
-    @PostMapping("/acquisitions/basket-groups/{id}/reopen")
+    @PostMapping("/acquisitions/basket-groups/{id}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> reopenBasketGroup(@PathVariable Long id) {
         basketGroupService.reopenBasketGroup(id);
         return ResponseEntity.noContent().build();
@@ -115,7 +115,7 @@ public class BasketGroupController {
      * op=cud-mod_basket — assigns a single basket to this basket group.
      * Mirrors ModBasket({ basketno => ..., basketgroupid => ... }).
      */
-    @PutMapping("/acquisitions/basket-groups/{id}/baskets/{basketno}")
+    @PutMapping("/acquisitions/basket-groups/{id}/baskets/{basketno}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> assignBasket(
             @PathVariable Long id,
             @PathVariable Long basketno) {
@@ -127,7 +127,7 @@ public class BasketGroupController {
      * op=export — export all orders in the basket group as CSV.
      * Mirrors GetBasketGroupAsCSV().
      */
-    @GetMapping("/acquisitions/basket-groups/{id}/export")
+    @GetMapping("/acquisitions/basket-groups/{id}/export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> exportAsCsv(@PathVariable Long id) {
         String csv = basketGroupService.exportAsCsv(id);
         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
@@ -142,7 +142,7 @@ public class BasketGroupController {
      * op=print / op=closeandprint (PDF) — not implemented.
      * PDF generation requires an external rendering library (Koha::pdfformat).
      */
-    @GetMapping("/acquisitions/basket-groups/{id}/print")
+    @GetMapping("/acquisitions/basket-groups/{id}/print", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> printPdf(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of("error", "pdf_not_implemented",
@@ -153,7 +153,7 @@ public class BasketGroupController {
      * op=cud-ediprint — not implemented here.
      * EDI order generation belongs in the EDI microservice.
      */
-    @PostMapping("/acquisitions/basket-groups/{id}/ediprint")
+    @PostMapping("/acquisitions/basket-groups/{id}/ediprint", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> ediPrint(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of("error", "edi_not_implemented",

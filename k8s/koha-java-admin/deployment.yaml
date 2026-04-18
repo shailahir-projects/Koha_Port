@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koha-java-admin
+  namespace: koha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: koha-java-admin
+  template:
+    metadata:
+      labels:
+        app: koha-java-admin
+    spec:
+      containers:
+        - name: koha-java-admin
+          image: shailahir/koha-java-admin:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: koha-java-admin-config
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10

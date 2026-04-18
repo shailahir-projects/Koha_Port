@@ -1,0 +1,13 @@
+server:
+  port: 8092
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: koha-java-batch
+  datasource:
+    url:     username:     password: management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

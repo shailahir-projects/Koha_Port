@@ -43,7 +43,7 @@ public class BasketDetailController {
      * @param basketno    basket number
      * @param duplinbatch optional flag indicating a duplicate was found during the last import
      */
-    @GetMapping("/acquisitions/baskets/{basketno}")
+    @GetMapping("/acquisitions/baskets/{basketno}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDetailDto> getBasketDetail(
             @PathVariable Long basketno,
             @RequestParam(value = "duplinbatch", required = false) String duplinbatch) {
@@ -57,7 +57,7 @@ public class BasketDetailController {
      * When {@code create_basket_group=true}: also creates a basket group, attaches the basket, and closes the group.
      * Returns the new basket group id in the body when one was created, or an empty object.
      */
-    @PostMapping("/acquisitions/baskets/{basketno}/close")
+    @PostMapping("/acquisitions/baskets/{basketno}/close", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> closeBasket(
             @PathVariable Long basketno,
             @RequestBody BasketCloseRequest request) {
@@ -72,7 +72,7 @@ public class BasketDetailController {
      * Reopen a closed basket — op=cud-reopen.
      * Clears the closedate so the basket can be edited again.
      */
-    @PostMapping("/acquisitions/baskets/{basketno}/reopen")
+    @PostMapping("/acquisitions/baskets/{basketno}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> reopenBasket(@PathVariable Long basketno) {
         basketService.reopenBasket(basketno);
         return ResponseEntity.noContent().build();
@@ -83,7 +83,7 @@ public class BasketDetailController {
      * Cancels all active orders and then removes the basket row.
      * Requires delete_baskets permission (enforced at gateway/auth layer).
      */
-    @DeleteMapping("/acquisitions/baskets/{basketno}")
+    @DeleteMapping("/acquisitions/baskets/{basketno}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteBasket(@PathVariable Long basketno) {
         basketService.deleteBasket(basketno);
         return ResponseEntity.noContent().build();
@@ -93,7 +93,7 @@ public class BasketDetailController {
      * Delete a single cancelled order with no biblionumber — op=cud-delete-order.
      * Only cancelled orders without an attached biblio may be hard-deleted.
      */
-    @DeleteMapping("/acquisitions/baskets/{basketno}/orders/{ordernumber}")
+    @DeleteMapping("/acquisitions/baskets/{basketno}/orders/{ordernumber}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteCancelledOrder(
             @PathVariable Long basketno,
             @PathVariable Long ordernumber) {
@@ -105,7 +105,7 @@ public class BasketDetailController {
      * Replace basket user list — op=cud-mod_users.
      * Body: {@code { "users_ids": "1:2:3" }} (colon-separated patron ids).
      */
-    @PutMapping("/acquisitions/baskets/{basketno}/users")
+    @PutMapping("/acquisitions/baskets/{basketno}/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> setBasketUsers(
             @PathVariable Long basketno,
             @RequestBody Map<String, String> body) {
@@ -122,7 +122,7 @@ public class BasketDetailController {
      * Update basket branch — op=cud-mod_branch.
      * Body: {@code { "branch": "CPL" }}. Send an empty string to clear the branch.
      */
-    @PutMapping("/acquisitions/baskets/{basketno}/branch")
+    @PutMapping("/acquisitions/baskets/{basketno}/branch", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> setBasketBranch(
             @PathVariable Long basketno,
             @RequestBody Map<String, String> body) {
@@ -135,7 +135,7 @@ public class BasketDetailController {
      * Returns a CSV file attachment named {@code basket{basketno}.csv}.
      * Mirrors GetBasketAsCSV().
      */
-    @GetMapping("/acquisitions/baskets/{basketno}/export")
+    @GetMapping("/acquisitions/baskets/{basketno}/export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> exportBasketAsCsv(@PathVariable Long basketno) {
         String csv = basketService.exportBasketAsCsv(basketno);
         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -31,7 +32,7 @@ public class CancelOrderController {
      * Returns order + basket info needed to render the cancel-confirmation form.
      * Mirrors the initial page load (no op) of cancelorder.pl.
      */
-    @GetMapping("/acquisitions/orders/{ordernumber}/cancel")
+    @GetMapping("/acquisitions/orders/{ordernumber}/cancel", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getCancelForm(
             @PathVariable Long ordernumber) {
 
@@ -64,7 +65,7 @@ public class CancelOrderController {
      * @param request     reason + delete_biblio flag
      * @return result with success flag and any error codes
      */
-    @PostMapping("/acquisitions/orders/{ordernumber}/cancel")
+    @PostMapping("/acquisitions/orders/{ordernumber}/cancel", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<CancelOrderResult> confirmCancel(
             @PathVariable Long ordernumber,

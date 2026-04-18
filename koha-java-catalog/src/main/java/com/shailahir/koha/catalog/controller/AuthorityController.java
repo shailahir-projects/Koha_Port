@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 /**
  * REST controller for authority records.
@@ -19,14 +20,14 @@ public class AuthorityController {
 
     private final AuthorityService authorityService;
 
-    @GetMapping("/authorities")
+    @GetMapping("/authorities", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<AuthorityDto>> listAuthorities(
             @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
         return ResponseEntity.ok(authorityService.listAuthorities(query, pageable));
     }
 
-    @PostMapping("/authorities")
+    @PostMapping("/authorities", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AuthorityDto> addAuthority(
             @RequestBody AuthorityDto authority,
             @RequestHeader(value = "x-authority-type", required = false) String authorityType,
@@ -34,12 +35,12 @@ public class AuthorityController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authorityService.addAuthority(authority, authorityType));
     }
 
-    @GetMapping("/authorities/{authority_id}")
+    @GetMapping("/authorities/{authority_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AuthorityDto> getAuthority(@PathVariable("authority_id") Long authorityId) {
         return ResponseEntity.ok(authorityService.getAuthority(authorityId));
     }
 
-    @PutMapping("/authorities/{authority_id}")
+    @PutMapping("/authorities/{authority_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AuthorityDto> updateAuthority(
             @PathVariable("authority_id") Long authorityId,
             @RequestBody AuthorityDto authority,
@@ -47,7 +48,7 @@ public class AuthorityController {
         return ResponseEntity.ok(authorityService.updateAuthority(authorityId, authority, authorityType));
     }
 
-    @DeleteMapping("/authorities/{authority_id}")
+    @DeleteMapping("/authorities/{authority_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteAuthority(@PathVariable("authority_id") Long authorityId) {
         authorityService.deleteAuthority(authorityId);
         return ResponseEntity.noContent().build();

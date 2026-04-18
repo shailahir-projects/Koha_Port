@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,6 +15,7 @@ import java.util.List;
  * Maps to the CGI parameters collected in addorder.pl.
  */
 @Data
+@JacksonXmlRootElement
 public class OrderRequest {
 
     /** Existing order number (present for modify, absent for create) */

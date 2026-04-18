@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koha-java-database
+  namespace: koha
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: koha-java-database
+  template:
+    metadata:
+      labels:
+        app: koha-java-database
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+      containers:
+        - name: koha-java-database
+          image: shailahir/koha-java-database:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: koha-java-database-config
+          ports:
+            - containerPort: 8076
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8076
+            initialDelaySeconds: 30
+            periodSeconds: 10
+

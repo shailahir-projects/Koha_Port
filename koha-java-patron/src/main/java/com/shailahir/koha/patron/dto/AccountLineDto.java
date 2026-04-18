@@ -1,5 +1,7 @@
 package com.shailahir.koha.patron.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -8,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@JacksonXmlRootElement
 public class AccountLineDto {
     @JsonProperty("accountlines_id")
     private Long accountlines_id;

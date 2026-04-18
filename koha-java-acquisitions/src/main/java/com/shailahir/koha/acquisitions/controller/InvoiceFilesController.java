@@ -40,7 +40,7 @@ public class InvoiceFilesController {
      * Returns metadata for all files attached to the invoice.
      * Mirrors Koha::Misc::Files->GetFilesInfo() called from invoice-files.pl.
      */
-    @GetMapping("/acquisitions/invoices/{id}/files")
+    @GetMapping("/acquisitions/invoices/{id}/files", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFiles(@PathVariable Long id) {
         ensureInvoiceExists(id);
         return ResponseEntity.ok(filesRepo.getFilesInfo(id));
@@ -53,7 +53,7 @@ public class InvoiceFilesController {
      * Mirrors the op=download branch in invoice-files.pl:
      * {@code print $input->header(-type => $ftype, -attachment => $fname)}.
      */
-    @GetMapping("/acquisitions/invoices/{id}/files/{fileId}")
+    @GetMapping("/acquisitions/invoices/{id}/files/{fileId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> downloadFile(
             @PathVariable Long id,
             @PathVariable Long fileId) {
@@ -143,7 +143,7 @@ public class InvoiceFilesController {
      * Deletes a file attached to the invoice.
      * Mirrors Koha::Misc::Files->DelFile(id => $file_id) in invoice-files.pl.
      */
-    @DeleteMapping("/acquisitions/invoices/{id}/files/{fileId}")
+    @DeleteMapping("/acquisitions/invoices/{id}/files/{fileId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteFile(
             @PathVariable Long id,

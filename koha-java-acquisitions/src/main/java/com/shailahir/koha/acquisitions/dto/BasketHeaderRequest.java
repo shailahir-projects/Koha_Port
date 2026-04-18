@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,6 +12,7 @@ import lombok.Data;
  * Maps to the cud-add_validate CGI parameters in basketheader.pl.
  */
 @Data
+@JacksonXmlRootElement
 public class BasketHeaderRequest {
 
     /** Required for edit; absent (null) for new basket creation */

@@ -60,6 +60,7 @@ public class PatronRepository {
         dto.setB_email(rs.getString("B_email"));
         dto.setB_phone(rs.getString("B_phone"));
         dto.setDatebirth(rs.getObject("dateofbirth", LocalDate.class));
+        dto.setDateofbirth(rs.getObject("dateofbirth", LocalDate.class));
         dto.setBranchcode(rs.getString("branchcode"));
         dto.setCategorycode(rs.getString("categorycode"));
         dto.setDateenrolled(rs.getObject("dateenrolled", LocalDate.class));
@@ -72,7 +73,6 @@ public class PatronRepository {
         dto.setContactfirstname(rs.getString("contactfirstname"));
         dto.setContacttitle(rs.getString("contacttitle"));
         dto.setSex(rs.getString("sex"));
-        dto.setPassword(rs.getString("password"));
         dto.setFlags(rs.getObject("flags", Long.class));
         dto.setUserid(rs.getString("userid"));
         dto.setOpacnote(rs.getString("opacnote"));
@@ -88,13 +88,9 @@ public class PatronRepository {
         dto.setAltcontactcountry(rs.getString("altcontactcountry"));
         dto.setAltcontactphone(rs.getString("altcontactphone"));
         dto.setSmsalertnumber(rs.getString("smsalertnumber"));
-        dto.setSmsprovider(rs.getString("sms_provider_id"));
         dto.setPrivacy(rs.getInt("privacy"));
-        dto.setPrivacyGuarantor(rs.getInt("privacy_guarantor_checkouts"));
         dto.setLang(rs.getString("lang"));
         dto.setLogin_attempts(rs.getInt("login_attempts"));
-        dto.setOverdrive_auth_token(rs.getString("overdrive_auth_token"));
-        dto.setStripeCustomerId(rs.getString("stripe_customer_id"));
         return dto;
     };
 

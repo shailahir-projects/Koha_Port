@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("/items")
+    @GetMapping("/items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<ItemDto>> listItems(
             @RequestParam(value = "external_id", required = false) String externalId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,
@@ -35,14 +36,14 @@ public class ItemController {
         return ResponseEntity.ok(itemService.listItems(externalId, query, pageable));
     }
 
-    @GetMapping("/items/{item_id}")
+    @GetMapping("/items/{item_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemDto> getItem(
             @PathVariable("item_id") Long itemId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed) {
         return ResponseEntity.ok(itemService.getItem(itemId));
     }
 
-    @DeleteMapping("/items/{item_id}")
+    @DeleteMapping("/items/{item_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteItem(@PathVariable("item_id") Long itemId) {
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
@@ -50,14 +51,14 @@ public class ItemController {
 
     // ── /items/{item_id}/bundled_items ──
 
-    @PostMapping("/items/{item_id}/bundled_items")
+    @PostMapping("/items/{item_id}/bundled_items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ItemDto> addToBundle(
             @PathVariable("item_id") Long itemId,
             @RequestBody BundleLinkDto bundleLink) {
         return ResponseEntity.status(HttpStatus.CREATED).body(itemService.addToBundle(itemId, bundleLink));
     }
 
-    @GetMapping("/items/{item_id}/bundled_items")
+    @GetMapping("/items/{item_id}/bundled_items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ItemDto>> listBundledItems(
             @PathVariable("item_id") Long itemId,
             @RequestParam(value = "external_id", required = false) String externalId,
@@ -67,7 +68,7 @@ public class ItemController {
         return ResponseEntity.ok(itemService.listBundledItems(itemId, externalId, query, pageable));
     }
 
-    @DeleteMapping("/items/{item_id}/bundled_items/{bundled_item_id}")
+    @DeleteMapping("/items/{item_id}/bundled_items/{bundled_item_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> removeFromBundle(
             @PathVariable("item_id") Long itemId,
             @PathVariable("bundled_item_id") String bundledItemId) {
@@ -77,7 +78,7 @@ public class ItemController {
 
     // ── /items/{item_id}/bookings ──
 
-    @GetMapping("/items/{item_id}/bookings")
+    @GetMapping("/items/{item_id}/bookings", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BookingDto>> getItemBookings(
             @PathVariable("item_id") Long itemId,
             @RequestParam(value = "q", required = false) String query,
@@ -87,7 +88,7 @@ public class ItemController {
 
     // ── /items/{item_id}/pickup_locations ──
 
-    @GetMapping("/items/{item_id}/pickup_locations")
+    @GetMapping("/items/{item_id}/pickup_locations", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<LibraryDto>> getItemPickupLocations(
             @PathVariable("item_id") Long itemId,
             @RequestParam("patron_id") Long patronId,
@@ -98,7 +99,7 @@ public class ItemController {
 
     // ── /public/items ──
 
-    @GetMapping("/public/items")
+    @GetMapping("/public/items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<ItemDto>> listItemsPublic(
             @RequestParam(value = "external_id", required = false) String externalId,
             @RequestHeader(value = "x-koha-embed", required = false) List<String> embed,

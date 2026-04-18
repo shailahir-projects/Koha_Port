@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class FinishReceiveController {
      *   <li>Write acquisition log entry (RECEIVE_ORDER)</li>
      * </ol>
      */
-    @PostMapping("/acquisitions/orders/{ordernumber}/receive")
+    @PostMapping("/acquisitions/orders/{ordernumber}/receive", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<ReceiveOrderResult> finishReceive(
             @PathVariable Long ordernumber,

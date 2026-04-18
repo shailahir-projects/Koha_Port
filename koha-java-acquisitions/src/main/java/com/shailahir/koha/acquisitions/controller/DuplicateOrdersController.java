@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -43,7 +44,7 @@ public class DuplicateOrdersController {
      * @param filter              search filter parameters (all optional)
      * @param selectedOrdernumbers comma-separated list of already-selected order numbers
      */
-    @GetMapping("/acquisitions/baskets/{basketno}/duplicate-orders/search")
+    @GetMapping("/acquisitions/baskets/{basketno}/duplicate-orders/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> searchOrderHistory(
             @PathVariable Long basketno,
             @ModelAttribute OrderHistoryFilter filter,
@@ -93,7 +94,7 @@ public class DuplicateOrdersController {
      * @param request  list of order numbers to duplicate + field override defaults
      * @return list of newly created order history rows
      */
-    @PostMapping("/acquisitions/baskets/{basketno}/duplicate-orders")
+    @PostMapping("/acquisitions/baskets/{basketno}/duplicate-orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Map<String, Object>> duplicateOrders(
             @PathVariable Long basketno,
@@ -153,7 +154,7 @@ public class DuplicateOrdersController {
      * @param doSearch  pass {@code true} to execute the search; {@code false} returns empty results
      * @param filter    all optional filter parameters
      */
-    @GetMapping("/acquisitions/orders/history")
+    @GetMapping("/acquisitions/orders/history", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> orderHistory(
             @RequestParam(value = "do_search", defaultValue = "false") boolean doSearch,
             @ModelAttribute OrderHistoryFilter filter) {
