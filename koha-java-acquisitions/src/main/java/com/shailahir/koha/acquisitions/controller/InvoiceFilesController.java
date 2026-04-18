@@ -100,7 +100,7 @@ public class InvoiceFilesController {
             @PathVariable Long id,
             @RequestPart("uploadfile") MultipartFile file,
             @RequestParam(value = "description", required = false, defaultValue = "") String description) {
-        log.debug("Entering uploadFile - {}, {}, {}", id, file, description);
+        log.debug("Entering uploadFile - {}, name={}, size={} bytes, {}", id, file.getOriginalFilename(), file.getSize(), description);
 
         ensureInvoiceExists(id);
 

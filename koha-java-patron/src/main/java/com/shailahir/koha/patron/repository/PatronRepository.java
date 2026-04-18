@@ -31,7 +31,6 @@ public class PatronRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<PatronDto> PATRON_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         PatronDto dto = new PatronDto();
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setCardnumber(rs.getString("cardnumber"));

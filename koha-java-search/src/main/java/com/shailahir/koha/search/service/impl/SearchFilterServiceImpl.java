@@ -31,7 +31,6 @@ public class SearchFilterServiceImpl implements SearchFilterService {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<SearchFilterDto> MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         SearchFilterDto dto = new SearchFilterDto();
         dto.setSearchFilterId(rs.getLong("id"));
         dto.setName(rs.getString("name"));

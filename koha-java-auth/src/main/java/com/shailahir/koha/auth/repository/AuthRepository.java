@@ -32,7 +32,6 @@ public class AuthRepository {
     // ── Auth / Identity Providers ─────────────────────────────────────────────
 
     private static final RowMapper<AuthProviderDto> PROVIDER_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AuthProviderDto dto = new AuthProviderDto();
         dto.setAuthProviderId(rs.getLong("identity_provider_id"));
         dto.setCode(rs.getString("code"));
@@ -113,7 +112,6 @@ public class AuthRepository {
     // ── Provider Domains ──────────────────────────────────────────────────────
 
     private static final RowMapper<AuthProviderDomainDto> DOMAIN_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AuthProviderDomainDto dto = new AuthProviderDomainDto();
         dto.setDomainId(rs.getLong("identity_provider_domain_id"));
         dto.setAuthProviderId(rs.getLong("identity_provider_id"));

@@ -33,7 +33,6 @@ public class AdminRepository {
     // ── Libraries ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<LibraryDto> LIBRARY_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         LibraryDto dto = new LibraryDto();
         dto.setLibraryId(rs.getString("branchcode"));
         dto.setName(rs.getString("branchname"));
@@ -123,7 +122,6 @@ public class AdminRepository {
     // ── Cities ─────────────────────────────────────────────────────────────────
 
     private static final RowMapper<CityDto> CITY_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CityDto dto = new CityDto();
         dto.setCityId(rs.getLong("cityid"));
         dto.setName(rs.getString("city_name"));
@@ -188,7 +186,6 @@ public class AdminRepository {
     // ── Authorised Values ──────────────────────────────────────────────────────
 
     private static final RowMapper<AuthorisedValueDto> AV_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AuthorisedValueDto dto = new AuthorisedValueDto();
         dto.setAuthorisedValueId(rs.getLong("id"));
         dto.setCategoryName(rs.getString("category"));
@@ -201,7 +198,6 @@ public class AdminRepository {
     };
 
     private static final RowMapper<AuthorisedValueCategoryDto> AVC_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AuthorisedValueCategoryDto dto = new AuthorisedValueCategoryDto();
         dto.setCategoryName(rs.getString("category"));
         dto.setIsSystem(rs.getBoolean("is_system"));
@@ -227,7 +223,6 @@ public class AdminRepository {
     // ── Transfer Limits ────────────────────────────────────────────────────────
 
     private static final RowMapper<TransferLimitDto> TL_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         TransferLimitDto dto = new TransferLimitDto();
         dto.setTransferLimitId(rs.getLong("id"));
         dto.setFromLibraryId(rs.getString("fromBranch"));
@@ -265,7 +260,6 @@ public class AdminRepository {
     // ── Extended Attribute Types ───────────────────────────────────────────────
 
     private static final RowMapper<ExtendedAttributeTypeDto> EAT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         ExtendedAttributeTypeDto dto = new ExtendedAttributeTypeDto();
         dto.setCode(rs.getString("code"));
         dto.setDescription(rs.getString("description"));
@@ -292,7 +286,6 @@ public class AdminRepository {
     // ── Desks ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<DeskDto> DESK_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         DeskDto dto = new DeskDto();
         dto.setDeskId(rs.getLong("desk_id"));
         dto.setDeskName(rs.getString("desk_name"));
@@ -308,7 +301,6 @@ public class AdminRepository {
     // ── Cash Registers ─────────────────────────────────────────────────────────
 
     private static final RowMapper<CashRegisterDto> CR_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CashRegisterDto dto = new CashRegisterDto();
         dto.setCashRegisterId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -327,7 +319,6 @@ public class AdminRepository {
     // ── Advanced Editor Macros ─────────────────────────────────────────────────
 
     private static final RowMapper<AdvancedEditorMacroDto> MACRO_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AdvancedEditorMacroDto dto = new AdvancedEditorMacroDto();
         dto.setMacroId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -389,7 +380,6 @@ public class AdminRepository {
     // ── Tickets ────────────────────────────────────────────────────────────────
 
     private static final RowMapper<TicketDto> TICKET_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         TicketDto dto = new TicketDto();
         dto.setTicketId(rs.getLong("id"));
         dto.setTitle(rs.getString("title"));
@@ -455,7 +445,6 @@ public class AdminRepository {
     }
 
     private static final RowMapper<TicketUpdateDto> TICKET_UPDATE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         TicketUpdateDto dto = new TicketUpdateDto();
         dto.setUpdateId(rs.getLong("id"));
         dto.setTicketId(rs.getLong("ticket_id"));

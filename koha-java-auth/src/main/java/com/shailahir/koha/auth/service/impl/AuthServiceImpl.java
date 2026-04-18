@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
     }
     @Override
     public TokenResponse oauthToken(String grantType, String clientId, String clientSecret, String username, String password) {
-        log.debug("Entering oauthToken - {}, {}, {}, {}, {}", grantType, clientId, clientSecret, username, password);
+        log.debug("Entering oauthToken - {}, {}, [REDACTED], {}, [REDACTED]", grantType, clientId, username);
         // Simplified implementation
         LoginRequest req = new LoginRequest();
         req.setUsername(username != null ? username : clientId);

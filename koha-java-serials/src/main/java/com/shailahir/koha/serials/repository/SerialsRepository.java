@@ -33,7 +33,6 @@ public class SerialsRepository {
     // ── Subscriptions ─────────────────────────────────────────────────────────
 
     private static final RowMapper<SubscriptionDto> SUBSCRIPTION_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         SubscriptionDto dto = new SubscriptionDto();
         dto.setSubscriptionId(rs.getLong("subscriptionid"));
         dto.setBiblioId(rs.getLong("biblionumber"));
@@ -121,7 +120,6 @@ public class SerialsRepository {
     // ── Serials ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<SerialDto> SERIAL_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         SerialDto dto = new SerialDto();
         dto.setSerialId(rs.getLong("serialid"));
         dto.setSubscriptionId(rs.getLong("subscriptionid"));
@@ -145,7 +143,6 @@ public class SerialsRepository {
     // ── Frequencies ───────────────────────────────────────────────────────────
 
     private static final RowMapper<SubscriptionFrequencyDto> FREQUENCY_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         SubscriptionFrequencyDto dto = new SubscriptionFrequencyDto();
         dto.setId(rs.getLong("id"));
         dto.setDescription(rs.getString("description"));
@@ -207,7 +204,6 @@ public class SerialsRepository {
     // ── Numbering Patterns ────────────────────────────────────────────────────
 
     private static final RowMapper<NumberingPatternDto> PATTERN_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         NumberingPatternDto dto = new NumberingPatternDto();
         dto.setId(rs.getLong("id"));
         dto.setLabel(rs.getString("label"));

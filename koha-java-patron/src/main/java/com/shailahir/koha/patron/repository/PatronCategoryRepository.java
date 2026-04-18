@@ -23,7 +23,6 @@ public class PatronCategoryRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<PatronCategoryDto> ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         PatronCategoryDto dto = new PatronCategoryDto();
         dto.setCategorycode(rs.getString("categorycode"));
         dto.setDescription(rs.getString("description"));

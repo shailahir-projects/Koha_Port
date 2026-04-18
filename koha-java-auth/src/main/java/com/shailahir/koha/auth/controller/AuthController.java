@@ -25,7 +25,7 @@ public class AuthController {
             @RequestParam(value = "client_secret", required = false) String clientSecret,
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "password", required = false) String password) {
-        log.debug("Entering oauthToken - {}, {}, {}, {}, {}", grantType, clientId, clientSecret, username, password);
+        log.debug("Entering oauthToken - {}, {}, [REDACTED], {}, [REDACTED]", grantType, clientId, username);
         return ResponseEntity.ok(authService.oauthToken(grantType, clientId, clientSecret, username, password));
     }
 }

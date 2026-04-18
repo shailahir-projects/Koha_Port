@@ -81,7 +81,7 @@ public class InvoiceFilesRepository {
      */
     public Long addFile(Long invoiceid, String fileName, String fileType,
                         byte[] fileContent, String description) {
-        log.debug("Entering addFile - {}, {}, {}, {}, {}", invoiceid, fileName, fileType, fileContent, description);
+        log.debug("Entering addFile - {}, {}, {}, {} bytes, {}", invoiceid, fileName, fileType, fileContent != null ? fileContent.length : 0, description);
         String sql = """
                 INSERT INTO misc_files
                     (tabletag, recordid, file_name, file_type, file_content,

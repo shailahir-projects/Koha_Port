@@ -27,7 +27,6 @@ public class AccountRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<AccountLineDto> ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         AccountLineDto dto = new AccountLineDto();
         dto.setAccountlines_id(rs.getLong("accountlines_id"));
         dto.setBorrowernumber(rs.getLong("borrowernumber"));

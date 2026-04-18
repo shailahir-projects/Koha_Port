@@ -38,7 +38,6 @@ public class PatronRelatedRepository {
     // ── Checkouts ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<CheckoutDto> CHECKOUT_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         CheckoutDto dto = new CheckoutDto();
         dto.setIssueId(rs.getLong("issue_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -66,7 +65,6 @@ public class PatronRelatedRepository {
     // ── Holds ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<HoldDto> HOLD_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         HoldDto dto = new HoldDto();
         dto.setHoldId(rs.getLong("reserve_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -97,7 +95,6 @@ public class PatronRelatedRepository {
     // ── Hold Groups ────────────────────────────────────────────────────────────
 
     private static final RowMapper<HoldGroupDto> HOLD_GROUP_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         HoldGroupDto dto = new HoldGroupDto();
         dto.setHoldGroupId(rs.getLong("reserve_group_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -144,7 +141,6 @@ public class PatronRelatedRepository {
     // ── Extended Attributes ────────────────────────────────────────────────────
 
     private static final RowMapper<ExtendedAttributeDto> ATTR_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         ExtendedAttributeDto dto = new ExtendedAttributeDto();
         dto.setExtendedAttributeId(rs.getLong("id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -203,7 +199,6 @@ public class PatronRelatedRepository {
     // ── ILL Requests ───────────────────────────────────────────────────────────
 
     private static final RowMapper<IllRequestDto> ILL_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         IllRequestDto dto = new IllRequestDto();
         dto.setIllRequestId(rs.getLong("illrequest_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -230,7 +225,6 @@ public class PatronRelatedRepository {
     // ── Recalls ────────────────────────────────────────────────────────────────
 
     private static final RowMapper<RecallDto> RECALL_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         RecallDto dto = new RecallDto();
         dto.setRecallId(rs.getLong("recall_id"));
         dto.setPatronId(rs.getLong("patron_id"));
@@ -253,7 +247,6 @@ public class PatronRelatedRepository {
     // ── Virtual Shelves (Lists) ────────────────────────────────────────────────
 
     private static final RowMapper<VirtualShelfDto> SHELF_ROW_MAPPER = (rs, rowNum) -> {
-        log.debug("Entering = - {}, {}", rs, rowNum);
         VirtualShelfDto dto = new VirtualShelfDto();
         dto.setShelfnumber(rs.getLong("shelfnumber"));
         dto.setShelfname(rs.getString("shelfname"));

@@ -34,7 +34,6 @@ public class CatalogRepository {
     // ── Bibliographic records ──────────────────────────────────────────────────
 
     private static final RowMapper<BiblioDto> BIBLIO_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         BiblioDto dto = new BiblioDto();
         dto.setBiblioId(rs.getLong("biblionumber"));
         dto.setBiblionumber(rs.getString("biblionumber"));
@@ -150,7 +149,6 @@ public class CatalogRepository {
     // ── Items ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<ItemDto> ITEM_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         ItemDto dto = new ItemDto();
         dto.setItemId(rs.getLong("itemnumber"));
         dto.setBiblioId(rs.getLong("biblionumber"));
@@ -260,7 +258,6 @@ public class CatalogRepository {
     // ── Authorities ────────────────────────────────────────────────────────────
 
     private static final RowMapper<AuthorityDto> AUTHORITY_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AuthorityDto dto = new AuthorityDto();
         dto.setAuthorityId(rs.getLong("authid"));
         dto.setAuthorityType(rs.getString("authtypecode"));
@@ -335,7 +332,6 @@ public class CatalogRepository {
     // ── Item Groups ────────────────────────────────────────────────────────────
 
     private static final RowMapper<ItemGroupDto> IG_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         ItemGroupDto dto = new ItemGroupDto();
         dto.setItemGroupId(rs.getLong("item_group_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -410,7 +406,6 @@ public class CatalogRepository {
     // ── Record Sources ────────────────────────────────────────────────────────
 
     private static final RowMapper<RecordSourceDto> RS_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         RecordSourceDto dto = new RecordSourceDto();
         dto.setRecordSourceId(rs.getLong("record_source_id"));
         dto.setName(rs.getString("name"));
@@ -471,7 +466,6 @@ public class CatalogRepository {
     // ── Bookings ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<BookingDto> BOOKING_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         BookingDto dto = new BookingDto();
         dto.setBookingId(rs.getLong("booking_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -497,7 +491,6 @@ public class CatalogRepository {
     // ── Checkouts ─────────────────────────────────────────────────────────────
 
     private static final RowMapper<CheckoutDto> CHECKOUT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CheckoutDto dto = new CheckoutDto();
         dto.setCheckoutId(rs.getLong("issue_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -525,7 +518,6 @@ public class CatalogRepository {
     // ── Pickup Locations ──────────────────────────────────────────────────────
 
     private static final RowMapper<LibraryDto> LIBRARY_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         LibraryDto dto = new LibraryDto();
         dto.setLibraryId(rs.getString("branchcode"));
         dto.setName(rs.getString("branchname"));

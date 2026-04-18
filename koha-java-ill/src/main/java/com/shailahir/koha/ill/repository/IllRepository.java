@@ -30,7 +30,6 @@ public class IllRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<IllRequestDto> REQUEST_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllRequestDto dto = new IllRequestDto();
         dto.setIllRequestId(rs.getLong("illrequest_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -115,7 +114,6 @@ public class IllRepository {
     // ── Comments ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllRequestCommentDto> COMMENT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllRequestCommentDto dto = new IllRequestCommentDto();
         dto.setCommentId(rs.getLong("id"));
         dto.setIllRequestId(rs.getLong("illrequest_id"));
@@ -153,7 +151,6 @@ public class IllRepository {
     // ── Batches ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBatchDto> BATCH_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllBatchDto dto = new IllBatchDto();
         dto.setIllBatchId(rs.getLong("ill_batch_id"));
         dto.setName(rs.getString("name"));
@@ -224,7 +221,6 @@ public class IllRepository {
     // ── Batch Statuses ────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBatchStatusDto> BATCH_STATUS_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllBatchStatusDto dto = new IllBatchStatusDto();
         dto.setId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -281,7 +277,6 @@ public class IllRepository {
     // ── Backends ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllBackendDto> BACKEND_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllBackendDto dto = new IllBackendDto();
         dto.setBackendId(rs.getString("backend"));
         dto.setName(rs.getString("backend"));
@@ -317,7 +312,6 @@ public class IllRepository {
     // ── Users ─────────────────────────────────────────────────────────────────
 
     private static final RowMapper<IllUserDto> USER_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         IllUserDto dto = new IllUserDto();
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setCardnumber(rs.getString("cardnumber"));

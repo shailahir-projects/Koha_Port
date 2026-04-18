@@ -32,7 +32,6 @@ public class NotificationRepository {
     // ── Notice Templates ──────────────────────────────────────────────────────
 
     private static final RowMapper<NoticeTemplateDto> NOTICE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         NoticeTemplateDto dto = new NoticeTemplateDto();
         dto.setId(rs.getLong("id"));
         dto.setCode(rs.getString("code"));
@@ -111,7 +110,6 @@ public class NotificationRepository {
     // ── Additional Contents ───────────────────────────────────────────────────
 
     private static final RowMapper<AdditionalContentDto> CONTENT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AdditionalContentDto dto = new AdditionalContentDto();
         dto.setId(rs.getLong("id"));
         dto.setIdnew(rs.getString("idnew"));

@@ -35,7 +35,6 @@ public class ErmRepository {
     // ── Agreements ────────────────────────────────────────────────────────────
 
     private static final RowMapper<AgreementDto> AGREEMENT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AgreementDto dto = new AgreementDto();
         dto.setAgreementId(rs.getLong("agreement_id"));
         dto.setName(rs.getString("name"));
@@ -113,7 +112,6 @@ public class ErmRepository {
     // ── Licenses ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<LicenseDto> LICENSE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         LicenseDto dto = new LicenseDto();
         dto.setLicenseId(rs.getLong("license_id"));
         dto.setName(rs.getString("name"));
@@ -193,7 +191,6 @@ public class ErmRepository {
     // ── eHoldings Packages ────────────────────────────────────────────────────
 
     private static final RowMapper<ErmPackageDto> PACKAGE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         ErmPackageDto dto = new ErmPackageDto();
         dto.setPackageId(rs.getLong("package_id"));
         dto.setName(rs.getString("name"));

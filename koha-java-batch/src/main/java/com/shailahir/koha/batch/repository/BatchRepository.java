@@ -30,7 +30,6 @@ public class BatchRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<JobDto> JOB_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         JobDto dto = new JobDto();
         dto.setJobId(rs.getLong("id"));
         dto.setType(rs.getString("type"));

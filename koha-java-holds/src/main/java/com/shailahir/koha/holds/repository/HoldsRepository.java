@@ -33,7 +33,6 @@ public class HoldsRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<HoldDto> HOLD_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         HoldDto dto = new HoldDto();
         dto.setHoldId(rs.getLong("reserve_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));

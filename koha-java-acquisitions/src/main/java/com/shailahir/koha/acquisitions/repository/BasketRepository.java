@@ -50,7 +50,6 @@ public class BasketRepository {
             .build();
 
     private final RowMapper<BasketOrderLineDto> ORDER_LINE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         BigDecimal unitpriceTaxIncluded = rs.getBigDecimal("unitprice_tax_included");
         BigDecimal unitpriceTaxExcluded = rs.getBigDecimal("unitprice_tax_excluded");
         BigDecimal ecostTaxIncluded     = rs.getBigDecimal("ecost_tax_included");

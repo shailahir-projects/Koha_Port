@@ -33,7 +33,6 @@ public class ReportingRepository {
     private final JdbcTemplate jdbc;
 
     private static final RowMapper<SavedReportDto> REPORT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         SavedReportDto dto = new SavedReportDto();
         dto.setReportId(rs.getLong("id"));
         dto.setReportName(rs.getString("report_name"));

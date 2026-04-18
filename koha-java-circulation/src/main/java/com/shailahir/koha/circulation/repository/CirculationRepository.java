@@ -35,7 +35,6 @@ public class CirculationRepository {
     // ── Checkouts ──────────────────────────────────────────────────────────────
 
     private static final RowMapper<CheckoutDto> CHECKOUT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CheckoutDto dto = new CheckoutDto();
         dto.setCheckoutId(rs.getLong("issue_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
@@ -130,7 +129,6 @@ public class CirculationRepository {
     // ── Bookings ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<BookingDto> BOOKING_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         BookingDto dto = new BookingDto();
         dto.setBookingId(rs.getLong("booking_id"));
         dto.setBiblioId(rs.getLong("biblio_id"));
@@ -200,7 +198,6 @@ public class CirculationRepository {
     // ── Circulation Rules ──────────────────────────────────────────────────────
 
     private static final RowMapper<CirculationRuleDto> RULE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CirculationRuleDto dto = new CirculationRuleDto();
         dto.setBranchcode(rs.getString("branchcode"));
         dto.setCategorycode(rs.getString("categorycode"));
@@ -237,7 +234,6 @@ public class CirculationRepository {
     // ── Return Claims ──────────────────────────────────────────────────────────
 
     private static final RowMapper<ReturnClaimDto> CLAIM_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         ReturnClaimDto dto = new ReturnClaimDto();
         dto.setClaimId(rs.getLong("id"));
         dto.setCheckoutId(rs.getObject("issue_id", Long.class));
@@ -298,7 +294,6 @@ public class CirculationRepository {
     // ── Rotas ──────────────────────────────────────────────────────────────────
 
     private static final RowMapper<RotaDto> ROTA_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         RotaDto dto = new RotaDto();
         dto.setRotaId(rs.getLong("rota_id"));
         dto.setTitle(rs.getString("title"));
@@ -309,7 +304,6 @@ public class CirculationRepository {
     };
 
     private static final RowMapper<RotaStageDto> STAGE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         RotaStageDto dto = new RotaStageDto();
         dto.setStageId(rs.getLong("stage_id"));
         dto.setRotaId(rs.getLong("rota_id"));

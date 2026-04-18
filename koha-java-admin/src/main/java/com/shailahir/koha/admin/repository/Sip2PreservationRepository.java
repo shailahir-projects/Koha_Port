@@ -32,7 +32,6 @@ public class Sip2PreservationRepository {
     // ── SIP2 Accounts ──────────────────────────────────────────────────────────
 
     private static final RowMapper<Sip2AccountDto> SIP2_ACCOUNT_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         Sip2AccountDto dto = new Sip2AccountDto();
         dto.setSipAccountId(rs.getLong("id"));
         dto.setSip2AccountId(rs.getLong("id"));
@@ -97,7 +96,6 @@ public class Sip2PreservationRepository {
     // ── SIP2 Institutions ──────────────────────────────────────────────────────
 
     private static final RowMapper<Sip2InstitutionDto> SIP2_INST_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         Sip2InstitutionDto dto = new Sip2InstitutionDto();
         dto.setSip2InstitutionId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -155,7 +153,6 @@ public class Sip2PreservationRepository {
     // ── SIP2 System Preference Overrides ──────────────────────────────────────
 
     private static final RowMapper<Sip2SystemPreferenceOverrideDto> SIP2_PREF_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         Sip2SystemPreferenceOverrideDto dto = new Sip2SystemPreferenceOverrideDto();
         dto.setOverrideId(rs.getLong("id"));
         dto.setSip2AccountId(rs.getObject("sip_account_id", Long.class));
@@ -215,7 +212,6 @@ public class Sip2PreservationRepository {
     // ── Preservation Trains ────────────────────────────────────────────────────
 
     private static final RowMapper<PreservationTrainDto> TRAIN_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         PreservationTrainDto dto = new PreservationTrainDto();
         dto.setTrainId(rs.getLong("train_id"));
         dto.setName(rs.getString("name"));
@@ -277,7 +273,6 @@ public class Sip2PreservationRepository {
     // ── Preservation Train Items ───────────────────────────────────────────────
 
     private static final RowMapper<PreservationTrainItemDto> TRAIN_ITEM_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         PreservationTrainItemDto dto = new PreservationTrainItemDto();
         dto.setTrainItemId(rs.getLong("train_item_id"));
         dto.setTrainId(rs.getLong("train_id"));
@@ -339,7 +334,6 @@ public class Sip2PreservationRepository {
     // ── Preservation Processings ───────────────────────────────────────────────
 
     private static final RowMapper<PreservationProcessingDto> PROC_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         PreservationProcessingDto dto = new PreservationProcessingDto();
         dto.setProcessingId(rs.getLong("processing_id"));
         dto.setName(rs.getString("name"));
@@ -393,7 +387,6 @@ public class Sip2PreservationRepository {
     // ── Preservation Waiting List ──────────────────────────────────────────────
 
     private static final RowMapper<PreservationWaitingListItemDto> WL_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         PreservationWaitingListItemDto dto = new PreservationWaitingListItemDto();
         dto.setItemId(rs.getLong("item_id"));
         dto.setAddedOn(rs.getObject("added_on", java.time.LocalDateTime.class));

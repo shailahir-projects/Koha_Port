@@ -32,7 +32,6 @@ public class FinanceRepository {
     // ── Cash Registers ────────────────────────────────────────────────────────
 
     private static final RowMapper<CashRegisterDto> REGISTER_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CashRegisterDto dto = new CashRegisterDto();
         dto.setCashRegisterId(rs.getLong("id"));
         dto.setName(rs.getString("name"));
@@ -65,7 +64,6 @@ public class FinanceRepository {
     // ── Cashups ───────────────────────────────────────────────────────────────
 
     private static final RowMapper<CashupDto> CASHUP_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         CashupDto dto = new CashupDto();
         dto.setCashupId(rs.getLong("id"));
         dto.setCashRegisterId(rs.getLong("register_id"));
@@ -130,7 +128,6 @@ public class FinanceRepository {
     // ── Account Lines (Credits & Debits) ──────────────────────────────────────
 
     private static final RowMapper<AccountLineDto> LINE_MAPPER = (rs, rn) -> {
-        log.debug("Entering = - {}, {}", rs, rn);
         AccountLineDto dto = new AccountLineDto();
         dto.setAccountLineId(rs.getLong("accountlines_id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
