@@ -9,7 +9,7 @@ import {
   Text,
 } from '@salt-ds/core';
 import { login } from '../api/client';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../components/useAuth';
 import type { LoginRequest } from '../types';
 
 export default function LoginPage() {

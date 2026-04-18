@@ -5,7 +5,7 @@ import {
   Text,
   Button,
 } from '@salt-ds/core';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../components/useAuth';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard' },

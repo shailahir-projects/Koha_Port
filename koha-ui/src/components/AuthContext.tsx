@@ -1,14 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { clearToken, getToken, setToken } from '../api/client';
-
-interface AuthState {
-  token: string | null;
-  isAuthenticated: boolean;
-  signIn: (token: string) => void;
-  signOut: () => void;
-}
-
-const AuthContext = createContext<AuthState | null>(null);
+import { AuthContext } from './authContext';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setTokenState] = useState<string | null>(getToken);
@@ -32,8 +24,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth(): AuthState {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within <AuthProvider>');
-  return ctx;
-}
+
