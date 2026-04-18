@@ -199,11 +199,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto updateDeliveryDate(Long ordernumber, java.time.LocalDate date) {
         int rows = orderRepo.updateDeliveryDate(ordernumber, date);
         if (rows == 0) {
-            throw new jakarta.persistence.EntityNotFoundException(
+            throw new java.util.NoSuchElementException(
                     "Order not found: " + ordernumber);
         }
         return orderRepo.findById(ordernumber)
-                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Order not found after update: " + ordernumber));
     }
 
