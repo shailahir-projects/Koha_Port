@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class ErmServiceImpl implements ErmService {
@@ -98,6 +101,70 @@ public class ErmServiceImpl implements ErmService {
     @Override
     public void deletePackage(Long id) {
         repo.deletePackage(id);
+    }
+
+    // ── Generic CRUD ──────────────────────────────────────────────────────────
+
+    @Override
+    public Page<Map<String, Object>> pageQuery(String table, String orderColumn, Pageable pageable) {
+        return repo.pageQuery(table, orderColumn, pageable);
+    }
+
+    @Override
+    public Page<Map<String, Object>> pageQueryByForeignKey(String table, String orderColumn, String foreignKeyColumn, Long foreignKeyValue, Pageable pageable) {
+        return repo.pageQueryByForeignKey(table, orderColumn, foreignKeyColumn, foreignKeyValue, pageable);
+    }
+
+    @Override
+    public Map<String, Object> getRow(String table, String idColumn, Long id) {
+        Map<String, Object> row = repo.getRow(table, idColumn, id);
+        if (row == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+        }
+        return row;
+    }
+
+    @Override
+    public long insertRow(String table, Map<String, Object> body, String idColumn) {
+        if (body == null || body.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body cannot be empty");
+        }
+        return repo.insertRow(table, body, idColumn);
+    }
+
+    @Override
+    public void updateRow(String table, String idColumn, Long id, Map<String, Object> body) {
+        repo.updateRow(table, idColumn, id, body);
+    }
+
+    @Override
+    public void deleteRow(String table, String idColumn, Long id) {
+        repo.deleteRow(table, idColumn, id);
+    }
+
+    @Override
+    public void updatePackageSelected(Long id, Object isSelected) {
+        repo.updatePackageSelected(id, isSelected);
+    }
+
+    @Override
+    public List<Map<String, Object>> listCounterRegistries() {
+        return repo.findCounterRegistries();
+    }
+
+    @Override
+    public List<Map<String, Object>> listCustomReports() {
+        return repo.findCustomReports();
+    }
+
+    @Override
+    public List<Map<String, Object>> listSushiServices() {
+        return repo.findSushiServices();
+    }
+
+    @Override
+    public List<Map<String, Object>> listExtendedAttributeTypes() {
+        return repo.findExtendedAttributeTypes();
     }
 }
 

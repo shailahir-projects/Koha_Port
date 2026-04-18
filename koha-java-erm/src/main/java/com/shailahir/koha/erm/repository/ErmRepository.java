@@ -14,7 +14,10 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -241,6 +244,99 @@ public class ErmRepository {
 
     public void deletePackage(Long id) {
         jdbc.update("DELETE FROM erm_eholdings_packages WHERE package_id = ?", id);
+    }
+
+    // ── Generic CRUD helpers ─────────────────────────────────────────────────
+
+    public Page<Map<String, Object>> pageQuery(String table, String orderColumn, Pageable pageable) {
+        Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class);
+        List<Map<String, Object>> rows = jdbc.queryForList(
+                "SELECT * FROM " + table + " ORDER BY " + orderColumn + " DESC LIMIT ? OFFSET ?",
+                pageable.getPageSize(), pageable.getOffset());
+        return new PageImpl<>(rows, pageable, total != null ? total : 0);
+    }
+
+    public Page<Map<String, Object>> pageQueryByForeignKey(
+            String table, String orderColumn, String foreignKeyColumn, Long foreignKeyValue, Pageable pageable) {
+        Integer total = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM " + table + " WHERE " + foreignKeyColumn + " = ?",
+                Integer.class, foreignKeyValue);
+        List<Map<String, Object>> rows = jdbc.queryForList(
+                "SELECT * FROM " + table + " WHERE " + foreignKeyColumn + " = ? ORDER BY " + orderColumn + " DESC LIMIT ? OFFSET ?",
+                foreignKeyValue, pageable.getPageSize(), pageable.getOffset());
+        return new PageImpl<>(rows, pageable, total != null ? total : 0);
+    }
+
+    public Map<String, Object> getRow(String table, String idColumn, Long id) {
+        try {
+            return jdbc.queryForMap("SELECT * FROM " + table + " WHERE " + idColumn + " = ?", id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public long insertRow(String table, Map<String, Object> body, String idColumn) {
+        List<String> keys = new ArrayList<>(body.keySet());
+        String columns = String.join(", ", keys);
+        String placeholders = String.join(", ", keys.stream().map(k -> "?").toList());
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO " + table + " (" + columns + ") VALUES (" + placeholders + ")",
+                    Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0; i < keys.size(); i++) {
+                ps.setObject(i + 1, body.get(keys.get(i)));
+            }
+            return ps;
+        }, kh);
+        Number id = (Number) kh.getKeys().get(idColumn);
+        if (id == null) {
+            Object first = new LinkedHashMap<>(kh.getKeys()).values().stream().findFirst().orElseThrow();
+            id = (Number) first;
+        }
+        return id.longValue();
+    }
+
+    public void updateRow(String table, String idColumn, Long id, Map<String, Object> body) {
+        if (body == null || body.isEmpty()) {
+            return;
+        }
+        List<String> keys = new ArrayList<>(body.keySet());
+        String setSql = String.join(", ", keys.stream().map(k -> k + "=?").toList());
+        List<Object> values = new ArrayList<>();
+        for (String key : keys) {
+            values.add(body.get(key));
+        }
+        values.add(id);
+        jdbc.update("UPDATE " + table + " SET " + setSql + " WHERE " + idColumn + " = ?", values.toArray());
+    }
+
+    public void deleteRow(String table, String idColumn, Long id) {
+        jdbc.update("DELETE FROM " + table + " WHERE " + idColumn + " = ?", id);
+    }
+
+    public void updatePackageSelected(Long id, Object isSelected) {
+        jdbc.update("UPDATE erm_eholdings_packages SET is_selected = ? WHERE package_id = ?", isSelected, id);
+    }
+
+    public List<Map<String, Object>> findCounterRegistries() {
+        return jdbc.queryForList(
+                "SELECT DISTINCT service_url, report_release, customer_id FROM erm_usage_data_providers WHERE service_url IS NOT NULL");
+    }
+
+    public List<Map<String, Object>> findCustomReports() {
+        return jdbc.queryForList(
+                "SELECT id, report_name, notes FROM saved_sql WHERE report_group ILIKE 'ERM%' ORDER BY id DESC");
+    }
+
+    public List<Map<String, Object>> findSushiServices() {
+        return jdbc.queryForList(
+                "SELECT erm_usage_data_provider_id, name, service_url, service_type, report_release FROM erm_usage_data_providers ORDER BY erm_usage_data_provider_id DESC");
+    }
+
+    public List<Map<String, Object>> findExtendedAttributeTypes() {
+        return jdbc.queryForList(
+                "SELECT * FROM additional_field_types WHERE tablename ILIKE 'erm_%' ORDER BY id");
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {

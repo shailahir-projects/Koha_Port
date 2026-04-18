@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -127,6 +128,54 @@ public class SerialsServiceImpl implements SerialsService {
     @Override
     public List<SerialDto> listClaims(Pageable pageable) {
         return repo.findClaimedSerials(pageable);
+    }
+
+    @Override
+    public Map<String, Object> getHomeSummary() {
+        Integer subscriptions = repo.countSubscriptions();
+        Integer serials = repo.countSerials();
+        return Map.of(
+                "subscriptions", subscriptions != null ? subscriptions : 0,
+                "serials", serials != null ? serials : 0);
+    }
+
+    @Override
+    public List<Map<String, Object>> getCollection(Pageable pageable) {
+        return repo.findSerialCollection(pageable);
+    }
+
+    @Override
+    public List<Map<String, Object>> getRouting(Long subscriptionId) {
+        return repo.findRoutingListBySubscription(subscriptionId);
+    }
+
+    @Override
+    public void reorderRoutingMembers(List<Map<String, Object>> payload) {
+        for (Map<String, Object> row : payload) {
+            repo.updateRoutingRanking(row.get("routingid"), row.get("ranking"));
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> searchBiblio(String query) {
+        String needle = query == null ? "" : query;
+        return repo.searchBiblio(needle);
+    }
+
+    @Override
+    public List<Map<String, Object>> getLateIssuesExport() {
+        return repo.findLateIssues();
+    }
+
+    @Override
+    public List<Map<String, Object>> getExpiredSubscriptions() {
+        return repo.findExpiredSubscriptions();
+    }
+
+    @Override
+    public List<Map<String, Object>> searchAcquisitions(String query) {
+        String needle = query == null ? "" : query;
+        return repo.searchAcquisitions(needle);
     }
 }
 

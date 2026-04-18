@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SerialsService {
     Page<SubscriptionDto> listSubscriptions(String query, Pageable pageable);
@@ -30,5 +31,14 @@ public interface SerialsService {
     List<SerialDto> getSubscriptionHistory(Long subscriptionId);
     SubscriptionDto renewSubscription(Long subscriptionId, SubscriptionDto dto);
     List<SerialDto> listClaims(Pageable pageable);
+
+    Map<String, Object> getHomeSummary();
+    List<Map<String, Object>> getCollection(Pageable pageable);
+    List<Map<String, Object>> getRouting(Long subscriptionId);
+    void reorderRoutingMembers(List<Map<String, Object>> payload);
+    List<Map<String, Object>> searchBiblio(String query);
+    List<Map<String, Object>> getLateIssuesExport();
+    List<Map<String, Object>> getExpiredSubscriptions();
+    List<Map<String, Object>> searchAcquisitions(String query);
 }
 

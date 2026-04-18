@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -296,6 +297,55 @@ public class SerialsRepository {
         return jdbc.query(
                 "SELECT * FROM serial WHERE status ILIKE 'CLAIMED%' ORDER BY serialid DESC LIMIT ? OFFSET ?",
                 SERIAL_MAPPER, pageable.getPageSize(), pageable.getOffset());
+    }
+
+    // ── Home / Collection / Routing / Search helpers ─────────────────────────
+
+    public Integer countSubscriptions() {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM subscription", Integer.class);
+    }
+
+    public Integer countSerials() {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM serial", Integer.class);
+    }
+
+    public List<Map<String, Object>> findSerialCollection(Pageable pageable) {
+        return jdbc.queryForList(
+                "SELECT serialid, subscriptionid, status, serialseq, publisheddate FROM serial ORDER BY serialid DESC LIMIT ? OFFSET ?",
+                pageable.getPageSize(), pageable.getOffset());
+    }
+
+    public List<Map<String, Object>> findRoutingListBySubscription(Long subscriptionId) {
+        return jdbc.queryForList(
+                "SELECT * FROM subscriptionroutinglist WHERE subscriptionid = ? ORDER BY ranking",
+                subscriptionId);
+    }
+
+    public void updateRoutingRanking(Object routingId, Object ranking) {
+        jdbc.update("UPDATE subscriptionroutinglist SET ranking = ? WHERE routingid = ?",
+                ranking, routingId);
+    }
+
+    public List<Map<String, Object>> searchBiblio(String query) {
+        return jdbc.queryForList(
+                "SELECT biblionumber, title FROM biblio WHERE title ILIKE ? ORDER BY biblionumber DESC LIMIT 50",
+                "%" + query + "%");
+    }
+
+    public List<Map<String, Object>> findLateIssues() {
+        return jdbc.queryForList(
+                "SELECT serialid, subscriptionid, serialseq, publisheddate FROM serial WHERE status ILIKE 'LATE%' ORDER BY serialid DESC");
+    }
+
+    public List<Map<String, Object>> findExpiredSubscriptions() {
+        return jdbc.queryForList(
+                "SELECT subscriptionid, enddate, notes FROM subscription WHERE enddate < CURRENT_DATE ORDER BY enddate DESC");
+    }
+
+    public List<Map<String, Object>> searchAcquisitions(String query) {
+        return jdbc.queryForList(
+                "SELECT aqbooksellerid, name FROM aqbooksellers WHERE name ILIKE ? ORDER BY aqbooksellerid DESC LIMIT 50",
+                "%" + query + "%");
     }
 
     private Object[] appendPaging(Object[] params, Pageable pageable) {
