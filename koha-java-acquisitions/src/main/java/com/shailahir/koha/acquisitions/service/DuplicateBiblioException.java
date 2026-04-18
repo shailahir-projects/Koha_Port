@@ -1,20 +1,15 @@
 package com.shailahir.koha.acquisitions.service;
 
 /**
- * Thrown when a potential duplicate biblio is detected and the caller
- * has not confirmed they wish to proceed (confirm_not_duplicate=false).
+ * @deprecated Use {@link com.shailahir.koha.acquisitions.exception.DuplicateBiblioException} instead.
  */
-public class DuplicateBiblioException extends RuntimeException {
-
-    private final Long duplicateBiblionumber;
-
-    public DuplicateBiblioException(Long duplicateBiblionumber) {
-        super("Possible duplicate biblio: " + duplicateBiblionumber);
-        this.duplicateBiblionumber = duplicateBiblionumber;
+@Deprecated(since = "1.0", forRemoval = true)
+public class DuplicateBiblioException extends com.shailahir.koha.acquisitions.exception.DuplicateBiblioException {
+    public DuplicateBiblioException(Long existingBiblionumber) {
+        super(existingBiblionumber);
     }
-
+    /** Backward-compat alias for {@link #getExistingBiblionumber()}. */
     public Long getDuplicateBiblionumber() {
-        return duplicateBiblionumber;
+        return getExistingBiblionumber();
     }
 }
-

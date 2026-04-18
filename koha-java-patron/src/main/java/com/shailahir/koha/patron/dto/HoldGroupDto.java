@@ -10,6 +10,7 @@ import java.util.List;
 public class HoldGroupDto {
     private Long holdGroupId;
     private Long patronId;
-    private List<Long> holdIds;
+    private String branchcode;
+    private java.util.List<Long> holdIds;
 }
 

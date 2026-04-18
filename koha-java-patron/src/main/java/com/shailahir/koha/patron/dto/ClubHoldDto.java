@@ -10,7 +10,10 @@ public class ClubHoldDto {
     private Long clubHoldId;
     private Long clubId;
     private Long biblioId;
+    private Long biblionumber;
+    private Long itemId;
     private String branchCode;
+    private String branchcode;
     private String itemtype;
 }
 

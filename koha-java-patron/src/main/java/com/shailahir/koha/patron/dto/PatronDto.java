@@ -41,6 +41,8 @@ public class PatronDto {
     private String B_country;
     private String B_email;
     private String B_phone;
+    // dateofbirth maps to DB column dateofbirth; also aliased as datebirth for legacy compat
+    private LocalDate datebirth;
     private LocalDate dateofbirth;
     private String branchcode;
     private String categorycode;
@@ -48,17 +50,30 @@ public class PatronDto {
     private LocalDate dateexpiry;
     private String userid;
     private String opacnote;
+    private String contactnote;
     private String borrowernotes;
-    private Integer lost;
-    private Integer debarred;
+    private Boolean gonenoaddress;
+    private Boolean lost;
+    private LocalDate debarred;
     private String debarredcomment;
+    private String contactname;
+    private String contactfirstname;
+    private String contacttitle;
+    private String sex;
+    private String password;
+    private Long flags;
     private LocalDateTime lastseen;
     private Integer login_attempts;
     private String overdrive_auth_token;
+    private String stripe_customer_id;
     private Boolean anonymized;
     private String lang;
+    private Integer privacy;
+    private Integer privacyGuarantor;
     private Boolean privacy_guarantor_checkouts;
     private Boolean privacy_guarantor_fines;
+    private String sort1;
+    private String sort2;
     private String altcontactfirstname;
     private String altcontactsurname;
     private String altcontactaddress1;
@@ -70,7 +85,11 @@ public class PatronDto {
     private String altcontactphone;
     private String smsalertnumber;
     private String sms_provider_id;
+    private String smsprovider;
+    private String stripeCustomerId;
+    private String overdrive_auth_tokenAlias;
     private Boolean primary_address_valid;
     private Boolean secondary_address_valid;
+    private String overdriveAuthToken;
 }
 
