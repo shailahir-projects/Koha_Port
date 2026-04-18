@@ -30,6 +30,7 @@
         <module>koha-java-batch</module>
         <module>koha-java-opac-gateway</module>
         <module>koha-java-intranet-gateway</module>
+        <module>koha-java-database</module>
     </modules>
 </project>
 
