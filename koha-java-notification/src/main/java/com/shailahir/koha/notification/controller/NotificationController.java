@@ -1,71 +1,84 @@
 package com.shailahir.koha.notification.controller;
 
+import com.shailahir.koha.notification.dto.AdditionalContentDto;
+import com.shailahir.koha.notification.dto.NoticeTemplateDto;
+import com.shailahir.koha.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * Notification controller covering:
- * - /public/additional_contents (GET)
- * - /config/smtp_servers (GET, POST)
- * - /config/smtp_servers/{smtp_server_id} (GET, PUT, DELETE)
- * - /config/file_transports (GET, POST)
- * - /config/file_transports/{file_transport_id} (GET, PUT, DELETE)
+ * Notification controller - implements notice templates and additional content endpoints.
  */
 @RestController
 @RequiredArgsConstructor
 public class NotificationController {
 
-    @GetMapping("/public/additional_contents")
-    public ResponseEntity<List<Map<String, Object>>> listAdditionalContents(Pageable pageable) {
-        return ResponseEntity.ok(List.of());
+    private final NotificationService service;
+
+    // ── Notice Templates ──────────────────────────────────────────────────────
+
+    @GetMapping("/notice_templates")
+    public ResponseEntity<Page<NoticeTemplateDto>> listNotices(
+            @RequestParam(value = "q", required = false) String q,
+            Pageable pageable) {
+        return ResponseEntity.ok(service.listNotices(q, pageable));
     }
 
-    @GetMapping("/config/smtp_servers")
-    public ResponseEntity<List<Map<String, Object>>> listSMTPServers(Pageable pageable) {
-        return ResponseEntity.ok(List.of());
+    @PostMapping("/notice_templates")
+    public ResponseEntity<NoticeTemplateDto> addNotice(@RequestBody NoticeTemplateDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNotice(dto));
     }
-    @PostMapping("/config/smtp_servers")
-    public ResponseEntity<Map<String, Object>> addSMTPServer(@RequestBody Map<String, Object> dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of());
+
+    @GetMapping("/notice_templates/{notice_id}")
+    public ResponseEntity<NoticeTemplateDto> getNotice(@PathVariable("notice_id") Long id) {
+        return ResponseEntity.ok(service.getNotice(id));
     }
-    @GetMapping("/config/smtp_servers/{smtp_server_id}")
-    public ResponseEntity<Map<String, Object>> getSMTPServer(@PathVariable("smtp_server_id") Long id) {
-        return ResponseEntity.ok(Map.of());
+
+    @PutMapping("/notice_templates/{notice_id}")
+    public ResponseEntity<NoticeTemplateDto> updateNotice(@PathVariable("notice_id") Long id, @RequestBody NoticeTemplateDto dto) {
+        return ResponseEntity.ok(service.updateNotice(id, dto));
     }
-    @PutMapping("/config/smtp_servers/{smtp_server_id}")
-    public ResponseEntity<Map<String, Object>> updateSMTPServer(@PathVariable("smtp_server_id") Long id, @RequestBody Map<String, Object> dto) {
-        return ResponseEntity.ok(Map.of());
-    }
-    @DeleteMapping("/config/smtp_servers/{smtp_server_id}")
-    public ResponseEntity<Void> deleteSMTPServer(@PathVariable("smtp_server_id") Long id) {
+
+    @DeleteMapping("/notice_templates/{notice_id}")
+    public ResponseEntity<Void> deleteNotice(@PathVariable("notice_id") Long id) {
+        service.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/config/file_transports")
-    public ResponseEntity<List<Map<String, Object>>> listFileTransports(Pageable pageable) {
-        return ResponseEntity.ok(List.of());
+    // ── Additional Contents ───────────────────────────────────────────────────
+
+    @GetMapping("/additional_contents")
+    public ResponseEntity<Page<AdditionalContentDto>> listAdditionalContents(
+            @RequestParam(value = "q", required = false) String q,
+            Pageable pageable) {
+        return ResponseEntity.ok(service.listContent(q, pageable));
     }
-    @PostMapping("/config/file_transports")
-    public ResponseEntity<Map<String, Object>> addFileTransport(@RequestBody Map<String, Object> dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of());
+
+    @PostMapping("/additional_contents")
+    public ResponseEntity<AdditionalContentDto> addAdditionalContent(@RequestBody AdditionalContentDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addContent(dto));
     }
-    @GetMapping("/config/file_transports/{file_transport_id}")
-    public ResponseEntity<Map<String, Object>> getFileTransport(@PathVariable("file_transport_id") Long id) {
-        return ResponseEntity.ok(Map.of());
+
+    @GetMapping("/additional_contents/{content_id}")
+    public ResponseEntity<AdditionalContentDto> getAdditionalContent(@PathVariable("content_id") Long id) {
+        return ResponseEntity.ok(service.getContent(id));
     }
-    @PutMapping("/config/file_transports/{file_transport_id}")
-    public ResponseEntity<Map<String, Object>> updateFileTransport(@PathVariable("file_transport_id") Long id, @RequestBody Map<String, Object> dto) {
-        return ResponseEntity.ok(Map.of());
+
+    @PutMapping("/additional_contents/{content_id}")
+    public ResponseEntity<AdditionalContentDto> updateAdditionalContent(@PathVariable("content_id") Long id, @RequestBody AdditionalContentDto dto) {
+        return ResponseEntity.ok(service.updateContent(id, dto));
     }
-    @DeleteMapping("/config/file_transports/{file_transport_id}")
-    public ResponseEntity<Void> deleteFileTransport(@PathVariable("file_transport_id") Long id) {
+
+    @DeleteMapping("/additional_contents/{content_id}")
+    public ResponseEntity<Void> deleteAdditionalContent(@PathVariable("content_id") Long id) {
+        service.deleteContent(id);
         return ResponseEntity.noContent().build();
     }
+
+    // SMTP/File Transport endpoints remain TODO
 }
 
