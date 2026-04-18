@@ -190,6 +190,23 @@ public class OrderServiceImpl implements OrderService {
         orderRepo.cancel(ordernumber);
     }
 
+    /**
+     * Modifies only the estimated_delivery_date of an order.
+     * Mirrors moddeliverydate.pl (op=cud-save → ModOrder).
+     */
+    @Override
+    @Transactional
+    public OrderDto updateDeliveryDate(Long ordernumber, java.time.LocalDate date) {
+        int rows = orderRepo.updateDeliveryDate(ordernumber, date);
+        if (rows == 0) {
+            throw new jakarta.persistence.EntityNotFoundException(
+                    "Order not found: " + ordernumber);
+        }
+        return orderRepo.findById(ordernumber)
+                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                        "Order not found after update: " + ordernumber));
+    }
+
     // ── Budget validation ──────────────────────────────────────────────────────
 
     @Override

@@ -221,6 +221,19 @@ public class OrderRepository {
     }
 
     /**
+     * Update only the estimated_delivery_date column – mirrors moddeliverydate.pl ModOrder.
+     *
+     * @param ordernumber the order to update
+     * @param date        the new date, or null to clear
+     * @return number of rows affected (0 if order not found)
+     */
+    public int updateDeliveryDate(Long ordernumber, java.time.LocalDate date) {
+        return jdbc.update(
+                "UPDATE aqorders SET estimated_delivery_date = ? WHERE ordernumber = ?",
+                date, ordernumber);
+    }
+
+    /**
      * Soft-delete: mark order as 'cancelled'.
      */
     public void cancel(Long ordernumber) {

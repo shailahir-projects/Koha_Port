@@ -46,6 +46,17 @@ public interface OrderService {
     void deleteOrder(Long ordernumber);
 
     /**
+     * Update only the estimated delivery date of an order whose basket is closed.
+     * Mirrors moddeliverydate.pl (op=cud-save).
+     *
+     * @param ordernumber the target order
+     * @param date        new date, or null to clear
+     * @return the updated order
+     * @throws jakarta.persistence.EntityNotFoundException if the order does not exist
+     */
+    OrderDto updateDeliveryDate(Long ordernumber, java.time.LocalDate date);
+
+    /**
      * Validates budget headroom without persisting anything.
      * Returns a result object describing which thresholds (if any) are breached.
      */

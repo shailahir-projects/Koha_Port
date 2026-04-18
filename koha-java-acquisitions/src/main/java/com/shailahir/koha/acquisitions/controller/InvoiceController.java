@@ -37,6 +37,90 @@ public class InvoiceController {
     private final InvoiceRepository invoiceRepo;
     private final ObjectMapper      objectMapper;
 
+    // ── Invoice search (invoices.pl) ───────────────────────────────────────────
+
+    /**
+     * Searches invoices with optional filters — ports invoices.pl.
+     * <p>
+     * Mirrors {@code GetInvoices()} + the open/closed split in invoices.pl.
+     * When {@code do_search=false} (default) returns empty lists, mirroring
+     * the Perl behaviour of only running the query when {@code op=do_search}.
+     *
+     * @param doSearch        execute the search (pass {@code true} when form submitted)
+     * @param invoicenumber   partial match on invoice number
+     * @param supplierid      exact vendor id
+     * @param shipmentdatefrom / shipmentdateto  shipment date range (ISO dates)
+     * @param billingdatefrom / billingdateto    billing date range (ISO dates)
+     * @param isbneanissn     matches isbn, ean or issn of ordered items
+     * @param title           partial biblio title match
+     * @param author          partial biblio author match
+     * @param publisher       partial publishercode match
+     * @param publicationyear exact publication year match
+     * @param branch          basket branchcode filter
+     * @param messageId       EDIFACT message id filter
+     * @param additionalFields JSON array of {id,value} additional-field filters
+     */
+    @GetMapping("/acquisitions/invoices")
+    public ResponseEntity<Map<String, Object>> searchInvoices(
+            @RequestParam(value = "do_search",        defaultValue = "false") boolean doSearch,
+            @RequestParam(value = "invoicenumber",    required = false) String invoicenumber,
+            @RequestParam(value = "supplierid",       required = false) Long supplierid,
+            @RequestParam(value = "shipmentdatefrom", required = false) String shipmentdatefrom,
+            @RequestParam(value = "shipmentdateto",   required = false) String shipmentdateto,
+            @RequestParam(value = "billingdatefrom",  required = false) String billingdatefrom,
+            @RequestParam(value = "billingdateto",    required = false) String billingdateto,
+            @RequestParam(value = "isbneanissn",      required = false) String isbneanissn,
+            @RequestParam(value = "title",            required = false) String title,
+            @RequestParam(value = "author",           required = false) String author,
+            @RequestParam(value = "publisher",        required = false) String publisher,
+            @RequestParam(value = "publicationyear",  required = false) String publicationyear,
+            @RequestParam(value = "branch",           required = false) String branch,
+            @RequestParam(value = "message_id",       required = false) Long messageId,
+            @RequestParam(value = "additional_fields", required = false) String additionalFieldsJson) {
+
+        if (!doSearch) {
+            return ResponseEntity.ok(Map.of(
+                    "opened_invoices", List.of(),
+                    "closed_invoices", List.of(),
+                    "invoices",        List.of(),
+                    "do_search",       false));
+        }
+
+        // Parse optional additional_fields JSON: [{id:1,value:"..."}, ...]
+        List<Map<String, Object>> additionalFields = List.of();
+        if (additionalFieldsJson != null && !additionalFieldsJson.isBlank()) {
+            try {
+                additionalFields = objectMapper.readValue(additionalFieldsJson,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
+            } catch (Exception ignored) {}
+        }
+
+        List<Map<String, Object>> invoices = invoiceRepo.searchInvoices(
+                invoicenumber, supplierid,
+                parseDate(shipmentdatefrom), parseDate(shipmentdateto),
+                parseDate(billingdatefrom),  parseDate(billingdateto),
+                isbneanissn, title, author, publisher, publicationyear,
+                branch, messageId, additionalFields);
+
+        // Split into open / closed (mirrors the Perl for loop)
+        List<Map<String, Object>> opened = invoices.stream()
+                .filter(i -> i.get("closedate") == null).toList();
+        List<Map<String, Object>> closed = invoices.stream()
+                .filter(i -> i.get("closedate") != null).toList();
+
+        return ResponseEntity.ok(Map.of(
+                "invoices",        invoices,
+                "opened_invoices", opened,
+                "closed_invoices", closed,
+                "do_search",       true
+        ));
+    }
+
+    private java.time.LocalDate parseDate(String s) {
+        if (s == null || s.isBlank()) return null;
+        try { return java.time.LocalDate.parse(s.substring(0, 10)); } catch (Exception e) { return null; }
+    }
+
     // ── GET detail ─────────────────────────────────────────────────────────────
 
     /**
