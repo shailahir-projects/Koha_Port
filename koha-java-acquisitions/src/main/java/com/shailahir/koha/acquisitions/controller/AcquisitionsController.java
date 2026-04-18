@@ -185,6 +185,47 @@ public class AcquisitionsController {
     public ResponseEntity<List<Map<String, Object>>> listFundsUsers() { return ResponseEntity.ok(List.of()); }
 
     /**
+     * Updates just the estimated_delivery_date of an individual order.
+     * Ports moddeliverydate.pl — op=cud-save.
+     * <p>
+     * Mirrors: {@code $order->{'estimated_delivery_date'} = $date; ModOrder($order);}
+     * Used when a basket is already closed and the librarian wants to update only
+     * the expected delivery date without editing the full order.
+     *
+     * @param ordernumber order to update
+     * @param date        new estimated delivery date (ISO 8601 date string), or null/blank to clear it
+     * @return updated order info (ordernumber, basketno, estimated_delivery_date)
+     */
+    @PatchMapping("/acquisitions/orders/{ordernumber}/estimated-delivery-date")
+    public ResponseEntity<Map<String, Object>> updateEstimatedDeliveryDate(
+            @PathVariable Long ordernumber,
+            @RequestBody Map<String, String> body) {
+
+        // Validate the order exists
+        Integer exists = budgetRepository.getJdbc().queryForObject(
+                "SELECT COUNT(*) FROM aqorders WHERE ordernumber = ?", Integer.class, ordernumber);
+        if (exists == null || exists == 0) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String dateStr = body != null ? body.get("estimated_delivery_date") : null;
+        java.time.LocalDate date = null;
+        if (dateStr != null && !dateStr.isBlank()) {
+            try { date = java.time.LocalDate.parse(dateStr.substring(0, 10)); } catch (Exception ignored) {}
+        }
+
+        // ModOrder — update only estimated_delivery_date (mirrors moddeliverydate.pl)
+        budgetRepository.getJdbc().update(
+                "UPDATE aqorders SET estimated_delivery_date = ? WHERE ordernumber = ?",
+                date, ordernumber);
+
+        return ResponseEntity.ok(Map.of(
+                "ordernumber",             ordernumber,
+                "estimated_delivery_date", date != null ? date.toString() : ""
+        ));
+    }
+
+    /**
      * Returns the budget_amount for a given budget_id.
      * Ports check_budget_total.pl — used as an AJAX helper when the user changes
      * the fund on the order form to show the available budget total.
