@@ -44,7 +44,7 @@ public class PatronRelatedRepository {
         dto.setDate(rs.getObject("issuedate", java.time.LocalDateTime.class));
         dto.setDueDate(rs.getObject("date_due", java.time.LocalDateTime.class));
         dto.setReturnDate(rs.getObject("returndate", java.time.LocalDateTime.class));
-        dto.setBranchcode(rs.getString("branchcode"));
+        dto.setBranchCode(rs.getString("branchcode"));
         dto.setRenewals(rs.getInt("renewals_count"));
         dto.setAutoRenew(rs.getObject("auto_renew", Boolean.class));
         dto.setAutoRenewError(rs.getString("auto_renew_error"));
@@ -67,17 +67,17 @@ public class PatronRelatedRepository {
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setBiblionumber(rs.getLong("biblionumber"));
         dto.setItemnumber(rs.getObject("itemnumber", Long.class));
-        dto.setBranchcode(rs.getString("branchcode"));
+        dto.setBranchCode(rs.getString("branchcode"));
         dto.setStatus(rs.getString("found"));
         dto.setPriority(rs.getInt("priority"));
         dto.setReservdate(rs.getObject("reservedate", java.time.LocalDate.class));
-        dto.setExpirationdate(rs.getObject("expirationdate", java.time.LocalDate.class));
+        dto.setExpirationDate(rs.getObject("expirationdate", java.time.LocalDateTime.class));
         dto.setItemtype(rs.getString("itemtype"));
         dto.setPickupLibraryId(rs.getString("branchcode"));
         dto.setLowestPriority(rs.getBoolean("lowestPriority"));
         dto.setSuspend(rs.getBoolean("suspend"));
         dto.setSuspendUntil(rs.getObject("suspend_until", java.time.LocalDate.class));
-        dto.setWaitingdate(rs.getObject("waitingdate", java.time.LocalDate.class));
+        dto.setWaitingDate(rs.getObject("waitingdate", java.time.LocalDateTime.class));
         return dto;
     };
 
@@ -137,6 +137,7 @@ public class PatronRelatedRepository {
         dto.setExtendedAttributeId(rs.getLong("id"));
         dto.setPatronId(rs.getLong("borrowernumber"));
         dto.setCode(rs.getString("code"));
+        dto.setValue(rs.getString("attribute"));
         dto.setAttribute(rs.getString("attribute"));
         return dto;
     };
@@ -155,7 +156,7 @@ public class PatronRelatedRepository {
                 Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, patronId);
             ps.setString(2, dto.getCode());
-            ps.setString(3, dto.getAttribute());
+            ps.setString(3, dto.getValue() != null ? dto.getValue() : dto.getAttribute());
             return ps;
         }, kh);
         dto.setExtendedAttributeId(((Number) kh.getKeys().get("id")).longValue());
@@ -165,7 +166,7 @@ public class PatronRelatedRepository {
 
     public ExtendedAttributeDto updateAttribute(Long patronId, Long attrId, ExtendedAttributeDto dto) {
         jdbc.update("UPDATE borrower_attributes SET attribute = ? WHERE id = ? AND borrowernumber = ?",
-            dto.getAttribute(), attrId, patronId);
+            dto.getValue() != null ? dto.getValue() : dto.getAttribute(), attrId, patronId);
         dto.setExtendedAttributeId(attrId);
         dto.setPatronId(patronId);
         return dto;
@@ -232,14 +233,14 @@ public class PatronRelatedRepository {
 
     private static final RowMapper<VirtualShelfDto> SHELF_ROW_MAPPER = (rs, rowNum) -> {
         VirtualShelfDto dto = new VirtualShelfDto();
-        dto.setShelfId(rs.getLong("shelfnumber"));
+        dto.setShelfnumber(rs.getLong("shelfnumber"));
         dto.setShelfname(rs.getString("shelfname"));
-        dto.setOwner(rs.getObject("owner", Long.class));
+        dto.setOwner(rs.getString("owner"));
         dto.setCategory(rs.getString("category"));
         dto.setSortfield(rs.getString("sortfield"));
         dto.setLastmodified(rs.getObject("lastmodified", java.time.LocalDateTime.class));
-        dto.setAllowchanges(rs.getObject("allow_change_from_owner", Boolean.class));
-        dto.setAllowDeleteOther(rs.getObject("allow_delete_from_other", Boolean.class));
+        dto.setAllow_change_from_owner(rs.getObject("allow_change_from_owner", Boolean.class));
+        dto.setAllow_change_from_others(rs.getObject("allow_change_from_others", Boolean.class));
         return dto;
     };
 
@@ -260,9 +261,9 @@ public class PatronRelatedRepository {
                 VALUES (?, ?, ?, ?, NOW())
                 """, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, clubId);
-            ps.setObject(2, dto.getBiblionumber());
+            ps.setObject(2, dto.getBiblionumber() != null ? dto.getBiblionumber() : dto.getBiblioId());
             ps.setObject(3, dto.getItemId());
-            ps.setString(4, dto.getBranchcode());
+            ps.setString(4, dto.getBranchCode());
             return ps;
         }, kh);
         dto.setClubHoldId(((Number) kh.getKeys().get("id")).longValue());

@@ -11,5 +11,6 @@ public class ExtendedAttributeDto {
     private Long patronId;
     private String code;
     private String value;
+    private String attribute; // alias for value (DB column name)
 }
 

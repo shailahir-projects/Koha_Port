@@ -13,7 +13,6 @@ public class ClubHoldDto {
     private Long biblionumber;
     private Long itemId;
     private String branchCode;
-    private String branchcode;
     private String itemtype;
 }
 
