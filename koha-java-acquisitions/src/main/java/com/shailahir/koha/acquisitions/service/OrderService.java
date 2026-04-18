@@ -52,7 +52,7 @@ public interface OrderService {
      * @param ordernumber the target order
      * @param date        new date, or null to clear
      * @return the updated order
-     * @throws jakarta.persistence.EntityNotFoundException if the order does not exist
+     * @throws java.util.NoSuchElementException if the order does not exist
      */
     OrderDto updateDeliveryDate(Long ordernumber, java.time.LocalDate date);
 

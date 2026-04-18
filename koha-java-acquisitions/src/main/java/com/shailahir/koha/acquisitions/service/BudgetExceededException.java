@@ -1,13 +1,12 @@
 package com.shailahir.koha.acquisitions.service;
 
 /**
- * Thrown when an order would exceed the available budget and the caller
- * has not confirmed they wish to proceed (confirm_budget_exceeding=false).
+ * @deprecated Use {@link com.shailahir.koha.acquisitions.exception.BudgetExceededException} instead.
+ * Kept for backward compatibility with existing service implementations.
  */
-public class BudgetExceededException extends RuntimeException {
-
+@Deprecated(since = "1.0", forRemoval = true)
+public class BudgetExceededException extends com.shailahir.koha.acquisitions.exception.BudgetExceededException {
     public BudgetExceededException(String message) {
         super(message);
     }
 }
-
