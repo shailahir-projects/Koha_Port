@@ -50,7 +50,7 @@ public class LateOrdersController {
      * @param estimatedDeliveryFrom  lower bound for estimated_delivery_date (ISO date)
      * @param estimatedDeliveryTo    upper bound for estimated_delivery_date (ISO date)
      */
-    @GetMapping("/acquisitions/late-orders")
+    @GetMapping("/acquisitions/late-orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getLateOrders(
             @RequestParam(value = "booksellerid",          required = false) Long booksellerid,
             @RequestParam(value = "delay",                 defaultValue = "0") int delay,
@@ -95,7 +95,7 @@ public class LateOrdersController {
      * Returns available claim letter codes for the claimacquisition module.
      * Mirrors GetLetters({ module => "claimacquisition" }) in lateorders.pl.
      */
-    @GetMapping("/acquisitions/late-orders/letters")
+    @GetMapping("/acquisitions/late-orders/letters", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> getClaimLetters() {
         return ResponseEntity.ok(lateOrderRepo.getClaimLetters());
     }
@@ -120,7 +120,7 @@ public class LateOrdersController {
      * @param request ordernumbers + letter_code
      * @return claim result with success/error status per order
      */
-    @PostMapping("/acquisitions/late-orders/claim")
+    @PostMapping("/acquisitions/late-orders/claim", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Map<String, Object>> sendClaimAlert(@RequestBody ClaimOrderRequest request) {
 
@@ -171,7 +171,7 @@ public class LateOrdersController {
      * @param ordernumbers  comma-separated list of ordernumbers to export
      * @param csvProfileId  optional custom CSV profile id
      */
-    @GetMapping("/acquisitions/late-orders/export")
+    @GetMapping("/acquisitions/late-orders/export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> exportLateOrders(
             @RequestParam("ordernumber") List<Long> ordernumbers,
             @RequestParam(value = "csv_profile", required = false) Long csvProfileId) {

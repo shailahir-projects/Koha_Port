@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,7 +42,7 @@ public class BasketHeaderController {
      *   <li>Determines whether the basket name is read-only (EDI / po_is_basketname)</li>
      * </ul>
      */
-    @GetMapping("/acquisitions/baskets/{basketno}/header")
+    @GetMapping("/acquisitions/baskets/{basketno}/header", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketHeaderFormDto> getBasketHeaderForm(@PathVariable Long basketno) {
         BasketDto basket = basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
@@ -83,7 +84,7 @@ public class BasketHeaderController {
      * Mirrors the no-basketno branch of op=add_form in basketheader.pl:
      * loads active contracts for the vendor (none pre-selected).
      */
-    @GetMapping("/acquisitions/vendors/{booksellerid}/basket-form")
+    @GetMapping("/acquisitions/vendors/{booksellerid}/basket-form", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketHeaderFormDto> getNewBasketForm(@PathVariable Long booksellerid) {
         String vendorName = headerRepo.findVendorName(booksellerid).orElse("");
         List<ContractDto> contracts = headerRepo.findActiveContractsByVendor(booksellerid);
@@ -107,7 +108,7 @@ public class BasketHeaderController {
      * has {@code po_is_basketname} enabled, the basket name is preserved
      * (same protection as the Perl script applies).
      */
-    @PutMapping("/acquisitions/baskets/{basketno}/header")
+    @PutMapping("/acquisitions/baskets/{basketno}/header", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDto> updateBasketHeader(
             @PathVariable Long basketno,
             @RequestBody @Valid BasketHeaderRequest request) {
@@ -142,7 +143,7 @@ public class BasketHeaderController {
      * Mirrors NewBasket() in basketheader.pl.
      * Returns the newly created basket with its assigned basketno.
      */
-    @PostMapping("/acquisitions/baskets/header")
+    @PostMapping("/acquisitions/baskets/header", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDto> createBasket(@RequestBody @Valid BasketHeaderRequest request) {
         Long basketno = headerRepo.createBasket(
                 request.getBooksellerid(),

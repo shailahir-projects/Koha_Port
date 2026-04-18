@@ -15,11 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,24 +41,24 @@ public class AcquisitionsController {
 
     // ── Baskets ────────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/baskets")
+    @GetMapping("/acquisitions/baskets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BasketDto>> listBaskets(Pageable pageable) {
         return ResponseEntity.ok(basketService.listBaskets(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
-    @PostMapping("/acquisitions/baskets")
+    @PostMapping("/acquisitions/baskets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDto> addBasket(@RequestBody @Valid BasketDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(basketService.addBasket(dto));
     }
 
-    @GetMapping("/acquisitions/baskets/managers")
+    @GetMapping("/acquisitions/baskets/managers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BasketDto>> listBasketsManagers() {
         return ResponseEntity.ok(List.of());
     }
 
     // ── Orders ─────────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/orders")
+    @GetMapping("/acquisitions/orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<OrderDto>> listOrders(Pageable pageable) {
         return ResponseEntity.ok(orderService.listOrders(pageable.getPageNumber(), pageable.getPageSize()));
     }
@@ -70,7 +72,7 @@ public class AcquisitionsController {
      *
      * Returns 409 CONFLICT with error details if budget is exceeded or duplicate biblio found.
      */
-    @PostMapping("/acquisitions/orders")
+    @PostMapping("/acquisitions/orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest dto) {
         try {
             OrderDto saved = orderService.saveOrder(dto);
@@ -91,7 +93,7 @@ public class AcquisitionsController {
         }
     }
 
-    @GetMapping("/acquisitions/orders/{order_id}")
+    @GetMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<OrderDto> getOrder(@PathVariable("order_id") Long id) {
         return orderService.getOrder(id)
                 .map(ResponseEntity::ok)
@@ -102,7 +104,7 @@ public class AcquisitionsController {
      * PUT /acquisitions/orders/{order_id} — modify an existing order.
      * Same business logic as POST with ordernumber forced to the path variable.
      */
-    @PutMapping("/acquisitions/orders/{order_id}")
+    @PutMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> updateOrder(@PathVariable("order_id") Long id,
                                           @RequestBody @Valid OrderRequest dto) {
         dto.setOrdernumber(id);
@@ -124,7 +126,7 @@ public class AcquisitionsController {
     }
 
     /** Soft-cancels the order (orderstatus = 'cancelled'). */
-    @DeleteMapping("/acquisitions/orders/{order_id}")
+    @DeleteMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteOrder(@PathVariable("order_id") Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
@@ -132,56 +134,56 @@ public class AcquisitionsController {
 
     // ── Vendors ────────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/vendors")
+    @GetMapping("/acquisitions/vendors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listVendors(Pageable pageable) {
         return ResponseEntity.ok(budgetRepository.findAllVendors(
                 pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize()));
     }
 
-    @PostMapping("/acquisitions/vendors")
+    @PostMapping("/acquisitions/vendors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addVendor(@RequestBody Map<String, Object> dto) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(Map.of("error", "not_implemented"));
     }
 
-    @GetMapping("/acquisitions/vendors/{vendor_id}")
+    @GetMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getVendor(@PathVariable("vendor_id") Long id) {
         return budgetRepository.findVendorById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/acquisitions/vendors/{vendor_id}")
+    @PutMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateVendor(@PathVariable("vendor_id") Long id,
                                                              @RequestBody Map<String, Object> dto) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(Map.of("error", "not_implemented"));
     }
 
-    @DeleteMapping("/acquisitions/vendors/{vendor_id}")
+    @DeleteMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteVendor(@PathVariable("vendor_id") Long id) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
-    @GetMapping("/acquisitions/vendors/config")
+    @GetMapping("/acquisitions/vendors/config", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getVendorsConfig() { return ResponseEntity.ok(Map.of()); }
 
-    @GetMapping("/acquisitions/vendors/extended_attribute_types")
+    @GetMapping("/acquisitions/vendors/extended_attribute_types", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listVendorExtendedAttributeTypes() { return ResponseEntity.ok(List.of()); }
 
-    @GetMapping("/acquisitions/vendors/{vendor_id}/issues")
+    @GetMapping("/acquisitions/vendors/{vendor_id}/issues", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listVendorIssues(@PathVariable("vendor_id") Long vendorId) { return ResponseEntity.ok(List.of()); }
 
     // ── Funds ──────────────────────────────────────────────────────────────────
 
-    @GetMapping("/acquisitions/funds")
+    @GetMapping("/acquisitions/funds", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFunds(Pageable pageable) {
         return ResponseEntity.ok(budgetRepository.findAllFunds(
                 pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize()));
     }
 
-    @GetMapping("/acquisitions/funds/owners")
+    @GetMapping("/acquisitions/funds/owners", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFundsOwners() { return ResponseEntity.ok(List.of()); }
 
-    @GetMapping("/acquisitions/funds/users")
+    @GetMapping("/acquisitions/funds/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFundsUsers() { return ResponseEntity.ok(List.of()); }
 
     /**
@@ -196,7 +198,7 @@ public class AcquisitionsController {
      * @param date        new estimated delivery date (ISO 8601 date string), or null/blank to clear it
      * @return updated order info (ordernumber, basketno, estimated_delivery_date)
      */
-    @PatchMapping("/acquisitions/orders/{ordernumber}/estimated-delivery-date")
+    @PatchMapping("/acquisitions/orders/{ordernumber}/estimated-delivery-date", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateEstimatedDeliveryDate(
             @PathVariable Long ordernumber,
             @RequestBody Map<String, String> body) {
@@ -233,7 +235,7 @@ public class AcquisitionsController {
      * @param budgetId the budget_id to look up
      * @return {@code { "budget_amount": 1234.56 }} or 404 when not found
      */
-    @GetMapping("/acquisitions/budgets/{budget_id}/amount")
+    @GetMapping("/acquisitions/budgets/{budget_id}/amount", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getBudgetAmount(
             @PathVariable("budget_id") Long budgetId) {
         return budgetRepository.getBudgetAmount(budgetId)
@@ -258,7 +260,7 @@ public class AcquisitionsController {
      * @param values parallel list of values corresponding to each field
      * @return map of field → list of duplicate values found
      */
-    @GetMapping("/acquisitions/items/check-uniqueness")
+    @GetMapping("/acquisitions/items/check-uniqueness", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, List<String>>> checkItemUniqueness(
             @RequestParam(value = "field[]", required = false) List<String> fields,
             @RequestParam(value = "value[]", required = false) List<String> values) {
@@ -300,39 +302,39 @@ public class AcquisitionsController {
 
     // ── Quotes ─────────────────────────────────────────────────────────────────
 
-    @GetMapping("/quotes")
+    @GetMapping("/quotes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listQuotes(Pageable pageable) { return ResponseEntity.ok(List.of()); }
 
-    @PostMapping("/quotes")
+    @PostMapping("/quotes", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addQuote(@RequestBody Map<String, Object> dto) { return ResponseEntity.status(HttpStatus.CREATED).body(Map.of()); }
 
-    @GetMapping("/quotes/{quote_id}")
+    @GetMapping("/quotes/{quote_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getQuote(@PathVariable("quote_id") Long id) { return ResponseEntity.ok(Map.of()); }
 
-    @PutMapping("/quotes/{quote_id}")
+    @PutMapping("/quotes/{quote_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateQuote(@PathVariable("quote_id") Long id, @RequestBody Map<String, Object> dto) { return ResponseEntity.ok(Map.of()); }
 
-    @DeleteMapping("/quotes/{quote_id}")
+    @DeleteMapping("/quotes/{quote_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteQuote(@PathVariable("quote_id") Long id) { return ResponseEntity.noContent().build(); }
 
     // ── Suggestions ────────────────────────────────────────────────────────────
 
-    @GetMapping("/suggestions")
+    @GetMapping("/suggestions", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listSuggestions(Pageable pageable) { return ResponseEntity.ok(List.of()); }
 
-    @PostMapping("/suggestions")
+    @PostMapping("/suggestions", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addSuggestion(@RequestBody Map<String, Object> dto) { return ResponseEntity.status(HttpStatus.CREATED).body(Map.of()); }
 
-    @GetMapping("/suggestions/{suggestion_id}")
+    @GetMapping("/suggestions/{suggestion_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getSuggestion(@PathVariable("suggestion_id") Long id) { return ResponseEntity.ok(Map.of()); }
 
-    @PutMapping("/suggestions/{suggestion_id}")
+    @PutMapping("/suggestions/{suggestion_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateSuggestion(@PathVariable("suggestion_id") Long id, @RequestBody Map<String, Object> dto) { return ResponseEntity.ok(Map.of()); }
 
-    @DeleteMapping("/suggestions/{suggestion_id}")
+    @DeleteMapping("/suggestions/{suggestion_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteSuggestion(@PathVariable("suggestion_id") Long id) { return ResponseEntity.noContent().build(); }
 
-    @GetMapping("/suggestions/managers")
+    @GetMapping("/suggestions/managers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listSuggestionsManagers() { return ResponseEntity.ok(List.of()); }
 }
 

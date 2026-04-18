@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -36,28 +37,28 @@ public class ErmController {
 
     // ── Agreements ────────────────────────────────────────────────────────────
 
-    @GetMapping("/erm/agreements")
+    @GetMapping("/erm/agreements", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<AgreementDto>> listAgreements(
             @RequestParam(value = "q", required = false) String query, Pageable pageable) {
         return ResponseEntity.ok(ermService.listAgreements(query, pageable));
     }
 
-    @PostMapping("/erm/agreements")
+    @PostMapping("/erm/agreements", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AgreementDto> addAgreement(@RequestBody AgreementDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ermService.addAgreement(dto));
     }
 
-    @GetMapping("/erm/agreements/{agreement_id}")
+    @GetMapping("/erm/agreements/{agreement_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AgreementDto> getAgreement(@PathVariable("agreement_id") Long id) {
         return ResponseEntity.ok(ermService.getAgreement(id));
     }
 
-    @PutMapping("/erm/agreements/{agreement_id}")
+    @PutMapping("/erm/agreements/{agreement_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AgreementDto> updateAgreement(@PathVariable("agreement_id") Long id, @RequestBody AgreementDto dto) {
         return ResponseEntity.ok(ermService.updateAgreement(id, dto));
     }
 
-    @DeleteMapping("/erm/agreements/{agreement_id}")
+    @DeleteMapping("/erm/agreements/{agreement_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteAgreement(@PathVariable("agreement_id") Long id) {
         ermService.deleteAgreement(id);
         return ResponseEntity.noContent().build();
@@ -65,28 +66,28 @@ public class ErmController {
 
     // ── Licenses ──────────────────────────────────────────────────────────────
 
-    @GetMapping("/erm/licenses")
+    @GetMapping("/erm/licenses", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<LicenseDto>> listLicenses(
             @RequestParam(value = "q", required = false) String query, Pageable pageable) {
         return ResponseEntity.ok(ermService.listLicenses(query, pageable));
     }
 
-    @PostMapping("/erm/licenses")
+    @PostMapping("/erm/licenses", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<LicenseDto> addLicense(@RequestBody LicenseDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ermService.addLicense(dto));
     }
 
-    @GetMapping("/erm/licenses/{license_id}")
+    @GetMapping("/erm/licenses/{license_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<LicenseDto> getLicense(@PathVariable("license_id") Long id) {
         return ResponseEntity.ok(ermService.getLicense(id));
     }
 
-    @PutMapping("/erm/licenses/{license_id}")
+    @PutMapping("/erm/licenses/{license_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<LicenseDto> updateLicense(@PathVariable("license_id") Long id, @RequestBody LicenseDto dto) {
         return ResponseEntity.ok(ermService.updateLicense(id, dto));
     }
 
-    @DeleteMapping("/erm/licenses/{license_id}")
+    @DeleteMapping("/erm/licenses/{license_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteLicense(@PathVariable("license_id") Long id) {
         ermService.deleteLicense(id);
         return ResponseEntity.noContent().build();
@@ -94,35 +95,35 @@ public class ErmController {
 
     // ── eHoldings Packages ────────────────────────────────────────────────────
 
-    @GetMapping("/erm/eholdings/packages")
+    @GetMapping("/erm/eholdings/packages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<ErmPackageDto>> listPackages(
             @RequestParam(value = "q", required = false) String query, Pageable pageable) {
         return ResponseEntity.ok(ermService.listPackages(query, pageable));
     }
 
-    @PostMapping("/erm/eholdings/packages")
+    @PostMapping("/erm/eholdings/packages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> addPackage(@RequestBody ErmPackageDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ermService.addPackage(dto));
     }
 
-    @GetMapping("/erm/eholdings/packages/{package_id}")
+    @GetMapping("/erm/eholdings/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> getPackage(@PathVariable("package_id") Long id) {
         return ResponseEntity.ok(ermService.getPackage(id));
     }
 
-    @PutMapping("/erm/eholdings/packages/{package_id}")
+    @PutMapping("/erm/eholdings/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> updatePackage(@PathVariable("package_id") Long id, @RequestBody ErmPackageDto dto) {
         return ResponseEntity.ok(ermService.updatePackage(id, dto));
     }
 
-    @DeleteMapping("/erm/eholdings/packages/{package_id}")
+    @DeleteMapping("/erm/eholdings/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deletePackage(@PathVariable("package_id") Long id) {
         ermService.deletePackage(id);
         return ResponseEntity.noContent().build();
     }
 
     // Provider-aware package routes from Swagger parity
-    @GetMapping("/erm/eholdings/{provider}/packages")
+    @GetMapping("/erm/eholdings/{provider}/packages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<ErmPackageDto>> listProviderPackages(
             @PathVariable("provider") String provider,
             @RequestParam(value = "q", required = false) String query,
@@ -130,21 +131,21 @@ public class ErmController {
         return ResponseEntity.ok(ermService.listPackages(query, pageable));
     }
 
-    @PostMapping("/erm/eholdings/{provider}/packages")
+    @PostMapping("/erm/eholdings/{provider}/packages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> addProviderPackage(
             @PathVariable("provider") String provider,
             @RequestBody ErmPackageDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ermService.addPackage(dto));
     }
 
-    @GetMapping("/erm/eholdings/{provider}/packages/{package_id}")
+    @GetMapping("/erm/eholdings/{provider}/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> getProviderPackage(
             @PathVariable("provider") String provider,
             @PathVariable("package_id") Long id) {
         return ResponseEntity.ok(ermService.getPackage(id));
     }
 
-    @PutMapping("/erm/eholdings/{provider}/packages/{package_id}")
+    @PutMapping("/erm/eholdings/{provider}/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ErmPackageDto> updateProviderPackage(
             @PathVariable("provider") String provider,
             @PathVariable("package_id") Long id,
@@ -152,7 +153,7 @@ public class ErmController {
         return ResponseEntity.ok(ermService.updatePackage(id, dto));
     }
 
-    @DeleteMapping("/erm/eholdings/{provider}/packages/{package_id}")
+    @DeleteMapping("/erm/eholdings/{provider}/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteProviderPackage(
             @PathVariable("provider") String provider,
             @PathVariable("package_id") Long id) {
@@ -160,7 +161,7 @@ public class ErmController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/erm/eholdings/{provider}/packages/{package_id}")
+    @PatchMapping("/erm/eholdings/{provider}/packages/{package_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> patchProviderPackage(
             @PathVariable("provider") String provider,
             @PathVariable("package_id") Long id,
@@ -172,76 +173,76 @@ public class ErmController {
     }
 
     // Config
-    @GetMapping("/erm/config")
+    @GetMapping("/erm/config", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getConfig() {
         return ResponseEntity.ok(Map.of("module", "erm", "status", "enabled"));
     }
 
     // Documents
-    @GetMapping("/erm/documents")
+    @GetMapping("/erm/documents", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listDocuments(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_documents", "document_id", pageable));
     }
 
-    @PostMapping("/erm/documents")
+    @PostMapping("/erm/documents", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addDocument(@RequestBody Map<String, Object> dto) {
         long id = insertRow("erm_documents", dto, "document_id");
         return ResponseEntity.status(HttpStatus.CREATED).body(getRow("erm_documents", "document_id", id));
     }
 
-    @GetMapping("/erm/documents/{document_id}")
+    @GetMapping("/erm/documents/{document_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getDocument(@PathVariable("document_id") Long id) {
         return ResponseEntity.ok(getRow("erm_documents", "document_id", id));
     }
 
-    @PutMapping("/erm/documents/{document_id}")
+    @PutMapping("/erm/documents/{document_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateDocument(@PathVariable("document_id") Long id, @RequestBody Map<String, Object> dto) {
         updateRow("erm_documents", "document_id", id, dto);
         return ResponseEntity.ok(getRow("erm_documents", "document_id", id));
     }
 
-    @DeleteMapping("/erm/documents/{document_id}")
+    @DeleteMapping("/erm/documents/{document_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteDocument(@PathVariable("document_id") Long id) {
         jdbc.update("DELETE FROM erm_documents WHERE document_id = ?", id);
         return ResponseEntity.noContent().build();
     }
 
     // Users (ERM user roles)
-    @GetMapping("/erm/users")
+    @GetMapping("/erm/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsers(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_user_roles", "user_role_id", pageable));
     }
 
-    @PostMapping("/erm/users")
+    @PostMapping("/erm/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addUser(@RequestBody Map<String, Object> dto) {
         long id = insertRow("erm_user_roles", dto, "user_role_id");
         return ResponseEntity.status(HttpStatus.CREATED).body(getRow("erm_user_roles", "user_role_id", id));
     }
 
-    @GetMapping("/erm/users/{user_role_id}")
+    @GetMapping("/erm/users/{user_role_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getUser(@PathVariable("user_role_id") Long id) {
         return ResponseEntity.ok(getRow("erm_user_roles", "user_role_id", id));
     }
 
-    @PutMapping("/erm/users/{user_role_id}")
+    @PutMapping("/erm/users/{user_role_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateUser(@PathVariable("user_role_id") Long id, @RequestBody Map<String, Object> dto) {
         updateRow("erm_user_roles", "user_role_id", id, dto);
         return ResponseEntity.ok(getRow("erm_user_roles", "user_role_id", id));
     }
 
-    @DeleteMapping("/erm/users/{user_role_id}")
+    @DeleteMapping("/erm/users/{user_role_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteUser(@PathVariable("user_role_id") Long id) {
         jdbc.update("DELETE FROM erm_user_roles WHERE user_role_id = ?", id);
         return ResponseEntity.noContent().build();
     }
 
     // eHoldings resources
-    @GetMapping("/erm/eholdings/{provider}/resources")
+    @GetMapping("/erm/eholdings/{provider}/resources", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listResources(@PathVariable("provider") String provider, Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_eholdings_resources", "resource_id", pageable));
     }
 
-    @GetMapping("/erm/eholdings/{provider}/packages/{package_id}/resources")
+    @GetMapping("/erm/eholdings/{provider}/packages/{package_id}/resources", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listPackageResources(
             @PathVariable("provider") String provider,
             @PathVariable("package_id") Long packageId,
@@ -249,7 +250,7 @@ public class ErmController {
         return ResponseEntity.ok(pageQueryByForeignKey("erm_eholdings_resources", "resource_id", "package_id", packageId, pageable));
     }
 
-    @GetMapping("/erm/eholdings/{provider}/titles/{title_id}/resources")
+    @GetMapping("/erm/eholdings/{provider}/titles/{title_id}/resources", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listTitleResources(
             @PathVariable("provider") String provider,
             @PathVariable("title_id") Long titleId,
@@ -257,12 +258,12 @@ public class ErmController {
         return ResponseEntity.ok(pageQueryByForeignKey("erm_eholdings_resources", "resource_id", "title_id", titleId, pageable));
     }
 
-    @GetMapping("/erm/eholdings/{provider}/resources/{resource_id}")
+    @GetMapping("/erm/eholdings/{provider}/resources/{resource_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getResource(@PathVariable("provider") String provider, @PathVariable("resource_id") Long id) {
         return ResponseEntity.ok(getRow("erm_eholdings_resources", "resource_id", id));
     }
 
-    @PatchMapping("/erm/eholdings/{provider}/resources/{resource_id}")
+    @PatchMapping("/erm/eholdings/{provider}/resources/{resource_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> patchResource(
             @PathVariable("provider") String provider,
             @PathVariable("resource_id") Long id,
@@ -275,104 +276,104 @@ public class ErmController {
     }
 
     // eHoldings titles
-    @GetMapping("/erm/eholdings/{provider}/titles")
+    @GetMapping("/erm/eholdings/{provider}/titles", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listTitles(@PathVariable("provider") String provider, Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_eholdings_titles", "title_id", pageable));
     }
 
-    @PostMapping("/erm/eholdings/{provider}/titles")
+    @PostMapping("/erm/eholdings/{provider}/titles", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addTitle(@PathVariable("provider") String provider, @RequestBody Map<String, Object> dto) {
         long id = insertRow("erm_eholdings_titles", dto, "title_id");
         return ResponseEntity.status(HttpStatus.CREATED).body(getRow("erm_eholdings_titles", "title_id", id));
     }
 
-    @GetMapping("/erm/eholdings/{provider}/titles/{title_id}")
+    @GetMapping("/erm/eholdings/{provider}/titles/{title_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getTitle(@PathVariable("provider") String provider, @PathVariable("title_id") Long id) {
         return ResponseEntity.ok(getRow("erm_eholdings_titles", "title_id", id));
     }
 
-    @PutMapping("/erm/eholdings/{provider}/titles/{title_id}")
+    @PutMapping("/erm/eholdings/{provider}/titles/{title_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateTitle(@PathVariable("provider") String provider, @PathVariable("title_id") Long id, @RequestBody Map<String, Object> dto) {
         updateRow("erm_eholdings_titles", "title_id", id, dto);
         return ResponseEntity.ok(getRow("erm_eholdings_titles", "title_id", id));
     }
 
-    @DeleteMapping("/erm/eholdings/{provider}/titles/{title_id}")
+    @DeleteMapping("/erm/eholdings/{provider}/titles/{title_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteTitle(@PathVariable("provider") String provider, @PathVariable("title_id") Long id) {
         jdbc.update("DELETE FROM erm_eholdings_titles WHERE title_id = ?", id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/erm/eholdings/local/titles/import")
+    @PostMapping("/erm/eholdings/local/titles/import", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> importTitles(@RequestBody Map<String, Object> body) {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("job_id", "queued-local-title-import"));
     }
 
-    @PostMapping("/erm/eholdings/local/titles/import_kbart")
+    @PostMapping("/erm/eholdings/local/titles/import_kbart", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> importTitlesFromKbart(@RequestBody Map<String, Object> body) {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("job_ids", List.of("queued-kbart-import")));
     }
 
     // EUsage / Counter families
-    @GetMapping("/erm/counter/files")
+    @GetMapping("/erm/counter/files", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listCounterFiles(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_counter_files", "erm_counter_files_id", pageable));
     }
 
-    @GetMapping("/erm/counter/logs")
+    @GetMapping("/erm/counter/logs", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listCounterLogs(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_counter_logs", "erm_counter_log_id", pageable));
     }
 
-    @GetMapping("/erm/default_usage_reports")
+    @GetMapping("/erm/default_usage_reports", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listDefaultUsageReports(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_default_usage_reports", "erm_default_usage_report_id", pageable));
     }
 
-    @GetMapping("/erm/usage/data_providers")
+    @GetMapping("/erm/usage/data_providers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsageDataProviders(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_usage_data_providers", "erm_usage_data_provider_id", pageable));
     }
 
-    @GetMapping("/erm/usage/databases")
+    @GetMapping("/erm/usage/databases", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsageDatabases(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_usage_databases", "database_id", pageable));
     }
 
-    @GetMapping("/erm/usage/items")
+    @GetMapping("/erm/usage/items", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsageItems(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_usage_items", "item_id", pageable));
     }
 
-    @GetMapping("/erm/usage/platforms")
+    @GetMapping("/erm/usage/platforms", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsagePlatforms(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_usage_platforms", "platform_id", pageable));
     }
 
-    @GetMapping("/erm/usage/titles")
+    @GetMapping("/erm/usage/titles", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<Map<String, Object>>> listUsageTitles(Pageable pageable) {
         return ResponseEntity.ok(pageQuery("erm_usage_titles", "title_id", pageable));
     }
 
-    @GetMapping("/erm/counter/registries")
+    @GetMapping("/erm/counter/registries", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listCounterRegistries() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT DISTINCT service_url, report_release, customer_id FROM erm_usage_data_providers WHERE service_url IS NOT NULL"));
     }
 
-    @GetMapping("/erm/custom_reports")
+    @GetMapping("/erm/custom_reports", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listCustomReports() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT id, report_name, notes FROM saved_sql WHERE report_group ILIKE 'ERM%' ORDER BY id DESC"));
     }
 
-    @GetMapping("/erm/sushi_services")
+    @GetMapping("/erm/sushi_services", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listSushiServices() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT erm_usage_data_provider_id, name, service_url, service_type, report_release FROM erm_usage_data_providers ORDER BY erm_usage_data_provider_id DESC"));
     }
 
-    @GetMapping("/erm/extended_attribute_types")
+    @GetMapping("/erm/extended_attribute_types", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listExtendedAttributeTypes() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT * FROM additional_field_types WHERE tablename ILIKE 'erm_%' ORDER BY id"));

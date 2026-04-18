@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * Mirrors the form parameters submitted in the cud-do_duplicate block of duplicate_orders.pl.
  */
 @Data
+@JacksonXmlRootElement
 public class DuplicateOrdersRequest {
 
     /** Order numbers to duplicate into the target basket */

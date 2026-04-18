@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -10,6 +12,7 @@ import java.time.LocalDate;
  * of a single order whose basket is already closed.
  */
 @Data
+@JacksonXmlRootElement
 public class ModDeliveryDateRequest {
 
     /**

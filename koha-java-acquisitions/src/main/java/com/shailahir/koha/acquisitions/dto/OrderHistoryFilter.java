@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import java.util.Map;
  * Mirrors the %filters hash built in duplicate_orders.pl and passed to GetHistory().
  */
 @Data
+@JacksonXmlRootElement
 public class OrderHistoryFilter {
 
     @JsonProperty("basket")

@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -8,6 +10,7 @@ import lombok.Data;
  * Maps to the cud-confirmcancel CGI parameters in cancelorder.pl.
  */
 @Data
+@JacksonXmlRootElement
 public class CancelOrderRequest {
 
     /**

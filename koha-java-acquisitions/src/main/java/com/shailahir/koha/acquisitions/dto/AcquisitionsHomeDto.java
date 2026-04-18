@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ import java.util.List;
  * Contains budget summaries, budget periods, suggestions count, and active currency.
  */
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
+@JacksonXmlRootElement
 public class AcquisitionsHomeDto {
 
     // ── Suggestions ──

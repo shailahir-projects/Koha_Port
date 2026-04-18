@@ -6,6 +6,7 @@ import com.shailahir.koha.acquisitions.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class BooksellersController {
      * @param allbaskets   when 1, include closed baskets; when 0 (default), open only
      * @return vendor basket overview DTO
      */
-    @GetMapping("/acquisitions/vendors/{booksellerid}/baskets")
+    @GetMapping("/acquisitions/vendors/{booksellerid}/baskets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<VendorBasketsDto> getVendorBaskets(
             @PathVariable Long booksellerid,
             @RequestParam(value = "allbaskets", defaultValue = "0") int allbaskets) {

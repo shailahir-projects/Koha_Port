@@ -1,5 +1,7 @@
 package com.shailahir.koha.admin.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
+@JacksonXmlRootElement
 public class PreservationTrainDto {
     private Long trainId;
     private String name;

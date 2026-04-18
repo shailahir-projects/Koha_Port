@@ -1,5 +1,7 @@
 package com.shailahir.koha.serials.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
+@JacksonXmlRootElement
 public class SubscriptionDto {
     private Long subscriptionId;
     private Long biblioId;

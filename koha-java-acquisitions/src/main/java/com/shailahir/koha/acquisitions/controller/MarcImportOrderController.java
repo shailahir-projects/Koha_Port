@@ -5,6 +5,7 @@ import com.shailahir.koha.acquisitions.service.MarcImportOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class MarcImportOrderController {
      *
      * @return list of batches in status 'staged' (not yet fully imported)
      */
-    @GetMapping("/batches")
+    @GetMapping("/batches", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ImportBatchDto>> listImportBatches() {
         return ResponseEntity.ok(marcImportOrderService.listImportBatches());
     }
@@ -48,7 +49,7 @@ public class MarcImportOrderController {
      * @param batchId the import_batch_id
      * @return batch metadata and list of biblio records
      */
-    @GetMapping("/batches/{batch_id}")
+    @GetMapping("/batches/{batch_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ImportBatchDetailDto> getBatchDetail(@PathVariable("batch_id") Long batchId) {
         return ResponseEntity.ok(marcImportOrderService.getBatchDetail(batchId));
     }
@@ -71,7 +72,7 @@ public class MarcImportOrderController {
      * @param request  user form data (selected record IDs, per-record overrides, defaults)
      * @return import result summary
      */
-    @PostMapping("/baskets/{basketno}/import")
+    @PostMapping("/baskets/{basketno}/import", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<MarcImportResult> importAndCreateOrders(
             @PathVariable("basketno") Long basketno,
             @RequestBody MarcImportOrderRequest request) {

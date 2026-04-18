@@ -1,5 +1,7 @@
 package com.shailahir.koha.erm.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
+@JacksonXmlRootElement
 public class LicenseDto {
     private Long licenseId;
     private String name;

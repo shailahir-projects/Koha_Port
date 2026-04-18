@@ -7,6 +7,7 @@ import com.shailahir.koha.acquisitions.service.AcquisitionsHomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class AcquisitionsHomeController {
      * @param branchCode    home branch code of the logged-in patron
      * @param onlyMyLibrary true if the system preference OnlyMyLibrary is enabled
      */
-    @GetMapping("/acquisitions/home")
+    @GetMapping("/acquisitions/home", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AcquisitionsHomeDto> getAcquisitionsHome(
             @RequestParam("patron_id") Long patronId,
             @RequestParam("branch_code") String branchCode,
@@ -70,7 +71,7 @@ public class AcquisitionsHomeController {
      * @param budgetPeriodId optional; filters to a specific budget period
      * @param patronId       filters budgets by user permission
      */
-    @GetMapping("/acquisitions/budgets")
+    @GetMapping("/acquisitions/budgets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BudgetDto>> getBudgetHierarchy(
             @RequestParam(value = "budget_period_id", required = false) Long budgetPeriodId,
             @RequestParam("patron_id") Long patronId) {
@@ -84,7 +85,7 @@ public class AcquisitionsHomeController {
      * (equivalent to {@code GetBudgetPeriods} + {@code GetBudgetHierarchy} per period
      * with depth-based display names in acqui-home.pl).
      */
-    @GetMapping("/acquisitions/budget_periods")
+    @GetMapping("/acquisitions/budget_periods", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BudgetPeriodDto>> getBudgetPeriods() {
         return ResponseEntity.ok(acquisitionsHomeService.getBudgetPeriods());
     }

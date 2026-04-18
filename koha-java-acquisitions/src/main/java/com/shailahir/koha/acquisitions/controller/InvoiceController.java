@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,7 +61,7 @@ public class InvoiceController {
      * @param messageId       EDIFACT message id filter
      * @param additionalFields JSON array of {id,value} additional-field filters
      */
-    @GetMapping("/acquisitions/invoices")
+    @GetMapping("/acquisitions/invoices", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> searchInvoices(
             @RequestParam(value = "do_search",        defaultValue = "false") boolean doSearch,
             @RequestParam(value = "invoicenumber",    required = false) String invoicenumber,
@@ -127,7 +128,7 @@ public class InvoiceController {
      * Returns full invoice detail including enriched order lines and totals.
      * Mirrors GetInvoiceDetails() + the order loop + footer totals in invoice.pl.
      */
-    @GetMapping("/acquisitions/invoices/{id}")
+    @GetMapping("/acquisitions/invoices/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<InvoiceDetailDto> getInvoice(@PathVariable Long id) {
         Map<String, Object> inv = invoiceRepo.findInvoice(id)
                 .orElse(null);
@@ -198,7 +199,7 @@ public class InvoiceController {
     // ── Close / Reopen ─────────────────────────────────────────────────────────
 
     /** op=cud-close — mirrors CloseInvoice(). */
-    @PostMapping("/acquisitions/invoices/{id}/close")
+    @PostMapping("/acquisitions/invoices/{id}/close", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> closeInvoice(@PathVariable Long id) {
         ensureExists(id);
@@ -208,7 +209,7 @@ public class InvoiceController {
     }
 
     /** op=cud-reopen — mirrors ReopenInvoice(). */
-    @PostMapping("/acquisitions/invoices/{id}/reopen")
+    @PostMapping("/acquisitions/invoices/{id}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> reopenInvoice(@PathVariable Long id) {
         ensureExists(id);
@@ -222,7 +223,7 @@ public class InvoiceController {
     /**
      * op=cud-mod — mirrors ModInvoice() + optional reopen/close/merge.
      */
-    @PutMapping("/acquisitions/invoices/{id}")
+    @PutMapping("/acquisitions/invoices/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<InvoiceDetailDto> modifyInvoice(
             @PathVariable Long id,
@@ -250,7 +251,7 @@ public class InvoiceController {
     // ── Delete ─────────────────────────────────────────────────────────────────
 
     /** op=cud-delete — mirrors DelInvoice(). Unlinks orders, deletes adjustments. */
-    @DeleteMapping("/acquisitions/invoices/{id}")
+    @DeleteMapping("/acquisitions/invoices/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteInvoice(@PathVariable Long id) {
         ensureExists(id);
@@ -262,7 +263,7 @@ public class InvoiceController {
     // ── Adjustments ────────────────────────────────────────────────────────────
 
     /** Returns all adjustments for this invoice. */
-    @GetMapping("/acquisitions/invoices/{id}/adjustments")
+    @GetMapping("/acquisitions/invoices/{id}/adjustments", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<InvoiceAdjustmentDto>> getAdjustments(@PathVariable Long id) {
         return ResponseEntity.ok(invoiceRepo.findAdjustments(id));
     }
@@ -271,7 +272,7 @@ public class InvoiceController {
      * Creates a new adjustment (cud-mod_adj where adjustment_id = 'new').
      * Mirrors the $new_adj->store() + logaction(CREATE_INVOICE_ADJUSTMENT) block.
      */
-    @PostMapping("/acquisitions/invoices/{id}/adjustments")
+    @PostMapping("/acquisitions/invoices/{id}/adjustments", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<InvoiceAdjustmentDto> createAdjustment(
             @PathVariable Long id,
@@ -293,7 +294,7 @@ public class InvoiceController {
      * Updates an existing adjustment (cud-mod_adj for existing id).
      * Logs if the adjustment values changed, mirroring the Perl comparison block.
      */
-    @PutMapping("/acquisitions/invoices/{id}/adjustments/{adjId}")
+    @PutMapping("/acquisitions/invoices/{id}/adjustments/{adjId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<InvoiceAdjustmentDto> updateAdjustment(
             @PathVariable Long id,
@@ -331,7 +332,7 @@ public class InvoiceController {
      * Deletes an adjustment (op=cud-del_adj).
      * Mirrors $del_adj->delete() + logaction(DELETE_INVOICE_ADJUSTMENT).
      */
-    @DeleteMapping("/acquisitions/invoices/{id}/adjustments/{adjId}")
+    @DeleteMapping("/acquisitions/invoices/{id}/adjustments/{adjId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Void> deleteAdjustment(
             @PathVariable Long id,

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
@@ -26,58 +27,58 @@ public class SerialsController {
 
     // ── Subscriptions ─────────────────────────────────────────────────────────
 
-    @GetMapping("/subscriptions")
+    @GetMapping("/subscriptions", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<SubscriptionDto>> listSubscriptions(@RequestParam(value = "q", required = false) String q, Pageable pageable) {
         return ResponseEntity.ok(service.listSubscriptions(q, pageable));
     }
 
-    @PostMapping("/subscriptions")
+    @PostMapping("/subscriptions", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionDto> addSubscription(@RequestBody SubscriptionDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addSubscription(dto));
     }
 
-    @GetMapping("/subscriptions/{subscription_id}")
+    @GetMapping("/subscriptions/{subscription_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionDto> getSubscription(@PathVariable("subscription_id") Long id) {
         return ResponseEntity.ok(service.getSubscription(id));
     }
 
-    @PutMapping("/subscriptions/{subscription_id}")
+    @PutMapping("/subscriptions/{subscription_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionDto> updateSubscription(@PathVariable("subscription_id") Long id, @RequestBody SubscriptionDto dto) {
         return ResponseEntity.ok(service.updateSubscription(id, dto));
     }
 
-    @DeleteMapping("/subscriptions/{subscription_id}")
+    @DeleteMapping("/subscriptions/{subscription_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteSubscription(@PathVariable("subscription_id") Long id) {
         service.deleteSubscription(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/subscriptions/{subscription_id}/serials")
+    @GetMapping("/subscriptions/{subscription_id}/serials", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<SerialDto>> listSubscriptionSerials(@PathVariable("subscription_id") Long id) {
         return ResponseEntity.ok(service.listSubscriptionSerials(id));
     }
 
-    @GetMapping("/subscriptions/search")
+    @GetMapping("/subscriptions/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<SubscriptionDto>> searchSubscriptions(@RequestParam(value = "q", required = false) String q, Pageable pageable) {
         return ResponseEntity.ok(service.searchSubscriptions(q, pageable));
     }
 
-    @GetMapping("/subscriptions/{subscription_id}/history")
+    @GetMapping("/subscriptions/{subscription_id}/history", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<SerialDto>> getSubscriptionHistory(@PathVariable("subscription_id") Long id) {
         return ResponseEntity.ok(service.getSubscriptionHistory(id));
     }
 
-    @PostMapping("/subscriptions/{subscription_id}/renew")
+    @PostMapping("/subscriptions/{subscription_id}/renew", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionDto> renewSubscription(@PathVariable("subscription_id") Long id, @RequestBody SubscriptionDto dto) {
         return ResponseEntity.ok(service.renewSubscription(id, dto));
     }
 
-    @GetMapping("/claims")
+    @GetMapping("/claims", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<SerialDto>> listClaims(Pageable pageable) {
         return ResponseEntity.ok(service.listClaims(pageable));
     }
 
-    @GetMapping("/home")
+    @GetMapping("/home", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> homeSummary() {
         Integer subscriptions = jdbc.queryForObject("SELECT COUNT(*) FROM subscription", Integer.class);
         Integer serials = jdbc.queryForObject("SELECT COUNT(*) FROM serial", Integer.class);
@@ -86,31 +87,31 @@ public class SerialsController {
                 "serials", serials != null ? serials : 0));
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<SubscriptionDto>> search(@RequestParam(value = "q", required = false) String q, Pageable pageable) {
         return ResponseEntity.ok(service.searchSubscriptions(q, pageable));
     }
 
-    @GetMapping("/collection")
+    @GetMapping("/collection", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> collection(Pageable pageable) {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT serialid, subscriptionid, status, serialseq, publisheddate FROM serial ORDER BY serialid DESC LIMIT ? OFFSET ?",
                 pageable.getPageSize(), pageable.getOffset()));
     }
 
-    @GetMapping("/routing/{subscription_id}")
+    @GetMapping("/routing/{subscription_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> routing(@PathVariable("subscription_id") Long subscriptionId) {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT * FROM subscriptionroutinglist WHERE subscriptionid = ? ORDER BY ranking",
                 subscriptionId));
     }
 
-    @GetMapping("/routing-preview/{subscription_id}")
+    @GetMapping("/routing-preview/{subscription_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> routingPreview(@PathVariable("subscription_id") Long subscriptionId) {
         return routing(subscriptionId);
     }
 
-    @PostMapping("/reorder_members")
+    @PostMapping("/reorder_members", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> reorderMembers(@RequestBody List<Map<String, Object>> payload) {
         for (Map<String, Object> row : payload) {
             jdbc.update("UPDATE subscriptionroutinglist SET ranking = ? WHERE routingid = ?",
@@ -119,13 +120,13 @@ public class SerialsController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/subscriptions/batch_edit")
+    @PostMapping("/subscriptions/batch_edit", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> batchEdit(@RequestBody Map<String, Object> body) {
         Object ids = body.get("subscription_ids");
         return ResponseEntity.ok(Map.of("updated", ids != null ? ids : List.of()));
     }
 
-    @GetMapping("/subscriptions/bib_search")
+    @GetMapping("/subscriptions/bib_search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> bibSearch(@RequestParam(value = "q", required = false) String q) {
         String needle = q == null ? "" : q;
         return ResponseEntity.ok(jdbc.queryForList(
@@ -133,19 +134,19 @@ public class SerialsController {
                 "%" + needle + "%"));
     }
 
-    @GetMapping("/lateissues-export")
+    @GetMapping("/lateissues-export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> lateIssuesExport() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT serialid, subscriptionid, serialseq, publisheddate FROM serial WHERE status ILIKE 'LATE%' ORDER BY serialid DESC"));
     }
 
-    @GetMapping("/checkexpiration")
+    @GetMapping("/checkexpiration", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> checkExpiration() {
         return ResponseEntity.ok(jdbc.queryForList(
                 "SELECT subscriptionid, enddate, notes FROM subscription WHERE enddate < CURRENT_DATE ORDER BY enddate DESC"));
     }
 
-    @GetMapping("/acqui-search")
+    @GetMapping("/acqui-search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> acquisitionsSearch(@RequestParam(value = "q", required = false) String q) {
         String needle = q == null ? "" : q;
         return ResponseEntity.ok(jdbc.queryForList(
@@ -153,34 +154,34 @@ public class SerialsController {
                 "%" + needle + "%"));
     }
 
-    @GetMapping("/acqui-search-result")
+    @GetMapping("/acqui-search-result", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> acquisitionsSearchResult(@RequestParam(value = "q", required = false) String q) {
         return acquisitionsSearch(q);
     }
 
     // ── Frequencies ───────────────────────────────────────────────────────────
 
-    @GetMapping("/serial_frequencies")
+    @GetMapping("/serial_frequencies", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<SubscriptionFrequencyDto>> listSerialFrequencies() {
         return ResponseEntity.ok(service.listFrequencies());
     }
 
-    @PostMapping("/serial_frequencies")
+    @PostMapping("/serial_frequencies", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionFrequencyDto> addSerialFrequency(@RequestBody SubscriptionFrequencyDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addFrequency(dto));
     }
 
-    @GetMapping("/serial_frequencies/{frequency_id}")
+    @GetMapping("/serial_frequencies/{frequency_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionFrequencyDto> getSerialFrequency(@PathVariable("frequency_id") Long id) {
         return ResponseEntity.ok(service.getFrequency(id));
     }
 
-    @PutMapping("/serial_frequencies/{frequency_id}")
+    @PutMapping("/serial_frequencies/{frequency_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SubscriptionFrequencyDto> updateSerialFrequency(@PathVariable("frequency_id") Long id, @RequestBody SubscriptionFrequencyDto dto) {
         return ResponseEntity.ok(service.updateFrequency(id, dto));
     }
 
-    @DeleteMapping("/serial_frequencies/{frequency_id}")
+    @DeleteMapping("/serial_frequencies/{frequency_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteSerialFrequency(@PathVariable("frequency_id") Long id) {
         service.deleteFrequency(id);
         return ResponseEntity.noContent().build();
@@ -188,27 +189,27 @@ public class SerialsController {
 
     // ── Numbering Patterns ────────────────────────────────────────────────────
 
-    @GetMapping("/numbering_patterns")
+    @GetMapping("/numbering_patterns", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<NumberingPatternDto>> listNumberingPatterns() {
         return ResponseEntity.ok(service.listNumberingPatterns());
     }
 
-    @PostMapping("/numbering_patterns")
+    @PostMapping("/numbering_patterns", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NumberingPatternDto> addNumberingPattern(@RequestBody NumberingPatternDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addNumberingPattern(dto));
     }
 
-    @GetMapping("/numbering_patterns/{pattern_id}")
+    @GetMapping("/numbering_patterns/{pattern_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NumberingPatternDto> getNumberingPattern(@PathVariable("pattern_id") Long id) {
         return ResponseEntity.ok(service.getNumberingPattern(id));
     }
 
-    @PutMapping("/numbering_patterns/{pattern_id}")
+    @PutMapping("/numbering_patterns/{pattern_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NumberingPatternDto> updateNumberingPattern(@PathVariable("pattern_id") Long id, @RequestBody NumberingPatternDto dto) {
         return ResponseEntity.ok(service.updateNumberingPattern(id, dto));
     }
 
-    @DeleteMapping("/numbering_patterns/{pattern_id}")
+    @DeleteMapping("/numbering_patterns/{pattern_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteNumberingPattern(@PathVariable("pattern_id") Long id) {
         service.deleteNumberingPattern(id);
         return ResponseEntity.noContent().build();

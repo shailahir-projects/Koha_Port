@@ -1,5 +1,7 @@
 package com.shailahir.koha.acquisitions.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -8,6 +10,7 @@ import java.time.LocalDate;
 
 /** Request body for PUT /acquisitions/invoices/{id} (op=cud-mod). */
 @Data
+@JacksonXmlRootElement
 public class InvoiceModRequest {
 
     @JsonProperty("invoicenumber")

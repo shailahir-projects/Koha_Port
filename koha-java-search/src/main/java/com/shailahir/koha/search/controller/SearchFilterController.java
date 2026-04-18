@@ -8,29 +8,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequiredArgsConstructor
 public class SearchFilterController {
     private final SearchFilterService searchFilterService;
 
-    @GetMapping("/search_filters")
+    @GetMapping("/search_filters", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Page<SearchFilterDto>> listFilters(Pageable pageable) {
         return ResponseEntity.ok(searchFilterService.listFilters(pageable));
     }
-    @PostMapping("/search_filters")
+    @PostMapping("/search_filters", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SearchFilterDto> addSearchFilter(@RequestBody SearchFilterDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(searchFilterService.addSearchFilter(dto));
     }
-    @GetMapping("/search_filters/{search_filter_id}")
+    @GetMapping("/search_filters/{search_filter_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SearchFilterDto> getSearchFilter(@PathVariable("search_filter_id") Long id) {
         return ResponseEntity.ok(searchFilterService.getSearchFilter(id));
     }
-    @PutMapping("/search_filters/{search_filter_id}")
+    @PutMapping("/search_filters/{search_filter_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<SearchFilterDto> updateSearchFilter(@PathVariable("search_filter_id") Long id, @RequestBody SearchFilterDto dto) {
         return ResponseEntity.ok(searchFilterService.updateSearchFilter(id, dto));
     }
-    @DeleteMapping("/search_filters/{search_filter_id}")
+    @DeleteMapping("/search_filters/{search_filter_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteSearchFilter(@PathVariable("search_filter_id") Long id) {
         searchFilterService.deleteSearchFilter(id);
         return ResponseEntity.noContent().build();
