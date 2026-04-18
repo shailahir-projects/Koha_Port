@@ -1,0 +1,61 @@
+Total Java controllers found: 100
+
+PRESENT (55):
+  + AdditionalContentsController.java
+  + AdvancedEditorMacroController.java
+  + ArticleRequestController.java
+  + AuthController.java
+  + AuthorisedValueCategoryController.java
+  + AuthorisedValueController.java
+  + AuthorityController.java
+  + BackgroundJobController.java
+  + BiblioController.java
+  + BookingController.java
+  + CashRegisterController.java
+  + CashupController.java
+  + CheckoutController.java
+  + CirculationRuleController.java
+  + CityController.java
+  + CspReportController.java
+  + ExtendedAttributeTypeController.java
+  + FileTransportController.java
+  + ImportBatchController.java
+  + ImportBatchProfileController.java
+  + ImportRecordMatchController.java
+  + ItemController.java
+  + ItemGroupController.java
+  + ItemGroupItemController.java
+  + ItemTypeController.java
+  + LibraryController.java
+  + ListController.java
+  + OAuthClientController.java
+  + PatronAttributeController.java
+  + PatronCategoryController.java
+  + PatronCheckoutController.java
+  + PatronController.java
+  + PatronHoldGroupController.java
+  + PatronPasswordController.java
+  + PatronPasswordExpirationController.java
+  + PreservationController.java
+  + PreservationProcessingController.java
+  + PreservationTrainController.java
+  + PreservationWaitingListController.java
+  + QuoteController.java
+  + RecallController.java
+  + RecordSourceController.java
+  + ReturnClaimController.java
+  + RotaController.java
+  + RotaStageController.java
+  + Sip2AccountController.java
+  + Sip2InstitutionController.java
+  + Sip2PreferenceController.java
+  + SmtpServerController.java
+  + StaticController.java
+  + StatusController.java
+  + SuggestionController.java
+  + TicketController.java
+  + TransferLimitController.java
+  + TwoFactorAuthController.java
+
+MISSING (1):
+  - DeletedBiblioController.java

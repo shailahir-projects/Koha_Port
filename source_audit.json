@@ -1,0 +1,300 @@
+{
+  "Koha/REST/V1": {
+    "description": "API Controllers (main migration target)",
+    "pl_count": 0,
+    "pm_count": 99,
+    "t_count": 0,
+    "pl_files": [],
+    "pm_files": [
+      "Acquisitions\\Baskets.pm",
+      "Acquisitions\\Funds.pm",
+      "Acquisitions\\Orders.pm",
+      "Acquisitions\\Vendor\\Edifact\\Files.pm",
+      "Acquisitions\\Vendor\\Issues.pm",
+      "Acquisitions\\Vendors.pm",
+      "AdditionalContents.pm",
+      "AdvancedEditorMacro.pm",
+      "ArticleRequests.pm",
+      "Auth.pm"
+    ]
+  },
+  "Koha": {
+    "description": "Domain models",
+    "pl_count": 0,
+    "pm_count": 1144,
+    "t_count": 0,
+    "pl_files": [],
+    "pm_files": [
+      "Account.pm",
+      "Account\\Credit.pm",
+      "Account\\CreditType.pm",
+      "Account\\CreditTypes.pm",
+      "Account\\Credits.pm",
+      "Account\\Debit.pm",
+      "Account\\DebitType.pm",
+      "Account\\DebitTypes.pm",
+      "Account\\Debits.pm",
+      "Account\\Line.pm"
+    ]
+  },
+  "C4": {
+    "description": "Core library",
+    "pl_count": 0,
+    "pm_count": 138,
+    "t_count": 0,
+    "pl_files": [],
+    "pm_files": [
+      "Accounts.pm",
+      "Acquisition.pm",
+      "Auth.pm",
+      "Auth_with_cas.pm",
+      "Auth_with_ldap.pm",
+      "Auth_with_shibboleth.pm",
+      "AuthoritiesMarc.pm",
+      "AuthoritiesMarc\\MARC21.pm",
+      "AuthoritiesMarc\\UNIMARC.pm",
+      "Barcodes.pm"
+    ]
+  },
+  "acqui": {
+    "description": "Acquisitions Perl scripts",
+    "pl_count": 37,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "acqui-home.pl",
+      "addorder.pl",
+      "addorderiso2709.pl",
+      "ajax-getauthvaluedropbox.pl",
+      "basket.pl",
+      "basketgroup.pl",
+      "basketheader.pl",
+      "booksellers.pl",
+      "cancelorder.pl",
+      "check_budget_total.pl"
+    ],
+    "pm_files": []
+  },
+  "admin": {
+    "description": "Admin Perl scripts",
+    "pl_count": 71,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "additional-fields.pl",
+      "admin-home.pl",
+      "adveditorshortcuts.pl",
+      "aqbudgetperiods.pl",
+      "aqbudgets.pl",
+      "aqcontract.pl",
+      "aqplan.pl",
+      "audio_alerts.pl",
+      "auth_subfields_structure.pl",
+      "auth_tag_structure.pl"
+    ],
+    "pm_files": []
+  },
+  "circ": {
+    "description": "Circulation Perl scripts",
+    "pl_count": 26,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "add_message.pl",
+      "article-request-slip.pl",
+      "article-requests.pl",
+      "bookcount.pl",
+      "branchoverdues.pl",
+      "branchtransfers.pl",
+      "checkout-notes.pl",
+      "circulation-home.pl",
+      "circulation.pl",
+      "curbside_pickups.pl"
+    ],
+    "pm_files": []
+  },
+  "members": {
+    "description": "Patron/members Perl scripts",
+    "pl_count": 43,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "accountline-details.pl",
+      "alert-subscriptions.pl",
+      "apikeys.pl",
+      "boraccount.pl",
+      "cancel-charge.pl",
+      "default_messageprefs.pl",
+      "deletemem.pl",
+      "discharge.pl",
+      "discharges.pl",
+      "files.pl"
+    ],
+    "pm_files": []
+  },
+  "serials": {
+    "description": "Serials Perl scripts",
+    "pl_count": 25,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "acqui-search-result.pl",
+      "acqui-search.pl",
+      "checkexpiration.pl",
+      "claims.pl",
+      "create-numberpattern.pl",
+      "lateissues-export.pl",
+      "reorder_members.pl",
+      "routing-preview.pl",
+      "routing.pl",
+      "serials-collection.pl"
+    ],
+    "pm_files": []
+  },
+  "catalogue": {
+    "description": "Catalogue Perl scripts",
+    "pl_count": 17,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "ISBDdetail.pl",
+      "MARCdetail.pl",
+      "detail.pl",
+      "export.pl",
+      "image.pl",
+      "imageviewer.pl",
+      "issuehistory.pl",
+      "item-export.pl",
+      "itemsearch.pl",
+      "labeledMARCdetail.pl"
+    ],
+    "pm_files": []
+  },
+  "opac": {
+    "description": "OPAC Perl scripts",
+    "pl_count": 96,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "clubs\\clubs-tab.pl",
+      "clubs\\enroll.pl",
+      "errors\\400.pl",
+      "errors\\401.pl",
+      "errors\\402.pl",
+      "errors\\403.pl",
+      "errors\\404.pl",
+      "errors\\500.pl",
+      "external\\overdrive\\auth.pl",
+      "ilsdi.pl"
+    ],
+    "pm_files": []
+  },
+  "reports": {
+    "description": "Reports Perl scripts",
+    "pl_count": 18,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "acquisitions_stats.pl",
+      "bor_issues_top.pl",
+      "borrowers_out.pl",
+      "borrowers_stats.pl",
+      "cash_register_stats.pl",
+      "cat_issues_top.pl",
+      "catalog_by_itemtype.pl",
+      "catalogue_out.pl",
+      "catalogue_stats.pl",
+      "dictionary.pl"
+    ],
+    "pm_files": []
+  },
+  "ill": {
+    "description": "ILL Perl scripts",
+    "pl_count": 1,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "ill-requests.pl"
+    ],
+    "pm_files": []
+  },
+  "erm": {
+    "description": "ERM Perl scripts",
+    "pl_count": 1,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "erm.pl"
+    ],
+    "pm_files": []
+  },
+  "reserve": {
+    "description": "Holds Perl scripts",
+    "pl_count": 5,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "hold-group.pl",
+      "modrequest.pl",
+      "modrequest_suspendall.pl",
+      "placerequest.pl",
+      "request.pl"
+    ],
+    "pm_files": []
+  },
+  "tools": {
+    "description": "Tools Perl scripts",
+    "pl_count": 38,
+    "pm_count": 0,
+    "t_count": 0,
+    "pl_files": [
+      "access_files.pl",
+      "additional-contents.pl",
+      "ajax-inventory.pl",
+      "automatic_item_modification_by_age.pl",
+      "batchMod.pl",
+      "batch_delete_records.pl",
+      "batch_extend_due_dates.pl",
+      "batch_modify_holds.pl",
+      "batch_record_modification.pl",
+      "batch_records_ajax.pl"
+    ],
+    "pm_files": []
+  },
+  "xt": {
+    "description": "Extended tests (NOT business logic - test quality checks)",
+    "pl_count": 2,
+    "pm_count": 0,
+    "t_count": 31,
+    "pl_files": [
+      "author\\show-template-structure.pl",
+      "yaml_valid.pl"
+    ],
+    "pm_files": []
+  },
+  "t": {
+    "description": "Unit tests (NOT business logic)",
+    "pl_count": 5,
+    "pm_count": 24,
+    "t_count": 764,
+    "pl_files": [
+      "Koha\\sleep.pl",
+      "Koha\\wait.pl",
+      "db_dependent\\LDAP\\test_ldap_add.pl",
+      "db_dependent\\zebra_config.pl",
+      "etc\\schema.pl"
+    ],
+    "pm_files": [
+      "lib\\Bootstrap.pm",
+      "lib\\Dates.pm",
+      "lib\\IdP\\ExternalIdP.pm",
+      "lib\\Koha\\BackgroundJob\\BatchTest.pm",
+      "lib\\Mocks.pm",
+      "lib\\Mocks\\Logger.pm",
+      "lib\\Mocks\\Zebra.pm",
+      "lib\\QA\\TemplateFilters.pm",
+      "lib\\Selenium.pm",
+      "lib\\TestBuilder.pm"
+    ]
+  }
+}
