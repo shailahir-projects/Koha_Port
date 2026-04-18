@@ -1,0 +1,236 @@
+{
+  "gap_to_module": {
+    "AdditionalContents.pm": [
+      "koha-java-admin",
+      "AdditionalContentsController"
+    ],
+    "AdvancedEditorMacro.pm": [
+      "koha-java-admin",
+      "AdvancedEditorMacroController"
+    ],
+    "ArticleRequests.pm": [
+      "koha-java-circulation",
+      "ArticleRequestController"
+    ],
+    "AuthorisedValueCategories.pm": [
+      "koha-java-admin",
+      "AuthorisedValueCategoryController"
+    ],
+    "AuthorisedValues.pm": [
+      "koha-java-admin",
+      "AuthorisedValueController"
+    ],
+    "Authorities.pm": [
+      "koha-java-catalog",
+      "AuthorityController"
+    ],
+    "BackgroundJobs.pm": [
+      "koha-java-batch",
+      "BackgroundJobController"
+    ],
+    "Biblios.pm": [
+      "koha-java-catalog",
+      "BiblioController"
+    ],
+    "Biblios/ItemGroups.pm": [
+      "koha-java-catalog",
+      "ItemGroupController"
+    ],
+    "Biblios/ItemGroups/Items.pm": [
+      "koha-java-catalog",
+      "ItemGroupItemController"
+    ],
+    "Bookings.pm": [
+      "koha-java-circulation",
+      "BookingController"
+    ],
+    "CSPReports.pm": [
+      "koha-java-opac-gateway",
+      "CspReportController"
+    ],
+    "CashRegisters/Cashups.pm": [
+      "koha-java-finance",
+      "CashupController"
+    ],
+    "CashRegisters/Registers.pm": [
+      "koha-java-finance",
+      "CashRegisterController"
+    ],
+    "Checkouts.pm": [
+      "koha-java-circulation",
+      "CheckoutController"
+    ],
+    "CirculationRules.pm": [
+      "koha-java-circulation",
+      "CirculationRuleController"
+    ],
+    "Cities.pm": [
+      "koha-java-admin",
+      "CityController"
+    ],
+    "Config/File/Transports.pm": [
+      "koha-java-admin",
+      "FileTransportController"
+    ],
+    "Config/SMTP/Servers.pm": [
+      "koha-java-admin",
+      "SmtpServerController"
+    ],
+    "DeletedBiblios.pm": [
+      "koha-java-catalog",
+      "DeletedBiblioController"
+    ],
+    "ExtendedAttributeTypes.pm": [
+      "koha-java-admin",
+      "ExtendedAttributeTypeController"
+    ],
+    "ImportBatchProfiles.pm": [
+      "koha-java-catalog",
+      "ImportBatchProfileController"
+    ],
+    "ImportRecordMatches.pm": [
+      "koha-java-catalog",
+      "ImportRecordMatchController"
+    ],
+    "ItemTypes.pm": [
+      "koha-java-catalog",
+      "ItemTypeController"
+    ],
+    "Items.pm": [
+      "koha-java-catalog",
+      "ItemController"
+    ],
+    "Libraries.pm": [
+      "koha-java-admin",
+      "LibraryController"
+    ],
+    "Lists.pm": [
+      "koha-java-patron",
+      "ListController"
+    ],
+    "OAuth.pm": [
+      "koha-java-auth",
+      "OAuthController"
+    ],
+    "OAuth/Client.pm": [
+      "koha-java-auth",
+      "OAuthClientController"
+    ],
+    "Patrons.pm": [
+      "koha-java-patron",
+      "PatronController"
+    ],
+    "Patrons/Attributes.pm": [
+      "koha-java-patron",
+      "PatronAttributeController"
+    ],
+    "Patrons/Categories.pm": [
+      "koha-java-patron",
+      "PatronCategoryController"
+    ],
+    "Patrons/Checkouts.pm": [
+      "koha-java-patron",
+      "PatronCheckoutController"
+    ],
+    "Patrons/HoldGroups.pm": [
+      "koha-java-patron",
+      "PatronHoldGroupController"
+    ],
+    "Patrons/Password.pm": [
+      "koha-java-patron",
+      "PatronPasswordController"
+    ],
+    "Patrons/Password/Expiration.pm": [
+      "koha-java-patron",
+      "PatronPasswordExpirationController"
+    ],
+    "Patrons/Recalls.pm": [
+      "koha-java-circulation",
+      "RecallController"
+    ],
+    "Preservation.pm": [
+      "koha-java-admin",
+      "PreservationController"
+    ],
+    "Preservation/Processings.pm": [
+      "koha-java-admin",
+      "PreservationProcessingController"
+    ],
+    "Preservation/Trains.pm": [
+      "koha-java-admin",
+      "PreservationTrainController"
+    ],
+    "Preservation/WaitingList.pm": [
+      "koha-java-admin",
+      "PreservationWaitingListController"
+    ],
+    "Quotes.pm": [
+      "koha-java-acquisitions",
+      "QuoteController"
+    ],
+    "RecordSources.pm": [
+      "koha-java-catalog",
+      "RecordSourceController"
+    ],
+    "ReturnClaims.pm": [
+      "koha-java-circulation",
+      "ReturnClaimController"
+    ],
+    "SIP2/Accounts.pm": [
+      "koha-java-admin",
+      "Sip2AccountController"
+    ],
+    "SIP2/Institutions.pm": [
+      "koha-java-admin",
+      "Sip2InstitutionController"
+    ],
+    "SIP2/SystemPreferenceOverrides.pm": [
+      "koha-java-admin",
+      "Sip2PreferenceController"
+    ],
+    "Static.pm": [
+      "koha-java-admin",
+      "StaticController"
+    ],
+    "Status.pm": [
+      "koha-java-admin",
+      "StatusController"
+    ],
+    "StockRotation/Rotas.pm": [
+      "koha-java-circulation",
+      "RotaController"
+    ],
+    "StockRotation/Stage.pm": [
+      "koha-java-circulation",
+      "RotaStageController"
+    ],
+    "Suggestions.pm": [
+      "koha-java-acquisitions",
+      "SuggestionController"
+    ],
+    "Tickets.pm": [
+      "koha-java-admin",
+      "TicketController"
+    ],
+    "TransferLimits.pm": [
+      "koha-java-admin",
+      "TransferLimitController"
+    ],
+    "TwoFactorAuth.pm": [
+      "koha-java-auth",
+      "TwoFactorAuthController"
+    ]
+  },
+  "already_exist": [
+    "RecordSources.pm",
+    "Patrons.pm",
+    "Items.pm",
+    "ItemGroups.pm",
+    "ItemTypes.pm",
+    "Biblios.pm",
+    "Authorities.pm",
+    "OAuth.pm",
+    "Biblios/ItemGroups.pm",
+    "DeletedBiblios.pm"
+  ]
+}

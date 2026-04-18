@@ -1,0 +1,274 @@
+{
+  "koha-java-acquisitions": {
+    "base_pkg": "com\\shailahir\\koha\\acquisitions",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service",
+      "transformer"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-admin": {
+    "base_pkg": "com\\shailahir\\koha\\admin",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-auth": {
+    "base_pkg": "com\\shailahir\\koha\\auth",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service",
+      "util"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-batch": {
+    "base_pkg": "com\\shailahir\\koha\\batch",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-catalog": {
+    "base_pkg": "com\\shailahir\\koha\\catalog",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-circulation": {
+    "base_pkg": "com\\shailahir\\koha\\circulation",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-erm": {
+    "base_pkg": "com\\shailahir\\koha\\erm",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-finance": {
+    "base_pkg": "com\\shailahir\\koha\\finance",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-holds": {
+    "base_pkg": "com\\shailahir\\koha\\holds",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-ill": {
+    "base_pkg": "com\\shailahir\\koha\\ill",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-intranet-gateway": {
+    "base_pkg": "com\\shailahir\\koha\\intranet\\gateway",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-notification": {
+    "base_pkg": "com\\shailahir\\koha\\notification",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-opac-gateway": {
+    "base_pkg": "com\\shailahir\\koha\\opac\\gateway",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-patron": {
+    "base_pkg": "com\\shailahir\\koha\\patron",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-reporting": {
+    "base_pkg": "com\\shailahir\\koha\\reporting",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-search": {
+    "base_pkg": "com\\shailahir\\koha\\search",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  },
+  "koha-java-serials": {
+    "base_pkg": "com\\shailahir\\koha\\serials",
+    "files_at_base_level": [],
+    "existing_subdirs": [
+      "config",
+      "controller",
+      "dto",
+      "exception",
+      "repository",
+      "service"
+    ],
+    "missing_subdirs": [],
+    "misplaced_files": [],
+    "has_ResourceNotFoundException": true,
+    "has_BusinessRuleException": true
+  }
+}
