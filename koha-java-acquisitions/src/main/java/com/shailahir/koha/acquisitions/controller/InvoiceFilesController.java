@@ -42,6 +42,7 @@ public class InvoiceFilesController {
      */
     @GetMapping("/acquisitions/invoices/{id}/files", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFiles(@PathVariable Long id) {
+        log.debug("Entering listFiles - {}", id);
         ensureInvoiceExists(id);
         return ResponseEntity.ok(filesRepo.getFilesInfo(id));
     }
@@ -57,6 +58,7 @@ public class InvoiceFilesController {
     public ResponseEntity<byte[]> downloadFile(
             @PathVariable Long id,
             @PathVariable Long fileId) {
+        log.debug("Entering downloadFile - {}, {}", id, fileId);
 
         Map<String, Object> file = filesRepo.getFile(fileId, id)
                 .orElseThrow(() -> new NoSuchElementException(
@@ -98,6 +100,7 @@ public class InvoiceFilesController {
             @PathVariable Long id,
             @RequestPart("uploadfile") MultipartFile file,
             @RequestParam(value = "description", required = false, defaultValue = "") String description) {
+        log.debug("Entering uploadFile - {}, name={}, size={} bytes, {}", id, file.getOriginalFilename(), file.getSize(), description);
 
         ensureInvoiceExists(id);
 
@@ -148,6 +151,7 @@ public class InvoiceFilesController {
     public ResponseEntity<Void> deleteFile(
             @PathVariable Long id,
             @PathVariable Long fileId) {
+        log.debug("Entering deleteFile - {}, {}", id, fileId);
 
         ensureInvoiceExists(id);
         filesRepo.deleteFile(fileId, id);
@@ -158,6 +162,7 @@ public class InvoiceFilesController {
     // ── Helper ─────────────────────────────────────────────────────────────────
 
     private void ensureInvoiceExists(Long id) {
+        log.debug("Entering ensureInvoiceExists - {}", id);
         invoiceRepo.findInvoice(id)
                 .orElseThrow(() -> new NoSuchElementException("Invoice not found: " + id));
     }

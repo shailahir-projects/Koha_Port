@@ -1,4 +1,5 @@
 package com.shailahir.koha.circulation.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.circulation.dto.*;
 import com.shailahir.koha.circulation.repository.CirculationRepository;
@@ -23,6 +24,7 @@ import java.util.Map;
  *         circ/batch_checkout.pl, circ/batch_checkin.pl, circ/pendingreserves.pl,
  *         circ/hold-transfer.pl, circ/ysearch.pl, circ/cigfees.pl
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CirculationServiceImpl implements CirculationService {
@@ -31,17 +33,20 @@ public class CirculationServiceImpl implements CirculationService {
 
     @Override
     public Page<CheckoutDto> listCheckouts(String query, Pageable pageable) {
+        log.debug("Entering listCheckouts - {}, {}", query, pageable);
         return circulationRepository.findAllCheckouts(query, pageable);
     }
 
     @Override
     @Transactional
     public CheckoutDto addCheckout(CheckoutDto dto) {
+        log.debug("Entering addCheckout - {}", dto);
         return circulationRepository.insertCheckout(dto);
     }
 
     @Override
     public CheckoutDto getCheckout(Long checkoutId) {
+        log.debug("Entering getCheckout - {}", checkoutId);
         return circulationRepository.findCheckoutById(checkoutId)
             .orElseThrow(() -> new java.util.NoSuchElementException("Checkout not found: " + checkoutId));
     }
@@ -49,21 +54,25 @@ public class CirculationServiceImpl implements CirculationService {
     @Override
     @Transactional
     public CheckoutDto renewCheckout(Long checkoutId) {
+        log.debug("Entering renewCheckout - {}", checkoutId);
         return circulationRepository.renewCheckout(checkoutId);
     }
 
     @Override
     public List<CheckoutDto> renewsCheckout(Long checkoutId) {
+        log.debug("Entering renewsCheckout - {}", checkoutId);
         return getRenewals(checkoutId);
     }
 
     @Override
     public List<CheckoutDto> getRenewals(Long checkoutId) {
+        log.debug("Entering getRenewals - {}", checkoutId);
         return circulationRepository.getRenewals(checkoutId);
     }
 
     @Override
     public Map<String, Object> allowsRenewal(Long checkoutId) {
+        log.debug("Entering allowsRenewal - {}", checkoutId);
         CheckoutDto checkout = getCheckout(checkoutId);
         int maxRenewals = 3; // default; would come from circulation rules
         boolean allowed = checkout.getRenewals() == null || checkout.getRenewals() < maxRenewals;
@@ -77,27 +86,32 @@ public class CirculationServiceImpl implements CirculationService {
 
     @Override
     public Map<String, Object> checkoutAvailability(Long patronId, Long itemId) {
+        log.debug("Entering checkoutAvailability - {}, {}", patronId, itemId);
         return circulationRepository.checkoutAvailability(patronId, itemId);
     }
 
     @Override
     public Map<String, Object> checkoutAvailabilityPublic(Long patronId, Long itemId) {
+        log.debug("Entering checkoutAvailabilityPublic - {}, {}", patronId, itemId);
         return circulationRepository.checkoutAvailability(patronId, itemId);
     }
 
     @Override
     public Page<BookingDto> listBookings(String query, Pageable pageable) {
+        log.debug("Entering listBookings - {}, {}", query, pageable);
         return circulationRepository.findAllBookings(query, pageable);
     }
 
     @Override
     @Transactional
     public BookingDto addBooking(BookingDto dto) {
+        log.debug("Entering addBooking - {}", dto);
         return circulationRepository.insertBooking(dto);
     }
 
     @Override
     public BookingDto getBooking(Long bookingId) {
+        log.debug("Entering getBooking - {}", bookingId);
         return circulationRepository.findBookingById(bookingId)
             .orElseThrow(() -> new java.util.NoSuchElementException("Booking not found: " + bookingId));
     }
@@ -105,23 +119,27 @@ public class CirculationServiceImpl implements CirculationService {
     @Override
     @Transactional
     public BookingDto updateBooking(Long bookingId, BookingDto dto) {
+        log.debug("Entering updateBooking - {}, {}", bookingId, dto);
         return circulationRepository.updateBooking(bookingId, dto);
     }
 
     @Override
     @Transactional
     public void deleteBooking(Long bookingId) {
+        log.debug("Entering deleteBooking - {}", bookingId);
         circulationRepository.deleteBooking(bookingId);
     }
 
     @Override
     public List<CirculationRuleDto> listCirculationRules() {
+        log.debug("Entering listCirculationRules");
         return circulationRepository.findAllCirculationRules();
     }
 
     @Override
     @Transactional
     public void setCirculationRules(List<CirculationRuleDto> rules) {
+        log.debug("Entering setCirculationRules - {}", rules);
         for (CirculationRuleDto rule : rules) {
             circulationRepository.upsertCirculationRule(rule);
         }
@@ -129,6 +147,7 @@ public class CirculationServiceImpl implements CirculationService {
 
     @Override
     public List<String> getCirculationRuleKinds() {
+        log.debug("Entering getCirculationRuleKinds");
         return List.of(
             "maxissueqty", "maxreserveqty", "issuelength", "lengthunit",
             "renewalsallowed", "renewalperiod", "norenewalbefore",
@@ -142,40 +161,47 @@ public class CirculationServiceImpl implements CirculationService {
     @Override
     @Transactional
     public ReturnClaimDto claimReturned(ReturnClaimDto dto) {
+        log.debug("Entering claimReturned - {}", dto);
         return circulationRepository.insertClaim(dto);
     }
 
     @Override
     @Transactional
     public ReturnClaimDto updateClaimNotes(Long claimId, String notes) {
+        log.debug("Entering updateClaimNotes - {}, {}", claimId, notes);
         return circulationRepository.updateClaimNotes(claimId, notes);
     }
 
     @Override
     @Transactional
     public void deleteClaim(Long claimId) {
+        log.debug("Entering deleteClaim - {}", claimId);
         circulationRepository.deleteClaim(claimId);
     }
 
     @Override
     @Transactional
     public ReturnClaimDto resolveReturnClaim(Long claimId, String resolution) {
+        log.debug("Entering resolveReturnClaim - {}, {}", claimId, resolution);
         return circulationRepository.resolveClaim(claimId, resolution);
     }
 
     @Override
     public List<RotaDto> listRotas() {
+        log.debug("Entering listRotas");
         return circulationRepository.findAllRotas();
     }
 
     @Override
     @Transactional
     public RotaDto addRota(RotaDto dto) {
+        log.debug("Entering addRota - {}", dto);
         return circulationRepository.insertRota(dto);
     }
 
     @Override
     public RotaDto getRota(Long rotaId) {
+        log.debug("Entering getRota - {}", rotaId);
         return circulationRepository.findRotaById(rotaId)
             .orElseThrow(() -> new java.util.NoSuchElementException("Rota not found: " + rotaId));
     }
@@ -183,18 +209,21 @@ public class CirculationServiceImpl implements CirculationService {
     @Override
     @Transactional
     public RotaDto updateRota(Long rotaId, RotaDto dto) {
+        log.debug("Entering updateRota - {}, {}", rotaId, dto);
         return circulationRepository.updateRota(rotaId, dto);
     }
 
     @Override
     @Transactional
     public void deleteRota(Long rotaId) {
+        log.debug("Entering deleteRota - {}", rotaId);
         circulationRepository.deleteRota(rotaId);
     }
 
     @Override
     @Transactional
     public void moveStage(Long rotaId, Long stageId, Integer position) {
+        log.debug("Entering moveStage - {}, {}, {}", rotaId, stageId, position);
         circulationRepository.moveStage(rotaId, stageId, position);
     }
 }

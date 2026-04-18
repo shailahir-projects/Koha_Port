@@ -18,11 +18,13 @@ public class ItemGroupItemController {
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> create(@Valid @RequestBody Object request) {
+        log.debug("Entering create - {}", request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Collections.emptyMap());
     }
 
     @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.debug("Entering delete - {}", id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,4 +1,5 @@
 package com.shailahir.koha.admin.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.admin.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for SIP2 and Preservation data.
  * Mirrors: admin/sip2_*.pl and preserv_*.pl (via preservation config/processings/trains)
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class Sip2PreservationRepository {
@@ -42,6 +44,7 @@ public class Sip2PreservationRepository {
     };
 
     public Page<Sip2AccountDto> findAllSip2Accounts(Pageable pageable) {
+        log.debug("Entering findAllSip2Accounts - {}", pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM sip_accounts", Integer.class);
         List<Sip2AccountDto> list = jdbc.query(
             "SELECT * FROM sip_accounts ORDER BY id LIMIT ? OFFSET ?",
@@ -50,6 +53,7 @@ public class Sip2PreservationRepository {
     }
 
     public Optional<Sip2AccountDto> findSip2AccountById(Long id) {
+        log.debug("Entering findSip2AccountById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM sip_accounts WHERE id = ?", SIP2_ACCOUNT_MAPPER, id));
@@ -59,6 +63,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2AccountDto insertSip2Account(Sip2AccountDto dto) {
+        log.debug("Entering insertSip2Account - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -76,6 +81,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2AccountDto updateSip2Account(Long id, Sip2AccountDto dto) {
+        log.debug("Entering updateSip2Account - {}, {}", id, dto);
         jdbc.update("UPDATE sip_accounts SET description=?, ip_restriction=?, login=?, password=? WHERE id=?",
             dto.getDescription(), dto.getIpRestriction(), dto.getLogin(), dto.getPassword(), id);
         dto.setSip2AccountId(id);
@@ -83,6 +89,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteSip2Account(Long id) {
+        log.debug("Entering deleteSip2Account - {}", id);
         jdbc.update("DELETE FROM sip_accounts WHERE id = ?", id);
     }
 
@@ -97,6 +104,7 @@ public class Sip2PreservationRepository {
     };
 
     public Page<Sip2InstitutionDto> findAllSip2Institutions(Pageable pageable) {
+        log.debug("Entering findAllSip2Institutions - {}", pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM sip_institutions", Integer.class);
         List<Sip2InstitutionDto> list = jdbc.query(
             "SELECT * FROM sip_institutions ORDER BY name LIMIT ? OFFSET ?",
@@ -105,6 +113,7 @@ public class Sip2PreservationRepository {
     }
 
     public Optional<Sip2InstitutionDto> findSip2InstitutionById(Long id) {
+        log.debug("Entering findSip2InstitutionById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM sip_institutions WHERE id = ?", SIP2_INST_MAPPER, id));
@@ -114,6 +123,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2InstitutionDto insertSip2Institution(Sip2InstitutionDto dto) {
+        log.debug("Entering insertSip2Institution - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -128,6 +138,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2InstitutionDto updateSip2Institution(Long id, Sip2InstitutionDto dto) {
+        log.debug("Entering updateSip2Institution - {}, {}", id, dto);
         jdbc.update("UPDATE sip_institutions SET name=?, branchcode=? WHERE id=?",
             dto.getName(), dto.getBranchcode(), id);
         dto.setSip2InstitutionId(id);
@@ -135,6 +146,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteSip2Institution(Long id) {
+        log.debug("Entering deleteSip2Institution - {}", id);
         jdbc.update("DELETE FROM sip_institutions WHERE id = ?", id);
     }
 
@@ -150,6 +162,7 @@ public class Sip2PreservationRepository {
     };
 
     public Page<Sip2SystemPreferenceOverrideDto> findAllSip2Overrides(Pageable pageable) {
+        log.debug("Entering findAllSip2Overrides - {}", pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM sip_preferences", Integer.class);
         List<Sip2SystemPreferenceOverrideDto> list = jdbc.query(
             "SELECT * FROM sip_preferences ORDER BY id LIMIT ? OFFSET ?",
@@ -158,6 +171,7 @@ public class Sip2PreservationRepository {
     }
 
     public Optional<Sip2SystemPreferenceOverrideDto> findSip2OverrideById(Long id) {
+        log.debug("Entering findSip2OverrideById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM sip_preferences WHERE id = ?", SIP2_PREF_MAPPER, id));
@@ -167,6 +181,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2SystemPreferenceOverrideDto insertSip2Override(Sip2SystemPreferenceOverrideDto dto) {
+        log.debug("Entering insertSip2Override - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -182,6 +197,7 @@ public class Sip2PreservationRepository {
     }
 
     public Sip2SystemPreferenceOverrideDto updateSip2Override(Long id, Sip2SystemPreferenceOverrideDto dto) {
+        log.debug("Entering updateSip2Override - {}, {}", id, dto);
         jdbc.update("UPDATE sip_preferences SET preference=?, value=? WHERE id=?",
             dto.getPreference(), dto.getValue(), id);
         dto.setOverrideId(id);
@@ -189,6 +205,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteSip2Override(Long id) {
+        log.debug("Entering deleteSip2Override - {}", id);
         jdbc.update("DELETE FROM sip_preferences WHERE id = ?", id);
     }
 
@@ -209,10 +226,12 @@ public class Sip2PreservationRepository {
     };
 
     public List<PreservationTrainDto> findAllTrains() {
+        log.debug("Entering findAllTrains");
         return jdbc.query("SELECT * FROM preservation_trains ORDER BY train_id", TRAIN_MAPPER);
     }
 
     public Optional<PreservationTrainDto> findTrainById(Long trainId) {
+        log.debug("Entering findTrainById - {}", trainId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM preservation_trains WHERE train_id = ?", TRAIN_MAPPER, trainId));
@@ -222,6 +241,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationTrainDto insertTrain(PreservationTrainDto dto) {
+        log.debug("Entering insertTrain - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -238,6 +258,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationTrainDto updateTrain(Long trainId, PreservationTrainDto dto) {
+        log.debug("Entering updateTrain - {}, {}", trainId, dto);
         jdbc.update("UPDATE preservation_trains SET name=?, description=?, branchcode=? WHERE train_id=?",
             dto.getName(), dto.getDescription(), dto.getBranchcode(), trainId);
         dto.setTrainId(trainId);
@@ -245,6 +266,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteTrain(Long trainId) {
+        log.debug("Entering deleteTrain - {}", trainId);
         jdbc.update("DELETE FROM preservation_trains WHERE train_id = ?", trainId);
     }
 
@@ -262,11 +284,13 @@ public class Sip2PreservationRepository {
     };
 
     public List<PreservationTrainItemDto> findTrainItems(Long trainId) {
+        log.debug("Entering findTrainItems - {}", trainId);
         return jdbc.query("SELECT * FROM preservation_train_items WHERE train_id = ? ORDER BY train_item_id",
             TRAIN_ITEM_MAPPER, trainId);
     }
 
     public Optional<PreservationTrainItemDto> findTrainItemById(Long trainItemId) {
+        log.debug("Entering findTrainItemById - {}", trainItemId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM preservation_train_items WHERE train_item_id = ?", TRAIN_ITEM_MAPPER, trainItemId));
@@ -276,6 +300,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationTrainItemDto insertTrainItem(Long trainId, PreservationTrainItemDto dto) {
+        log.debug("Entering insertTrainItem - {}, {}", trainId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -292,6 +317,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationTrainItemDto updateTrainItem(Long trainId, Long trainItemId, PreservationTrainItemDto dto) {
+        log.debug("Entering updateTrainItem - {}, {}, {}", trainId, trainItemId, dto);
         jdbc.update("UPDATE preservation_train_items SET processing_id=? WHERE train_item_id=? AND train_id=?",
             dto.getProcessingId(), trainItemId, trainId);
         dto.setTrainItemId(trainItemId);
@@ -300,6 +326,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteTrainItem(Long trainId, Long trainItemId) {
+        log.debug("Entering deleteTrainItem - {}, {}", trainId, trainItemId);
         jdbc.update("DELETE FROM preservation_train_items WHERE train_item_id = ? AND train_id = ?",
             trainItemId, trainId);
     }
@@ -315,10 +342,12 @@ public class Sip2PreservationRepository {
     };
 
     public List<PreservationProcessingDto> findAllProcessings() {
+        log.debug("Entering findAllProcessings");
         return jdbc.query("SELECT * FROM preservation_processings ORDER BY processing_id", PROC_MAPPER);
     }
 
     public Optional<PreservationProcessingDto> findProcessingById(Long processingId) {
+        log.debug("Entering findProcessingById - {}", processingId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM preservation_processings WHERE processing_id = ?", PROC_MAPPER, processingId));
@@ -328,6 +357,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationProcessingDto insertProcessing(PreservationProcessingDto dto) {
+        log.debug("Entering insertProcessing - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -342,6 +372,7 @@ public class Sip2PreservationRepository {
     }
 
     public PreservationProcessingDto updateProcessing(Long processingId, PreservationProcessingDto dto) {
+        log.debug("Entering updateProcessing - {}, {}", processingId, dto);
         jdbc.update("UPDATE preservation_processings SET name=?, location=? WHERE processing_id=?",
             dto.getName(), dto.getLocation(), processingId);
         dto.setProcessingId(processingId);
@@ -349,6 +380,7 @@ public class Sip2PreservationRepository {
     }
 
     public void deleteProcessing(Long processingId) {
+        log.debug("Entering deleteProcessing - {}", processingId);
         jdbc.update("DELETE FROM preservation_processings WHERE processing_id = ?", processingId);
     }
 
@@ -362,14 +394,17 @@ public class Sip2PreservationRepository {
     };
 
     public List<PreservationWaitingListItemDto> findWaitingListItems() {
+        log.debug("Entering findWaitingListItems");
         return jdbc.query("SELECT * FROM preservation_waiting_list ORDER BY added_on", WL_MAPPER);
     }
 
     public void insertWaitingListItem(Long itemId) {
+        log.debug("Entering insertWaitingListItem - {}", itemId);
         jdbc.update("INSERT INTO preservation_waiting_list (item_id, added_on) VALUES (?, NOW()) ON CONFLICT DO NOTHING", itemId);
     }
 
     public void deleteWaitingListItem(Long itemId) {
+        log.debug("Entering deleteWaitingListItem - {}", itemId);
         jdbc.update("DELETE FROM preservation_waiting_list WHERE item_id = ?", itemId);
     }
 }

@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.PatronCategoryDto;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
  * Repository for patron categories.
  * Mirrors: members/memberentry.pl (category selection)
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PatronCategoryRepository {
@@ -44,10 +46,12 @@ public class PatronCategoryRepository {
     };
 
     public List<PatronCategoryDto> findAll() {
+        log.debug("Entering findAll");
         return jdbc.query("SELECT * FROM categories ORDER BY categorycode", ROW_MAPPER);
     }
 
     public Optional<PatronCategoryDto> findByCategorycode(String categorycode) {
+        log.debug("Entering findByCategorycode - {}", categorycode);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM categories WHERE categorycode = ?", ROW_MAPPER, categorycode));

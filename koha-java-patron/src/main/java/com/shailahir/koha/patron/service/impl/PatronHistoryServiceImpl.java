@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.service.PatronHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * Service implementation for patron reading/transaction history and notices.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatronHistoryServiceImpl implements PatronHistoryService {
@@ -22,6 +24,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getReadingRecord(Long patronId, Pageable pageable) {
+        log.debug("Entering getReadingRecord - {}, {}", patronId, pageable);
         return jdbc.queryForList("""
             SELECT oi.*, bi.title, bi.author, i.barcode
             FROM old_issues oi
@@ -35,6 +38,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getHoldsHistory(Long patronId, Pageable pageable) {
+        log.debug("Entering getHoldsHistory - {}, {}", patronId, pageable);
         return jdbc.queryForList("""
             SELECT oh.*, bi.title, bi.author
             FROM old_reserves oh
@@ -47,6 +51,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getRecallsHistory(Long patronId) {
+        log.debug("Entering getRecallsHistory - {}", patronId);
         return jdbc.queryForList("""
             SELECT r.*, bi.title, bi.author
             FROM recalls r
@@ -58,6 +63,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getNotices(Long patronId, Pageable pageable) {
+        log.debug("Entering getNotices - {}, {}", patronId, pageable);
         return jdbc.queryForList("""
             SELECT mq.*, ml.name as letter_name
             FROM message_queue mq
@@ -70,6 +76,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getAlertSubscriptions(Long patronId) {
+        log.debug("Entering getAlertSubscriptions - {}", patronId);
         return jdbc.queryForList("""
             SELECT al.*, s.title as subscription_title, s.biblionumber
             FROM alert al
@@ -81,11 +88,13 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public void cancelAlertSubscription(Long patronId, Long subscriptionId) {
+        log.debug("Entering cancelAlertSubscription - {}, {}", patronId, subscriptionId);
         jdbc.update("DELETE FROM alert WHERE borrowernumber = ? AND alertid = ?", patronId, subscriptionId);
     }
 
     @Override
     public List<Map<String, Object>> getRoutingLists(Long patronId) {
+        log.debug("Entering getRoutingLists - {}", patronId);
         return jdbc.queryForList("""
             SELECT rl.*, s.title as subscription_title, s.biblionumber
             FROM subscriptionroutinglist rl
@@ -97,6 +106,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public List<Map<String, Object>> getPurchaseSuggestions(Long patronId, Pageable pageable) {
+        log.debug("Entering getPurchaseSuggestions - {}, {}", patronId, pageable);
         return jdbc.queryForList("""
             SELECT * FROM suggestions WHERE suggestedby = ?
             ORDER BY suggesteddate DESC
@@ -106,6 +116,7 @@ public class PatronHistoryServiceImpl implements PatronHistoryService {
 
     @Override
     public Map<String, Object> getStatistics(Long patronId) {
+        log.debug("Entering getStatistics - {}", patronId);
         Map<String, Object> stats = new HashMap<>();
         stats.put("patron_id", patronId);
         stats.put("total_checkouts", jdbc.queryForObject(

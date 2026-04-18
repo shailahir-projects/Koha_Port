@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.transformer;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketDto;
 import com.shailahir.koha.acquisitions.dto.BasketGroupDto;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  *
  * <p>Mirrors field-mapping done in basket.pl, basketheader.pl, basketgroup.pl.
  */
+@Slf4j
 @Component
 public class BasketTransformer {
 
@@ -22,6 +24,7 @@ public class BasketTransformer {
      * Converts a {@link BasketHeaderRequest} to a {@link BasketDto} for persistence.
      */
     public BasketDto fromHeaderRequest(BasketHeaderRequest req) {
+        log.debug("Entering fromHeaderRequest - {}", req);
         if (req == null) return null;
         return BasketDto.builder()
                 .basketno(req.getBasketno())
@@ -39,6 +42,7 @@ public class BasketTransformer {
      * Projects a full {@link BasketDto} to a lightweight {@link BasketSummaryDto}.
      */
     public BasketSummaryDto toSummary(BasketDto dto) {
+        log.debug("Entering toSummary - {}", dto);
         if (dto == null) return null;
         return BasketSummaryDto.builder()
                 .basketno(dto.getBasketno())
@@ -54,6 +58,7 @@ public class BasketTransformer {
      * Batch convert baskets to summary list.
      */
     public List<BasketSummaryDto> toSummaryList(List<BasketDto> baskets) {
+        log.debug("Entering toSummaryList - {}", baskets);
         if (baskets == null) return Collections.emptyList();
         return baskets.stream().map(this::toSummary).collect(Collectors.toList());
     }
@@ -62,6 +67,7 @@ public class BasketTransformer {
      * Maps a {@link BasketGroupDto} to a display label (for dropdowns, etc.).
      */
     public String toGroupLabel(BasketGroupDto group) {
+        log.debug("Entering toGroupLabel - {}", group);
         if (group == null) return "";
         return String.format("[%d] %s", group.getId(), group.getName());
     }

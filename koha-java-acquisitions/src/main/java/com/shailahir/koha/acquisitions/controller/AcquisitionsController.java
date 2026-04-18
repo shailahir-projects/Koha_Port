@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketDto;
 import com.shailahir.koha.acquisitions.dto.BudgetCheckResult;
@@ -31,6 +32,7 @@ import java.util.Map;
  * Acquisitions REST controller — full implementation of addorder.pl business logic
  * plus all other acquisitions endpoints.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AcquisitionsController {
@@ -43,16 +45,19 @@ public class AcquisitionsController {
 
     @GetMapping("/acquisitions/baskets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BasketDto>> listBaskets(Pageable pageable) {
+        log.debug("Entering listBaskets - {}", pageable);
         return ResponseEntity.ok(basketService.listBaskets(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
     @PostMapping("/acquisitions/baskets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDto> addBasket(@RequestBody @Valid BasketDto dto) {
+        log.debug("Entering addBasket - {}", dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(basketService.addBasket(dto));
     }
 
     @GetMapping("/acquisitions/baskets/managers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BasketDto>> listBasketsManagers() {
+        log.debug("Entering listBasketsManagers");
         return ResponseEntity.ok(List.of());
     }
 
@@ -60,6 +65,7 @@ public class AcquisitionsController {
 
     @GetMapping("/acquisitions/orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<OrderDto>> listOrders(Pageable pageable) {
+        log.debug("Entering listOrders - {}", pageable);
         return ResponseEntity.ok(orderService.listOrders(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
@@ -74,6 +80,7 @@ public class AcquisitionsController {
      */
     @PostMapping("/acquisitions/orders", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest dto) {
+        log.debug("Entering addOrder - {}", dto);
         try {
             OrderDto saved = orderService.saveOrder(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -95,6 +102,7 @@ public class AcquisitionsController {
 
     @GetMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<OrderDto> getOrder(@PathVariable("order_id") Long id) {
+        log.debug("Entering getOrder - {}", id);
         return orderService.getOrder(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -107,6 +115,7 @@ public class AcquisitionsController {
     @PutMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> updateOrder(@PathVariable("order_id") Long id,
                                           @RequestBody @Valid OrderRequest dto) {
+        log.debug("Entering updateOrder - {}, {}", id, dto);
         dto.setOrdernumber(id);
         try {
             return ResponseEntity.ok(orderService.saveOrder(dto));
@@ -128,6 +137,7 @@ public class AcquisitionsController {
     /** Soft-cancels the order (orderstatus = 'cancelled'). */
     @DeleteMapping("/acquisitions/orders/{order_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteOrder(@PathVariable("order_id") Long id) {
+        log.debug("Entering deleteOrder - {}", id);
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
@@ -136,17 +146,20 @@ public class AcquisitionsController {
 
     @GetMapping("/acquisitions/vendors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listVendors(Pageable pageable) {
+        log.debug("Entering listVendors - {}", pageable);
         return ResponseEntity.ok(budgetRepository.findAllVendors(
                 pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize()));
     }
 
     @PostMapping("/acquisitions/vendors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> addVendor(@RequestBody Map<String, Object> dto) {
+        log.debug("Entering addVendor - {}", dto);
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(Map.of("error", "not_implemented"));
     }
 
     @GetMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getVendor(@PathVariable("vendor_id") Long id) {
+        log.debug("Entering getVendor - {}", id);
         return budgetRepository.findVendorById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -155,11 +168,13 @@ public class AcquisitionsController {
     @PutMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> updateVendor(@PathVariable("vendor_id") Long id,
                                                              @RequestBody Map<String, Object> dto) {
+        log.debug("Entering updateVendor - {}, {}", id, dto);
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(Map.of("error", "not_implemented"));
     }
 
     @DeleteMapping("/acquisitions/vendors/{vendor_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteVendor(@PathVariable("vendor_id") Long id) {
+        log.debug("Entering deleteVendor - {}", id);
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
@@ -176,6 +191,7 @@ public class AcquisitionsController {
 
     @GetMapping("/acquisitions/funds", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> listFunds(Pageable pageable) {
+        log.debug("Entering listFunds - {}", pageable);
         return ResponseEntity.ok(budgetRepository.findAllFunds(
                 pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize()));
     }
@@ -202,6 +218,7 @@ public class AcquisitionsController {
     public ResponseEntity<Map<String, Object>> updateEstimatedDeliveryDate(
             @PathVariable Long ordernumber,
             @RequestBody Map<String, String> body) {
+        log.debug("Entering updateEstimatedDeliveryDate - {}, {}", ordernumber, body);
 
         // Validate the order exists
         Integer exists = budgetRepository.getJdbc().queryForObject(
@@ -238,6 +255,7 @@ public class AcquisitionsController {
     @GetMapping("/acquisitions/budgets/{budget_id}/amount", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> getBudgetAmount(
             @PathVariable("budget_id") Long budgetId) {
+        log.debug("Entering getBudgetAmount - {}", budgetId);
         return budgetRepository.getBudgetAmount(budgetId)
                 .map(amount -> ResponseEntity.ok(Map.<String, Object>of("budget_amount", amount)))
                 .orElse(ResponseEntity.notFound().build());
@@ -264,6 +282,7 @@ public class AcquisitionsController {
     public ResponseEntity<Map<String, List<String>>> checkItemUniqueness(
             @RequestParam(value = "field[]", required = false) List<String> fields,
             @RequestParam(value = "value[]", required = false) List<String> values) {
+        log.debug("Entering checkItemUniqueness - {}, {}", fields, values);
 
         // Allow-list of item fields that may be checked (mirrors what Koha uses)
         java.util.Set<String> ALLOWED_FIELDS = java.util.Set.of(

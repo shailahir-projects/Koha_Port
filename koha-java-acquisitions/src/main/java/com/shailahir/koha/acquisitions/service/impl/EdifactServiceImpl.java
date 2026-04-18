@@ -24,16 +24,19 @@ public class EdifactServiceImpl implements EdifactService {
 
     @Override
     public List<EdifactMessageDto> listMessages() {
+        log.debug("Entering listMessages");
         return edifactRepo.findAll();
     }
 
     @Override
     public Optional<EdifactMessageDto> getMessage(Long id) {
+        log.debug("Entering getMessage - {}", id);
         return edifactRepo.findById(id);
     }
 
     @Override
     public Optional<String> getRawMessage(Long id) {
+        log.debug("Entering getRawMessage - {}", id);
         return edifactRepo.getRawMsg(id);
     }
 

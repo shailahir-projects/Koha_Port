@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import com.shailahir.koha.acquisitions.repository.BasketHeaderRepository;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  *  POST /acquisitions/baskets/header                   — op=cud-add_validate (new)
  * </pre>
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BasketHeaderController {
@@ -44,6 +46,7 @@ public class BasketHeaderController {
      */
     @GetMapping("/acquisitions/baskets/{basketno}/header", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketHeaderFormDto> getBasketHeaderForm(@PathVariable Long basketno) {
+        log.debug("Entering getBasketHeaderForm - {}", basketno);
         BasketDto basket = basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
 
@@ -86,6 +89,7 @@ public class BasketHeaderController {
      */
     @GetMapping("/acquisitions/vendors/{booksellerid}/basket-form", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketHeaderFormDto> getNewBasketForm(@PathVariable Long booksellerid) {
+        log.debug("Entering getNewBasketForm - {}", booksellerid);
         String vendorName = headerRepo.findVendorName(booksellerid).orElse("");
         List<ContractDto> contracts = headerRepo.findActiveContractsByVendor(booksellerid);
 
@@ -112,6 +116,7 @@ public class BasketHeaderController {
     public ResponseEntity<BasketDto> updateBasketHeader(
             @PathVariable Long basketno,
             @RequestBody @Valid BasketHeaderRequest request) {
+        log.debug("Entering updateBasketHeader - {}, {}", basketno, request);
 
         // Protect basket name when EDI PO-number setting is active
         String basketname = request.getBasketname();
@@ -145,6 +150,7 @@ public class BasketHeaderController {
      */
     @PostMapping("/acquisitions/baskets/header", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketDto> createBasket(@RequestBody @Valid BasketHeaderRequest request) {
+        log.debug("Entering createBasket - {}", request);
         Long basketno = headerRepo.createBasket(
                 request.getBooksellerid(),
                 request.getAuthorisedby(),

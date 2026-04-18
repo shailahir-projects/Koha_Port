@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import com.shailahir.koha.acquisitions.service.BasketService;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  *  GET    /acquisitions/baskets/{basketno}/export     — op=export (CSV)
  * </pre>
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BasketDetailController {
@@ -47,6 +49,7 @@ public class BasketDetailController {
     public ResponseEntity<BasketDetailDto> getBasketDetail(
             @PathVariable Long basketno,
             @RequestParam(value = "duplinbatch", required = false) String duplinbatch) {
+        log.debug("Entering getBasketDetail - {}, {}", basketno, duplinbatch);
         return ResponseEntity.ok(basketService.getBasketDetail(basketno, duplinbatch));
     }
 
@@ -61,6 +64,7 @@ public class BasketDetailController {
     public ResponseEntity<Map<String, Object>> closeBasket(
             @PathVariable Long basketno,
             @RequestBody BasketCloseRequest request) {
+        log.debug("Entering closeBasket - {}, {}", basketno, request);
         Long basketgroupid = basketService.closeBasket(basketno, request);
         if (basketgroupid != null) {
             return ResponseEntity.ok(Map.of("basketgroupid", basketgroupid));
@@ -74,6 +78,7 @@ public class BasketDetailController {
      */
     @PostMapping("/acquisitions/baskets/{basketno}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> reopenBasket(@PathVariable Long basketno) {
+        log.debug("Entering reopenBasket - {}", basketno);
         basketService.reopenBasket(basketno);
         return ResponseEntity.noContent().build();
     }
@@ -85,6 +90,7 @@ public class BasketDetailController {
      */
     @DeleteMapping("/acquisitions/baskets/{basketno}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteBasket(@PathVariable Long basketno) {
+        log.debug("Entering deleteBasket - {}", basketno);
         basketService.deleteBasket(basketno);
         return ResponseEntity.noContent().build();
     }
@@ -97,6 +103,7 @@ public class BasketDetailController {
     public ResponseEntity<Void> deleteCancelledOrder(
             @PathVariable Long basketno,
             @PathVariable Long ordernumber) {
+        log.debug("Entering deleteCancelledOrder - {}, {}", basketno, ordernumber);
         basketService.deleteCancelledOrder(ordernumber);
         return ResponseEntity.noContent().build();
     }
@@ -109,6 +116,7 @@ public class BasketDetailController {
     public ResponseEntity<Void> setBasketUsers(
             @PathVariable Long basketno,
             @RequestBody Map<String, String> body) {
+        log.debug("Entering setBasketUsers - {}, {}", basketno, body);
         String usersIds = body.getOrDefault("users_ids", "");
         List<Long> userIds = Arrays.stream(usersIds.split(":"))
                 .filter(s -> !s.isBlank())
@@ -126,6 +134,7 @@ public class BasketDetailController {
     public ResponseEntity<Void> setBasketBranch(
             @PathVariable Long basketno,
             @RequestBody Map<String, String> body) {
+        log.debug("Entering setBasketBranch - {}, {}", basketno, body);
         basketService.setBasketBranch(basketno, body.get("branch"));
         return ResponseEntity.noContent().build();
     }
@@ -137,6 +146,7 @@ public class BasketDetailController {
      */
     @GetMapping("/acquisitions/baskets/{basketno}/export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> exportBasketAsCsv(@PathVariable Long basketno) {
+        log.debug("Entering exportBasketAsCsv - {}", basketno);
         String csv = basketService.exportBasketAsCsv(basketno);
         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
         HttpHeaders headers = new HttpHeaders();

@@ -1,4 +1,5 @@
 package com.shailahir.koha.notification.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.notification.dto.AdditionalContentDto;
 import com.shailahir.koha.notification.dto.NoticeTemplateDto;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 /**
  * Notification controller - implements notice templates and additional content endpoints.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class NotificationController {
@@ -26,26 +28,31 @@ public class NotificationController {
     public ResponseEntity<Page<NoticeTemplateDto>> listNotices(
             @RequestParam(value = "q", required = false) String q,
             Pageable pageable) {
+        log.debug("Entering listNotices - {}, {}", q, pageable);
         return ResponseEntity.ok(service.listNotices(q, pageable));
     }
 
     @PostMapping("/notice_templates", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NoticeTemplateDto> addNotice(@RequestBody NoticeTemplateDto dto) {
+        log.debug("Entering addNotice - {}", dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addNotice(dto));
     }
 
     @GetMapping("/notice_templates/{notice_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NoticeTemplateDto> getNotice(@PathVariable("notice_id") Long id) {
+        log.debug("Entering getNotice - {}", id);
         return ResponseEntity.ok(service.getNotice(id));
     }
 
     @PutMapping("/notice_templates/{notice_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<NoticeTemplateDto> updateNotice(@PathVariable("notice_id") Long id, @RequestBody NoticeTemplateDto dto) {
+        log.debug("Entering updateNotice - {}, {}", id, dto);
         return ResponseEntity.ok(service.updateNotice(id, dto));
     }
 
     @DeleteMapping("/notice_templates/{notice_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteNotice(@PathVariable("notice_id") Long id) {
+        log.debug("Entering deleteNotice - {}", id);
         service.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
@@ -56,26 +63,31 @@ public class NotificationController {
     public ResponseEntity<Page<AdditionalContentDto>> listAdditionalContents(
             @RequestParam(value = "q", required = false) String q,
             Pageable pageable) {
+        log.debug("Entering listAdditionalContents - {}, {}", q, pageable);
         return ResponseEntity.ok(service.listContent(q, pageable));
     }
 
     @PostMapping("/additional_contents", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdditionalContentDto> addAdditionalContent(@RequestBody AdditionalContentDto dto) {
+        log.debug("Entering addAdditionalContent - {}", dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addContent(dto));
     }
 
     @GetMapping("/additional_contents/{content_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdditionalContentDto> getAdditionalContent(@PathVariable("content_id") Long id) {
+        log.debug("Entering getAdditionalContent - {}", id);
         return ResponseEntity.ok(service.getContent(id));
     }
 
     @PutMapping("/additional_contents/{content_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<AdditionalContentDto> updateAdditionalContent(@PathVariable("content_id") Long id, @RequestBody AdditionalContentDto dto) {
+        log.debug("Entering updateAdditionalContent - {}, {}", id, dto);
         return ResponseEntity.ok(service.updateContent(id, dto));
     }
 
     @DeleteMapping("/additional_contents/{content_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteAdditionalContent(@PathVariable("content_id") Long id) {
+        log.debug("Entering deleteAdditionalContent - {}", id);
         service.deleteContent(id);
         return ResponseEntity.noContent().build();
     }

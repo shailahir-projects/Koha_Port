@@ -1,4 +1,5 @@
 package com.shailahir.koha.finance.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.finance.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Repository for finance data access.
  * Mirrors: pos/*, Koha/Account.pm, Koha/CashRegister.pm
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class FinanceRepository {
@@ -41,6 +43,7 @@ public class FinanceRepository {
     };
 
     public Page<CashRegisterDto> findAllCashRegisters(Pageable pageable) {
+        log.debug("Entering findAllCashRegisters - {}", pageable);
         Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM cash_registers", Integer.class);
         List<CashRegisterDto> list = jdbc.query(
                 "SELECT * FROM cash_registers ORDER BY id LIMIT ? OFFSET ?",
@@ -49,6 +52,7 @@ public class FinanceRepository {
     }
 
     public Optional<CashRegisterDto> findCashRegisterById(Long id) {
+        log.debug("Entering findCashRegisterById - {}", id);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM cash_registers WHERE id = ?", REGISTER_MAPPER, id));
@@ -71,12 +75,14 @@ public class FinanceRepository {
     };
 
     public List<CashupDto> findCashupsByRegisterId(Long registerId) {
+        log.debug("Entering findCashupsByRegisterId - {}", registerId);
         return jdbc.query(
                 "SELECT * FROM cash_register_actions WHERE register_id = ? AND type = 'CASHUP' ORDER BY timestamp DESC",
                 CASHUP_MAPPER, registerId);
     }
 
     public Optional<CashupDto> findCashupById(Long cashupId) {
+        log.debug("Entering findCashupById - {}", cashupId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM cash_register_actions WHERE id = ? AND type = 'CASHUP'", CASHUP_MAPPER, cashupId));
@@ -88,6 +94,7 @@ public class FinanceRepository {
     // ── Patron Account ────────────────────────────────────────────────────────
 
     public Optional<PatronAccountDto> findPatronAccount(Long patronId) {
+        log.debug("Entering findPatronAccount - {}", patronId);
         try {
             PatronAccountDto dto = jdbc.queryForObject("""
                     SELECT borrowernumber,
@@ -138,6 +145,7 @@ public class FinanceRepository {
     };
 
     public Page<AccountLineDto> findCreditsByPatron(Long patronId, Pageable pageable) {
+        log.debug("Entering findCreditsByPatron - {}, {}", patronId, pageable);
         Integer total = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM accountlines WHERE borrowernumber = ? AND amount < 0", Integer.class, patronId);
         List<AccountLineDto> list = jdbc.query(
@@ -147,6 +155,7 @@ public class FinanceRepository {
     }
 
     public Page<AccountLineDto> findDebitsByPatron(Long patronId, Pageable pageable) {
+        log.debug("Entering findDebitsByPatron - {}, {}", patronId, pageable);
         Integer total = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM accountlines WHERE borrowernumber = ? AND amount > 0", Integer.class, patronId);
         List<AccountLineDto> list = jdbc.query(
@@ -156,6 +165,7 @@ public class FinanceRepository {
     }
 
     public Optional<AccountLineDto> findAccountLineById(Long lineId) {
+        log.debug("Entering findAccountLineById - {}", lineId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM accountlines WHERE accountlines_id = ?", LINE_MAPPER, lineId));
@@ -165,6 +175,7 @@ public class FinanceRepository {
     }
 
     public AccountLineDto insertAccountLine(Long patronId, AccountLineDto dto) {
+        log.debug("Entering insertAccountLine - {}, {}", patronId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""

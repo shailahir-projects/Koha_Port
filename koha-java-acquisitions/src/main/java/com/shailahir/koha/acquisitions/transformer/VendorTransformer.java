@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.transformer;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.VendorBasketsDto;
 import com.shailahir.koha.acquisitions.dto.VendorSummaryDto;
@@ -10,11 +11,13 @@ import java.util.Map;
 /**
  * Transformer for Vendor/Bookseller-related DTOs.
  */
+@Slf4j
 @Component
 public class VendorTransformer {
 
     public VendorSummaryDto toSummary(Map<String, Object> row,
                                        long basketCount, long subscCount, long contractCount) {
+        log.debug("Entering toSummary - {}, {}, {}, {}", row, basketCount, subscCount, contractCount);
         if (row == null) return null;
         return VendorSummaryDto.builder()
                 .id(toLong(row, "id"))
@@ -34,6 +37,7 @@ public class VendorTransformer {
     }
 
     public VendorBasketsDto toVendorBasketsDto(Map<String, Object> row) {
+        log.debug("Entering toVendorBasketsDto - {}", row);
         if (row == null) return null;
         return VendorBasketsDto.builder()
                 .booksellerid(toLong(row, "id"))
@@ -43,20 +47,24 @@ public class VendorTransformer {
     }
 
     private Long toLong(Map<String, Object> row, String key) {
+        log.debug("Entering toLong - {}, {}", row, key);
         Object v = row.get(key);
         return v != null ? ((Number) v).longValue() : null;
     }
     private String toString(Map<String, Object> row, String key) {
+        log.debug("Entering toString - {}, {}", row, key);
         Object v = row.get(key);
         return v != null ? v.toString() : null;
     }
     private Boolean toBoolean(Map<String, Object> row, String key) {
+        log.debug("Entering toBoolean - {}, {}", row, key);
         Object v = row.get(key);
         if (v == null) return false;
         if (v instanceof Boolean b) return b;
         return ((Number) v).intValue() != 0;
     }
     private BigDecimal toBigDecimal(Map<String, Object> row, String key) {
+        log.debug("Entering toBigDecimal - {}, {}", row, key);
         Object v = row.get(key);
         if (v == null) return null;
         if (v instanceof BigDecimal bd) return bd;

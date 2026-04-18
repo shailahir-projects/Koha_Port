@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.PatronDto;
 import com.shailahir.koha.patron.service.PatronAdminService;
@@ -20,6 +21,7 @@ import java.util.Map;
  *          members/mod_debarment.pl, members/deletemem.pl,
  *          members/members-home.pl, members/member.pl, members/moremember.pl
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -30,12 +32,14 @@ public class PatronAdminController {
     /** members/members-home.pl - patron search home */
     @GetMapping("/patrons/home")
     public ResponseEntity<Map<String, Object>> patronsHome() {
+        log.debug("Entering patronsHome");
         return ResponseEntity.ok(patronAdminService.getHome());
     }
 
     /** members/discharge.pl - issue patron discharge letter */
     @PostMapping("/patrons/{patron_id}/discharge")
     public ResponseEntity<Map<String, Object>> issueDischarge(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering issueDischarge - {}", patronId);
         return ResponseEntity.status(HttpStatus.CREATED).body(patronAdminService.issueDischarge(patronId));
     }
 
@@ -51,6 +55,7 @@ public class PatronAdminController {
     public ResponseEntity<PatronDto> mergePatrons(
             @PathVariable("patron_id") Long keepPatronId,
             @RequestParam("merge_with") Long deletePatronId) {
+        log.debug("Entering mergePatrons - {}, {}", keepPatronId, deletePatronId);
         return ResponseEntity.ok(patronAdminService.mergePatrons(keepPatronId, deletePatronId));
     }
 
@@ -59,6 +64,7 @@ public class PatronAdminController {
     public ResponseEntity<Void> setStatus(
             @PathVariable("patron_id") Long patronId,
             @RequestBody Map<String, Object> statusRequest) {
+        log.debug("Entering setStatus - {}, {}", patronId, statusRequest);
         patronAdminService.setStatus(patronId, statusRequest);
         return ResponseEntity.ok().build();
     }
@@ -68,12 +74,14 @@ public class PatronAdminController {
     public ResponseEntity<Void> addDebarment(
             @PathVariable("patron_id") Long patronId,
             @RequestBody Map<String, String> debarmentRequest) {
+        log.debug("Entering addDebarment - {}, {}", patronId, debarmentRequest);
         patronAdminService.addDebarment(patronId, debarmentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/patrons/{patron_id}/debarment")
     public ResponseEntity<Void> removeDebarment(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering removeDebarment - {}", patronId);
         patronAdminService.removeDebarment(patronId);
         return ResponseEntity.noContent().build();
     }
@@ -83,6 +91,7 @@ public class PatronAdminController {
     public ResponseEntity<Void> updateFlags(
             @PathVariable("patron_id") Long patronId,
             @RequestBody Map<String, Long> flagRequest) {
+        log.debug("Entering updateFlags - {}, {}", patronId, flagRequest);
         patronAdminService.updateFlags(patronId, flagRequest.get("flags"));
         return ResponseEntity.ok().build();
     }
@@ -90,6 +99,7 @@ public class PatronAdminController {
     /** members/two_factor_auth.pl - two-factor authentication setup */
     @GetMapping("/patrons/{patron_id}/two_factor_auth")
     public ResponseEntity<Map<String, Object>> getTwoFactorAuth(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getTwoFactorAuth - {}", patronId);
         return ResponseEntity.ok(patronAdminService.getTwoFactorAuthStatus(patronId));
     }
 
@@ -97,11 +107,13 @@ public class PatronAdminController {
     public ResponseEntity<Map<String, Object>> enrollTwoFactorAuth(
             @PathVariable("patron_id") Long patronId,
             @RequestBody Map<String, String> request) {
+        log.debug("Entering enrollTwoFactorAuth - {}, {}", patronId, request);
         return ResponseEntity.ok(patronAdminService.enrollTwoFactorAuth(patronId, request.get("secret"), request.get("pin")));
     }
 
     @DeleteMapping("/patrons/{patron_id}/two_factor_auth")
     public ResponseEntity<Void> disableTwoFactorAuth(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering disableTwoFactorAuth - {}", patronId);
         patronAdminService.disableTwoFactorAuth(patronId);
         return ResponseEntity.noContent().build();
     }
@@ -109,6 +121,7 @@ public class PatronAdminController {
     /** members/patronimage.pl - patron photo */
     @GetMapping("/patrons/{patron_id}/image")
     public ResponseEntity<byte[]> getPatronImage(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering getPatronImage - {}", patronId);
         byte[] image = patronAdminService.getPatronImage(patronId);
         return ResponseEntity.ok()
             .contentType(MediaType.IMAGE_JPEG)
@@ -119,12 +132,14 @@ public class PatronAdminController {
     public ResponseEntity<Void> uploadPatronImage(
             @PathVariable("patron_id") Long patronId,
             @RequestParam("image") MultipartFile image) {
+        log.debug("Entering uploadPatronImage - {}, {}", patronId, image);
         patronAdminService.uploadPatronImage(patronId, image);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/patrons/{patron_id}/image")
     public ResponseEntity<Void> deletePatronImage(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering deletePatronImage - {}", patronId);
         patronAdminService.deletePatronImage(patronId);
         return ResponseEntity.noContent().build();
     }
@@ -134,6 +149,7 @@ public class PatronAdminController {
     public ResponseEntity<PatronDto> updatePatronCategory(
             @PathVariable("patron_id") Long patronId,
             @RequestBody Map<String, String> request) {
+        log.debug("Entering updatePatronCategory - {}, {}", patronId, request);
         return ResponseEntity.ok(patronAdminService.updateCategory(patronId, request.get("categorycode")));
     }
 
@@ -145,12 +161,14 @@ public class PatronAdminController {
 
     @PostMapping("/patrons/{patron_id}/approve_update")
     public ResponseEntity<Void> approveUpdate(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering approveUpdate - {}", patronId);
         patronAdminService.approveUpdate(patronId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/patrons/{patron_id}/pending_update")
     public ResponseEntity<Void> rejectUpdate(@PathVariable("patron_id") Long patronId) {
+        log.debug("Entering rejectUpdate - {}", patronId);
         patronAdminService.rejectUpdate(patronId);
         return ResponseEntity.noContent().build();
     }

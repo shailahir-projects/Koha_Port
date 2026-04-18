@@ -1,4 +1,5 @@
 package com.shailahir.koha.admin.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.admin.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * Mirrors: admin/branches.pl, admin/cities.pl, admin/authorised_values.pl,
  *          admin/adveditorshortcuts.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AdminRepository {
@@ -54,6 +56,7 @@ public class AdminRepository {
     };
 
     public Page<LibraryDto> findAllLibraries(String query, Pageable pageable) {
+        log.debug("Entering findAllLibraries - {}, {}", query, pageable);
         String where = query != null && !query.isBlank()
             ? " WHERE branchname ILIKE ? OR branchcode ILIKE ?" : "";
         Object[] params = query != null && !query.isBlank()
@@ -68,6 +71,7 @@ public class AdminRepository {
     }
 
     public Optional<LibraryDto> findLibraryById(String branchcode) {
+        log.debug("Entering findLibraryById - {}", branchcode);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM branches WHERE branchcode = ?", LIBRARY_MAPPER, branchcode));
@@ -77,6 +81,7 @@ public class AdminRepository {
     }
 
     public LibraryDto insertLibrary(LibraryDto dto) {
+        log.debug("Entering insertLibrary - {}", dto);
         jdbc.update("""
             INSERT INTO branches (branchcode, branchname, branchaddress1, branchaddress2, branchaddress3,
                 branchcity, branchstate, branchzip, branchcountry, branchphone, branchfax,
@@ -92,6 +97,7 @@ public class AdminRepository {
         return dto;    }
 
     public LibraryDto updateLibrary(String branchcode, LibraryDto dto) {
+        log.debug("Entering updateLibrary - {}, {}", branchcode, dto);
         jdbc.update("""
             UPDATE branches SET branchname=?, branchaddress1=?, branchaddress2=?, branchaddress3=?,
                 branchcity=?, branchstate=?, branchzip=?, branchcountry=?,
@@ -109,6 +115,7 @@ public class AdminRepository {
     }
 
     public void deleteLibrary(String branchcode) {
+        log.debug("Entering deleteLibrary - {}", branchcode);
         jdbc.update("DELETE FROM branches WHERE branchcode = ?", branchcode);
     }
 
@@ -125,6 +132,7 @@ public class AdminRepository {
     };
 
     public Page<CityDto> findAllCities(String query, Pageable pageable) {
+        log.debug("Entering findAllCities - {}, {}", query, pageable);
         String where = query != null && !query.isBlank() ? " WHERE city_name ILIKE ?" : "";
         Object[] params = query != null && !query.isBlank()
             ? new Object[]{"%" + query + "%"} : new Object[]{};
@@ -136,6 +144,7 @@ public class AdminRepository {
     }
 
     public Optional<CityDto> findCityById(Long cityId) {
+        log.debug("Entering findCityById - {}", cityId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM cities WHERE cityid = ?", CITY_MAPPER, cityId));
@@ -145,6 +154,7 @@ public class AdminRepository {
     }
 
     public CityDto insertCity(CityDto dto) {
+        log.debug("Entering insertCity - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -161,6 +171,7 @@ public class AdminRepository {
     }
 
     public CityDto updateCity(Long cityId, CityDto dto) {
+        log.debug("Entering updateCity - {}, {}", cityId, dto);
         jdbc.update("UPDATE cities SET city_name=?, city_state=?, city_country=?, city_zipcode=? WHERE cityid=?",
             dto.getName(), dto.getState(), dto.getCountry(), dto.getZipcode(), cityId);
         dto.setCityId(cityId);
@@ -168,6 +179,7 @@ public class AdminRepository {
     }
 
     public void deleteCity(Long cityId) {
+        log.debug("Entering deleteCity - {}", cityId);
         jdbc.update("DELETE FROM cities WHERE cityid = ?", cityId);
     }
 
@@ -193,6 +205,7 @@ public class AdminRepository {
     };
 
     public List<AuthorisedValueDto> findAuthorisedValuesByCategory(String category, Pageable pageable) {
+        log.debug("Entering findAuthorisedValuesByCategory - {}, {}", category, pageable);
         if (pageable.isUnpaged()) {
             return jdbc.query("SELECT * FROM authorised_values WHERE category = ? ORDER BY lib",
                 AV_MAPPER, category);
@@ -202,6 +215,7 @@ public class AdminRepository {
     }
 
     public List<AuthorisedValueCategoryDto> findAllAuthorisedValueCategories() {
+        log.debug("Entering findAllAuthorisedValueCategories");
         return jdbc.query("SELECT DISTINCT category, is_system FROM authorised_values ORDER BY category",
             AVC_MAPPER);
     }
@@ -218,10 +232,12 @@ public class AdminRepository {
     };
 
     public List<TransferLimitDto> findAllTransferLimits() {
+        log.debug("Entering findAllTransferLimits");
         return jdbc.query("SELECT * FROM branch_transfer_limits ORDER BY fromBranch, toBranch", TL_MAPPER);
     }
 
     public TransferLimitDto insertTransferLimit(TransferLimitDto dto) {
+        log.debug("Entering insertTransferLimit - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -237,6 +253,7 @@ public class AdminRepository {
     }
 
     public void deleteTransferLimit(Long limitId) {
+        log.debug("Entering deleteTransferLimit - {}", limitId);
         jdbc.update("DELETE FROM branch_transfer_limits WHERE id = ?", limitId);
     }
 
@@ -262,6 +279,7 @@ public class AdminRepository {
     };
 
     public List<ExtendedAttributeTypeDto> findAllExtendedAttributeTypes() {
+        log.debug("Entering findAllExtendedAttributeTypes");
         return jdbc.query("SELECT * FROM borrower_attribute_types ORDER BY code", EAT_MAPPER);
     }
 
@@ -276,6 +294,7 @@ public class AdminRepository {
     };
 
     public List<DeskDto> findDesksByLibrary(String branchcode) {
+        log.debug("Entering findDesksByLibrary - {}", branchcode);
         return jdbc.query("SELECT * FROM desks WHERE branchcode = ? ORDER BY desk_name", DESK_MAPPER, branchcode);
     }
 
@@ -293,6 +312,7 @@ public class AdminRepository {
     };
 
     public List<CashRegisterDto> findCashRegistersByLibrary(String branchcode) {
+        log.debug("Entering findCashRegistersByLibrary - {}", branchcode);
         return jdbc.query("SELECT * FROM cash_registers WHERE branch = ? ORDER BY name", CR_MAPPER, branchcode);
     }
 
@@ -309,6 +329,7 @@ public class AdminRepository {
     };
 
     public Page<AdvancedEditorMacroDto> findAllMacros(Pageable pageable) {
+        log.debug("Entering findAllMacros - {}", pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM advanced_editor_macros WHERE shared = false", Integer.class);
         List<AdvancedEditorMacroDto> list = jdbc.query(
             "SELECT * FROM advanced_editor_macros WHERE shared = false ORDER BY name LIMIT ? OFFSET ?",
@@ -317,6 +338,7 @@ public class AdminRepository {
     }
 
     public Optional<AdvancedEditorMacroDto> findMacroById(Long macroId) {
+        log.debug("Entering findMacroById - {}", macroId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM advanced_editor_macros WHERE id = ?", MACRO_MAPPER, macroId));
@@ -326,6 +348,7 @@ public class AdminRepository {
     }
 
     public AdvancedEditorMacroDto insertMacro(AdvancedEditorMacroDto dto) {
+        log.debug("Entering insertMacro - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -342,6 +365,7 @@ public class AdminRepository {
     }
 
     public AdvancedEditorMacroDto updateMacro(Long macroId, AdvancedEditorMacroDto dto) {
+        log.debug("Entering updateMacro - {}, {}", macroId, dto);
         jdbc.update("UPDATE advanced_editor_macros SET name=?, content=? WHERE id=?",
             dto.getName(), dto.getContent(), macroId);
         dto.setMacroId(macroId);
@@ -349,6 +373,7 @@ public class AdminRepository {
     }
 
     public void deleteMacro(Long macroId) {
+        log.debug("Entering deleteMacro - {}", macroId);
         jdbc.update("DELETE FROM advanced_editor_macros WHERE id = ?", macroId);
     }
 
@@ -369,6 +394,7 @@ public class AdminRepository {
     };
 
     public Page<TicketDto> findAllTickets(Pageable pageable) {
+        log.debug("Entering findAllTickets - {}", pageable);
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM tickets", Integer.class);
         List<TicketDto> list = jdbc.query(
             "SELECT * FROM tickets ORDER BY created_date DESC LIMIT ? OFFSET ?",
@@ -377,6 +403,7 @@ public class AdminRepository {
     }
 
     public Optional<TicketDto> findTicketById(Long ticketId) {
+        log.debug("Entering findTicketById - {}", ticketId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM tickets WHERE id = ?", TICKET_MAPPER, ticketId));
@@ -386,6 +413,7 @@ public class AdminRepository {
     }
 
     public TicketDto insertTicket(TicketDto dto) {
+        log.debug("Entering insertTicket - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -404,6 +432,7 @@ public class AdminRepository {
     }
 
     public TicketDto updateTicket(Long ticketId, TicketDto dto) {
+        log.debug("Entering updateTicket - {}, {}", ticketId, dto);
         jdbc.update("UPDATE tickets SET title=?, body=?, status=?, assignee_id=? WHERE id=?",
             dto.getTitle(), dto.getBody(), dto.getStatus(), dto.getAssigneeId(), ticketId);
         dto.setTicketId(ticketId);
@@ -411,6 +440,7 @@ public class AdminRepository {
     }
 
     public void deleteTicket(Long ticketId) {
+        log.debug("Entering deleteTicket - {}", ticketId);
         jdbc.update("DELETE FROM tickets WHERE id = ?", ticketId);
     }
 
@@ -425,10 +455,12 @@ public class AdminRepository {
     };
 
     public List<TicketUpdateDto> findTicketUpdates(Long ticketId) {
+        log.debug("Entering findTicketUpdates - {}", ticketId);
         return jdbc.query("SELECT * FROM ticket_updates WHERE ticket_id = ? ORDER BY created_date", TICKET_UPDATE_MAPPER, ticketId);
     }
 
     public TicketUpdateDto insertTicketUpdate(Long ticketId, TicketUpdateDto dto) {
+        log.debug("Entering insertTicketUpdate - {}, {}", ticketId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -445,6 +477,7 @@ public class AdminRepository {
     }
 
     private Object[] appendPage(Object[] base, Pageable pageable) {
+        log.debug("Entering appendPage - {}, {}", base, pageable);
         Object[] result = new Object[base.length + 2];
         System.arraycopy(base, 0, result, 0, base.length);
         result[base.length] = pageable.getPageSize();

@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.CheckoutDto;
 import com.shailahir.koha.patron.dto.HoldDto;
@@ -27,6 +28,7 @@ import java.util.List;
  * Mirrors: members/holdshistory.pl, members/readingrec.pl, members/recallshistory.pl,
  *          members/ill-requests.pl, members/routing-lists.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PatronRelatedRepository {
@@ -53,6 +55,7 @@ public class PatronRelatedRepository {
     };
 
     public List<CheckoutDto> findCurrentCheckoutsByPatronId(Long patronId, Pageable pageable) {
+        log.debug("Entering findCurrentCheckoutsByPatronId - {}, {}", patronId, pageable);
         return jdbc.query("""
             SELECT * FROM issues WHERE borrowernumber = ?
             ORDER BY issuedate DESC LIMIT ? OFFSET ?
@@ -82,6 +85,7 @@ public class PatronRelatedRepository {
     };
 
     public List<HoldDto> findActiveHoldsByPatronId(Long patronId, Pageable pageable) {
+        log.debug("Entering findActiveHoldsByPatronId - {}, {}", patronId, pageable);
         return jdbc.query("""
             SELECT * FROM reserves WHERE borrowernumber = ?
             ORDER BY priority LIMIT ? OFFSET ?
@@ -99,12 +103,14 @@ public class PatronRelatedRepository {
     };
 
     public List<HoldGroupDto> findHoldGroupsByPatronId(Long patronId) {
+        log.debug("Entering findHoldGroupsByPatronId - {}", patronId);
         return jdbc.query(
             "SELECT * FROM reserve_groups WHERE borrowernumber = ?",
             HOLD_GROUP_ROW_MAPPER, patronId);
     }
 
     public HoldGroupDto insertHoldGroup(Long patronId, HoldGroupDto dto) {
+        log.debug("Entering insertHoldGroup - {}, {}", patronId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -120,10 +126,12 @@ public class PatronRelatedRepository {
     }
 
     public void deleteHoldGroup(Long holdGroupId) {
+        log.debug("Entering deleteHoldGroup - {}", holdGroupId);
         jdbc.update("DELETE FROM reserve_groups WHERE reserve_group_id = ?", holdGroupId);
     }
 
     public void cancelHoldGroup(Long patronId, Long holdGroupId) {
+        log.debug("Entering cancelHoldGroup - {}, {}", patronId, holdGroupId);
         jdbc.update("""
             UPDATE reserves SET cancellationdate = NOW(), found = NULL
             WHERE borrowernumber = ? AND reserve_group_id = ?
@@ -143,12 +151,14 @@ public class PatronRelatedRepository {
     };
 
     public List<ExtendedAttributeDto> findAttributesByPatronId(Long patronId) {
+        log.debug("Entering findAttributesByPatronId - {}", patronId);
         return jdbc.query(
             "SELECT * FROM borrower_attributes WHERE borrowernumber = ? ORDER BY code",
             ATTR_ROW_MAPPER, patronId);
     }
 
     public ExtendedAttributeDto insertAttribute(Long patronId, ExtendedAttributeDto dto) {
+        log.debug("Entering insertAttribute - {}, {}", patronId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
@@ -165,6 +175,7 @@ public class PatronRelatedRepository {
     }
 
     public ExtendedAttributeDto updateAttribute(Long patronId, Long attrId, ExtendedAttributeDto dto) {
+        log.debug("Entering updateAttribute - {}, {}, {}", patronId, attrId, dto);
         jdbc.update("UPDATE borrower_attributes SET attribute = ? WHERE id = ? AND borrowernumber = ?",
             dto.getValue() != null ? dto.getValue() : dto.getAttribute(), attrId, patronId);
         dto.setExtendedAttributeId(attrId);
@@ -173,10 +184,12 @@ public class PatronRelatedRepository {
     }
 
     public void deleteAttribute(Long patronId, Long attrId) {
+        log.debug("Entering deleteAttribute - {}, {}", patronId, attrId);
         jdbc.update("DELETE FROM borrower_attributes WHERE id = ? AND borrowernumber = ?", attrId, patronId);
     }
 
     public void overwriteAttributes(Long patronId, List<ExtendedAttributeDto> dtos) {
+        log.debug("Entering overwriteAttributes - {}, {}", patronId, dtos);
         jdbc.update("DELETE FROM borrower_attributes WHERE borrowernumber = ?", patronId);
         for (ExtendedAttributeDto dto : dtos) {
             insertAttribute(patronId, dto);
@@ -202,6 +215,7 @@ public class PatronRelatedRepository {
     };
 
     public List<IllRequestDto> findIllRequestsByPatronId(Long patronId, Pageable pageable) {
+        log.debug("Entering findIllRequestsByPatronId - {}, {}", patronId, pageable);
         return jdbc.query("""
             SELECT * FROM illrequests WHERE borrowernumber = ?
             ORDER BY placed DESC LIMIT ? OFFSET ?
@@ -224,6 +238,7 @@ public class PatronRelatedRepository {
     };
 
     public List<RecallDto> findRecallsByPatronId(Long patronId) {
+        log.debug("Entering findRecallsByPatronId - {}", patronId);
         return jdbc.query(
             "SELECT * FROM recalls WHERE patron_id = ? ORDER BY created_date DESC",
             RECALL_ROW_MAPPER, patronId);
@@ -245,6 +260,7 @@ public class PatronRelatedRepository {
     };
 
     public List<VirtualShelfDto> findPublicShelves(Pageable pageable) {
+        log.debug("Entering findPublicShelves - {}", pageable);
         return jdbc.query("""
             SELECT * FROM virtualshelves WHERE category = 2
             ORDER BY shelfname LIMIT ? OFFSET ?
@@ -254,6 +270,7 @@ public class PatronRelatedRepository {
     // ── Clubs ──────────────────────────────────────────────────────────────────
 
     public ClubHoldDto insertClubHold(Long clubId, ClubHoldDto dto) {
+        log.debug("Entering insertClubHold - {}, {}", clubId, dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""

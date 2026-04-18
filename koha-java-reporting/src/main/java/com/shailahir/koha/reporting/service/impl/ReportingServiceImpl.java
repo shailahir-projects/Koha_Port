@@ -1,4 +1,5 @@
 package com.shailahir.koha.reporting.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.reporting.dto.ReportResultDto;
 import com.shailahir.koha.reporting.dto.SavedReportDto;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportingServiceImpl implements ReportingService {
@@ -21,22 +23,26 @@ public class ReportingServiceImpl implements ReportingService {
 
     @Override
     public Page<SavedReportDto> listReports(String query, Pageable pageable) {
+        log.debug("Entering listReports - {}, {}", query, pageable);
         return repo.findAllReports(query, pageable);
     }
 
     @Override
     public SavedReportDto addReport(SavedReportDto report) {
+        log.debug("Entering addReport - {}", report);
         return repo.insertReport(report);
     }
 
     @Override
     public SavedReportDto getReport(Long reportId) {
+        log.debug("Entering getReport - {}", reportId);
         return repo.findReportById(reportId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Report not found"));
     }
 
     @Override
     public SavedReportDto updateReport(Long reportId, SavedReportDto report) {
+        log.debug("Entering updateReport - {}, {}", reportId, report);
         repo.findReportById(reportId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Report not found"));
         return repo.updateReport(reportId, report);
@@ -44,11 +50,13 @@ public class ReportingServiceImpl implements ReportingService {
 
     @Override
     public void deleteReport(Long reportId) {
+        log.debug("Entering deleteReport - {}", reportId);
         repo.deleteReport(reportId);
     }
 
     @Override
     public ReportResultDto runReport(Long reportId, Map<String, String> params) {
+        log.debug("Entering runReport - {}, {}", reportId, params);
         return repo.executeReport(reportId, params);
     }
 }

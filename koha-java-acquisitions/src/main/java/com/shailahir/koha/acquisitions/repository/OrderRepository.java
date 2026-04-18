@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketDto;
 import com.shailahir.koha.acquisitions.dto.OrderDto;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class OrderRepository {
@@ -72,6 +74,7 @@ public class OrderRepository {
     // ── Order queries ──────────────────────────────────────────────────────────
 
     public List<OrderDto> findAll(int offset, int limit) {
+        log.debug("Entering findAll - {}, {}", offset, limit);
         String sql = """
                 SELECT o.*, b.basketname
                   FROM aqorders o
@@ -83,6 +86,7 @@ public class OrderRepository {
     }
 
     public Optional<OrderDto> findById(Long ordernumber) {
+        log.debug("Entering findById - {}", ordernumber);
         try {
             String sql = """
                     SELECT o.*, b.basketname
@@ -101,6 +105,7 @@ public class OrderRepository {
      * Implements populate_with_prices_for_ordering: copies ecost → unitprice when unitprice is null.
      */
     public Long insert(OrderDto order) {
+        log.debug("Entering insert - {}", order);
         // If unitprice not set, default to ecost (mirrors Koha's populate_with_prices_for_ordering)
         var unitprice = order.getUnitprice() != null ? order.getUnitprice() : order.getEcost();
 
@@ -159,6 +164,7 @@ public class OrderRepository {
      * Update an existing order row.
      */
     public void update(OrderDto order) {
+        log.debug("Entering update - {}", order);
         var unitprice = order.getUnitprice() != null ? order.getUnitprice() : order.getEcost();
 
         String sql = """
@@ -228,6 +234,7 @@ public class OrderRepository {
      * @return number of rows affected (0 if order not found)
      */
     public int updateDeliveryDate(Long ordernumber, java.time.LocalDate date) {
+        log.debug("Entering updateDeliveryDate - {}, {}", ordernumber, date);
         return jdbc.update(
                 "UPDATE aqorders SET estimated_delivery_date = ? WHERE ordernumber = ?",
                 date, ordernumber);
@@ -237,18 +244,21 @@ public class OrderRepository {
      * Soft-delete: mark order as 'cancelled'.
      */
     public void cancel(Long ordernumber) {
+        log.debug("Entering cancel - {}", ordernumber);
         jdbc.update("UPDATE aqorders SET orderstatus = 'cancelled' WHERE ordernumber = ?", ordernumber);
     }
 
     // ── Basket queries ─────────────────────────────────────────────────────────
 
     public List<BasketDto> findAllBaskets(int offset, int limit) {
+        log.debug("Entering findAllBaskets - {}, {}", offset, limit);
         return jdbc.query(
                 "SELECT * FROM aqbasket ORDER BY basketno DESC LIMIT ? OFFSET ?",
                 BASKET_ROW_MAPPER, limit, offset);
     }
 
     public Optional<BasketDto> findBasketById(Long basketno) {
+        log.debug("Entering findBasketById - {}", basketno);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT * FROM aqbasket WHERE basketno = ?", BASKET_ROW_MAPPER, basketno));
@@ -258,6 +268,7 @@ public class OrderRepository {
     }
 
     public Long insertBasket(BasketDto dto) {
+        log.debug("Entering insertBasket - {}", dto);
         String sql = """
                 INSERT INTO aqbasket (basketname, booksellerid, authorisedby, is_standing, create_items, note, contractnumber)
                 VALUES (?,?,?,?,?,?,?)
@@ -280,6 +291,7 @@ public class OrderRepository {
     // ── Order-user relation ────────────────────────────────────────────────────
 
     public void setOrderUsers(Long ordernumber, List<Long> userIds) {
+        log.debug("Entering setOrderUsers - {}, {}", ordernumber, userIds);
         jdbc.update("DELETE FROM aqorder_users WHERE ordernumber = ?", ordernumber);
         for (Long uid : userIds) {
             jdbc.update("INSERT INTO aqorder_users (ordernumber, borrowernumber) VALUES (?,?)", ordernumber, uid);
@@ -289,6 +301,7 @@ public class OrderRepository {
     // ── Item linkage ───────────────────────────────────────────────────────────
 
     public void linkItemToOrder(Long ordernumber, Long itemnumber) {
+        log.debug("Entering linkItemToOrder - {}, {}", ordernumber, itemnumber);
         jdbc.update(
                 "INSERT INTO aqorders_items (ordernumber, itemnumber) VALUES (?,?) ON CONFLICT DO NOTHING",
                 ordernumber, itemnumber);

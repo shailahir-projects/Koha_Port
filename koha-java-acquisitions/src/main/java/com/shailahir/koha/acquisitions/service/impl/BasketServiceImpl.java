@@ -27,6 +27,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
 
     @Override
     public BasketDetailDto getBasketDetail(Long basketno, String duplinbatch) {
+        log.debug("Entering getBasketDetail - {}, {}", basketno, duplinbatch);
         BasketDto basket = basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
 
@@ -117,6 +118,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
 
     @Override
     public List<BasketDto> listBaskets(int page, int size) {
+        log.debug("Entering listBaskets - {}, {}", page, size);
         List<BasketDto> baskets = basketRepo.findAll(page * size, size);
         baskets.forEach(this::enrichBasket);
         return baskets;
@@ -125,6 +127,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public BasketDto addBasket(BasketDto dto) {
+        log.debug("Entering addBasket - {}", dto);
         Long basketno = basketRepo.insert(dto);
         dto.setBasketno(basketno);
         return dto;
@@ -135,6 +138,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public Long closeBasket(Long basketno, BasketCloseRequest request) {
+        log.debug("Entering closeBasket - {}, {}", basketno, request);
         BasketDto basket = basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
 
@@ -161,6 +165,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public void reopenBasket(Long basketno) {
+        log.debug("Entering reopenBasket - {}", basketno);
         basketRepo.reopen(basketno);
         log.info("Basket {} reopened", basketno);
     }
@@ -170,6 +175,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public void deleteBasket(Long basketno) {
+        log.debug("Entering deleteBasket - {}", basketno);
         basketRepo.delete(basketno);
         log.info("Basket {} deleted", basketno);
     }
@@ -177,6 +183,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public void deleteCancelledOrder(Long ordernumber) {
+        log.debug("Entering deleteCancelledOrder - {}", ordernumber);
         // Only allow deleting cancelled orders without a biblionumber (mirrors basket.pl restriction)
         basketRepo.deleteCancelledOrderWithoutBiblio(ordernumber);
         log.info("Deleted cancelled order {}", ordernumber);
@@ -187,6 +194,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public void setBasketUsers(Long basketno, List<Long> userIds) {
+        log.debug("Entering setBasketUsers - {}, {}", basketno, userIds);
         basketRepo.setBasketUsers(basketno, userIds);
     }
 
@@ -195,6 +203,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     @Override
     @Transactional
     public void setBasketBranch(Long basketno, String branch) {
+        log.debug("Entering setBasketBranch - {}, {}", basketno, branch);
         basketRepo.updateBranch(basketno, (branch != null && branch.isBlank()) ? null : branch);
     }
 
@@ -202,6 +211,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
 
     @Override
     public String exportBasketAsCsv(Long basketno) {
+        log.debug("Entering exportBasketAsCsv - {}", basketno);
         BasketDto basket = basketRepo.findById(basketno)
                 .orElseThrow(() -> new NoSuchElementException("Basket not found: " + basketno));
         enrichBasket(basket);
@@ -234,6 +244,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
 
     /** Enriches a BasketDto with vendor name, contract name and estimated delivery date. */
     private void enrichBasket(BasketDto basket) {
+        log.debug("Entering enrichBasket - {}", basket);
         if (basket.getBooksellerid() != null) {
             basketRepo.findVendorName(basket.getBooksellerid())
                     .ifPresent(basket::setBooksellername);
@@ -259,6 +270,7 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
      * order_received flag. Mirrors get_order_infos() in basket.pl.
      */
     private void enrichOrderLine(BasketOrderLineDto line, BasketDto basket) {
+        log.debug("Entering enrichOrderLine - {}, {}", line, basket);
         // Budget
         if (line.getBudgetId() != null) {
             basketRepo.findBudget(line.getBudgetId()).ifPresent(b -> {
@@ -311,10 +323,12 @@ public class BasketServiceImpl implements com.shailahir.koha.acquisitions.servic
     }
 
     private BigDecimal rounded(BigDecimal v) {
+        log.debug("Entering rounded - {}", v);
         return v == null ? BigDecimal.ZERO : v.setScale(2, RoundingMode.HALF_UP);
     }
 
     private String csv(Object v) {
+        log.debug("Entering csv - {}", v);
         if (v == null) return "";
         String s = v.toString();
         if (s.contains(",") || s.contains("\"") || s.contains("\n")) {

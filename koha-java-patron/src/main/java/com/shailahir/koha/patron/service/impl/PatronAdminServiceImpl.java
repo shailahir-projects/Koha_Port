@@ -1,4 +1,5 @@
 package com.shailahir.koha.patron.service.impl;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.patron.dto.PatronDto;
 import com.shailahir.koha.patron.exception.PatronNotFoundException;
@@ -20,6 +21,7 @@ import java.util.UUID;
 /**
  * Service implementation for patron administrative operations.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatronAdminServiceImpl implements PatronAdminService {
@@ -29,6 +31,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
 
     @Override
     public Map<String, Object> getHome() {
+        log.debug("Entering getHome");
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM borrowers", Integer.class);
         Map<String, Object> home = new HashMap<>();
         home.put("total_patrons", total);
@@ -40,6 +43,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public Map<String, Object> issueDischarge(Long patronId) {
+        log.debug("Entering issueDischarge - {}", patronId);
         ensurePatronExists(patronId);
         // Insert discharge record
         jdbc.update("""
@@ -56,6 +60,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
 
     @Override
     public List<Map<String, Object>> listDischarges(String status) {
+        log.debug("Entering listDischarges - {}", status);
         String sql = "SELECT d.*, b.surname, b.firstname, b.cardnumber FROM discharges d " +
             "JOIN borrowers b ON d.borrower_id = b.borrowernumber";
         if (status != null && !status.isBlank()) {
@@ -67,6 +72,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public PatronDto mergePatrons(Long keepPatronId, Long deletePatronId) {
+        log.debug("Entering mergePatrons - {}, {}", keepPatronId, deletePatronId);
         ensurePatronExists(keepPatronId);
         ensurePatronExists(deletePatronId);
         patronRepository.mergePatrons(keepPatronId, deletePatronId);
@@ -76,6 +82,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void setStatus(Long patronId, Map<String, Object> statusRequest) {
+        log.debug("Entering setStatus - {}, {}", patronId, statusRequest);
         ensurePatronExists(patronId);
         Boolean lost = (Boolean) statusRequest.get("lost");
         Boolean gonenoaddress = (Boolean) statusRequest.get("gonenoaddress");
@@ -88,6 +95,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void addDebarment(Long patronId, Map<String, String> debarmentRequest) {
+        log.debug("Entering addDebarment - {}, {}", patronId, debarmentRequest);
         ensurePatronExists(patronId);
         String comment = debarmentRequest.get("comment");
         String type = debarmentRequest.getOrDefault("type", "MANUAL");
@@ -104,6 +112,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void removeDebarment(Long patronId) {
+        log.debug("Entering removeDebarment - {}", patronId);
         jdbc.update("DELETE FROM borrower_debarments WHERE borrowernumber = ?", patronId);
         jdbc.update("UPDATE borrowers SET debarred = NULL, debarredcomment = NULL WHERE borrowernumber = ?", patronId);
     }
@@ -111,12 +120,14 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void updateFlags(Long patronId, Long flags) {
+        log.debug("Entering updateFlags - {}, {}", patronId, flags);
         ensurePatronExists(patronId);
         jdbc.update("UPDATE borrowers SET flags = ? WHERE borrowernumber = ?", flags, patronId);
     }
 
     @Override
     public Map<String, Object> getTwoFactorAuthStatus(Long patronId) {
+        log.debug("Entering getTwoFactorAuthStatus - {}", patronId);
         ensurePatronExists(patronId);
         Map<String, Object> result = new HashMap<>();
         try {
@@ -134,6 +145,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public Map<String, Object> enrollTwoFactorAuth(Long patronId, String secret, String pin) {
+        log.debug("Entering enrollTwoFactorAuth - {}, [REDACTED], [REDACTED]", patronId);
         ensurePatronExists(patronId);
         jdbc.update("UPDATE borrowers SET secret = ? WHERE borrowernumber = ?", secret, patronId);
         Map<String, Object> result = new HashMap<>();
@@ -145,11 +157,13 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void disableTwoFactorAuth(Long patronId) {
+        log.debug("Entering disableTwoFactorAuth - {}", patronId);
         jdbc.update("UPDATE borrowers SET secret = NULL WHERE borrowernumber = ?", patronId);
     }
 
     @Override
     public byte[] getPatronImage(Long patronId) {
+        log.debug("Entering getPatronImage - {}", patronId);
         ensurePatronExists(patronId);
         try {
             return jdbc.queryForObject(
@@ -162,6 +176,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void uploadPatronImage(Long patronId, MultipartFile image) {
+        log.debug("Entering uploadPatronImage - {}, {}", patronId, image);
         ensurePatronExists(patronId);
         try {
             byte[] bytes = image.getBytes();
@@ -181,12 +196,14 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void deletePatronImage(Long patronId) {
+        log.debug("Entering deletePatronImage - {}", patronId);
         jdbc.update("DELETE FROM patronimage WHERE borrowernumber = ?", patronId);
     }
 
     @Override
     @Transactional
     public PatronDto updateCategory(Long patronId, String categorycode) {
+        log.debug("Entering updateCategory - {}, {}", patronId, categorycode);
         ensurePatronExists(patronId);
         jdbc.update("UPDATE borrowers SET categorycode = ? WHERE borrowernumber = ?", categorycode, patronId);
         return patronRepository.findById(patronId).orElseThrow();
@@ -194,6 +211,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
 
     @Override
     public List<Map<String, Object>> listPendingUpdates() {
+        log.debug("Entering listPendingUpdates");
         try {
             return jdbc.queryForList("""
                 SELECT bm.*, b.surname, b.firstname, b.cardnumber
@@ -210,6 +228,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void approveUpdate(Long patronId) {
+        log.debug("Entering approveUpdate - {}", patronId);
         try {
             List<Map<String, Object>> mods = jdbc.queryForList(
                 "SELECT * FROM borrower_modifications WHERE borrowernumber = ?", patronId);
@@ -224,10 +243,12 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public void rejectUpdate(Long patronId) {
+        log.debug("Entering rejectUpdate - {}", patronId);
         jdbc.update("DELETE FROM borrower_modifications WHERE borrowernumber = ?", patronId);
     }
 
     private void ensurePatronExists(Long patronId) {
+        log.debug("Entering ensurePatronExists - {}", patronId);
         if (!patronRepository.exists(patronId)) {
             throw new PatronNotFoundException(patronId);
         }

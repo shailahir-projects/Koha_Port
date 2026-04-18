@@ -57,6 +57,7 @@ public class LateOrdersController {
             @RequestParam(value = "branch",                required = false) String branch,
             @RequestParam(value = "estimateddeliverydatefrom", required = false) String estimatedDeliveryFrom,
             @RequestParam(value = "estimateddeliverydateto",   required = false) String estimatedDeliveryTo) {
+        log.debug("Entering getLateOrders - {}, {}, {}, {}, {}", booksellerid, delay, branch, estimatedDeliveryFrom, estimatedDeliveryTo);
 
         // Validate delay (mirrors: if ($delay and not $delay =~ /^\d{1,3}$/))
         if (delay < 0 || delay > 999) {
@@ -97,6 +98,7 @@ public class LateOrdersController {
      */
     @GetMapping("/acquisitions/late-orders/letters", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Map<String, Object>>> getClaimLetters() {
+        log.debug("Entering getClaimLetters");
         return ResponseEntity.ok(lateOrderRepo.getClaimLetters());
     }
 
@@ -123,6 +125,7 @@ public class LateOrdersController {
     @PostMapping("/acquisitions/late-orders/claim", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Transactional
     public ResponseEntity<Map<String, Object>> sendClaimAlert(@RequestBody ClaimOrderRequest request) {
+        log.debug("Entering sendClaimAlert - {}", request);
 
         if (request.getOrdernumbers() == null || request.getOrdernumbers().isEmpty()) {
             return ResponseEntity.badRequest()
@@ -175,6 +178,7 @@ public class LateOrdersController {
     public ResponseEntity<byte[]> exportLateOrders(
             @RequestParam("ordernumber") List<Long> ordernumbers,
             @RequestParam(value = "csv_profile", required = false) Long csvProfileId) {
+        log.debug("Entering exportLateOrders - {}, {}", ordernumbers, csvProfileId);
 
         List<Map<String, Object>> orders = lateOrderRepo.getOrdersForExport(ordernumbers);
 
@@ -194,6 +198,7 @@ public class LateOrdersController {
      * Mirrors the built-in template path in lateorders-export.pl (no csv_profile_id).
      */
     private String buildDefaultCsv(List<Map<String, Object>> orders) {
+        log.debug("Entering buildDefaultCsv - {}", orders);
         String[] HEADERS = {
             "Order Date", "Late Since", "Estimated Delivery",
             "Supplier", "Supplier ID",
@@ -233,6 +238,7 @@ public class LateOrdersController {
 
     /** Wraps a value in double-quotes, escaping internal double-quotes. */
     private String csvField(Object v) {
+        log.debug("Entering csvField - {}", v);
         if (v == null) return "\"\"";
         String s = v.toString().replace("\"", "\"\"");
         return "\"" + s + "\"";
@@ -241,6 +247,7 @@ public class LateOrdersController {
     // ── Helper ─────────────────────────────────────────────────────────────────
 
     private LocalDate parseDate(String s) {
+        log.debug("Entering parseDate - {}", s);
         if (s == null || s.isBlank()) return null;
         try { return LocalDate.parse(s.substring(0, 10)); } catch (Exception e) { return null; }
     }

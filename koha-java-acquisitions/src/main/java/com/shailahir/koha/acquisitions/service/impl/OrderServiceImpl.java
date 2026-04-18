@@ -40,17 +40,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> listOrders(int page, int size) {
+        log.debug("Entering listOrders - {}, {}", page, size);
         return orderRepo.findAll(page * size, size);
     }
 
     @Override
     public Optional<OrderDto> getOrder(Long ordernumber) {
+        log.debug("Entering getOrder - {}", ordernumber);
         return orderRepo.findById(ordernumber);
     }
 
     @Override
     @Transactional
     public OrderDto saveOrder(OrderRequest req) {
+        log.debug("Entering saveOrder - {}", req);
 
         // ── 1. Budget check ────────────────────────────────────────────────────
         boolean skipBudgetCheck = Boolean.TRUE.equals(req.getConfirmBudgetExceeding());
@@ -187,6 +190,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void deleteOrder(Long ordernumber) {
+        log.debug("Entering deleteOrder - {}", ordernumber);
         orderRepo.cancel(ordernumber);
     }
 
@@ -197,6 +201,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDto updateDeliveryDate(Long ordernumber, java.time.LocalDate date) {
+        log.debug("Entering updateDeliveryDate - {}, {}", ordernumber, date);
         int rows = orderRepo.updateDeliveryDate(ordernumber, date);
         if (rows == 0) {
             throw new java.util.NoSuchElementException(
@@ -211,6 +216,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public BudgetCheckResult checkBudget(Long budgetId, Long excludeOrdernumber, BigDecimal orderTotal) {
+        log.debug("Entering checkBudget - {}, {}, {}", budgetId, excludeOrdernumber, orderTotal);
         Optional<Map<String, Object>> budgetOpt = budgetRepo.findBudgetById(budgetId);
         if (budgetOpt.isEmpty()) {
             return BudgetCheckResult.builder().exceeded(false).build();
@@ -263,12 +269,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<BasketDto> listBaskets(int page, int size) {
+        log.debug("Entering listBaskets - {}, {}", page, size);
         return orderRepo.findAllBaskets(page * size, size);
     }
 
     @Override
     @Transactional
     public BasketDto addBasket(BasketDto dto) {
+        log.debug("Entering addBasket - {}", dto);
         Long basketno = orderRepo.insertBasket(dto);
         dto.setBasketno(basketno);
         return dto;
@@ -276,6 +284,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<BasketDto> listBasketManagers() {
+        log.debug("Entering listBasketManagers");
         // Returns patrons who have the 'acquisition' permission — stub returning empty
         // Full implementation would join borrowers with userflags
         return List.of();
@@ -289,6 +298,7 @@ public class OrderServiceImpl implements OrderService {
      * using the tax_rate_on_ordering.
      */
     private void populateWithPricesForOrdering(OrderDto order) {
+        log.debug("Entering populateWithPricesForOrdering - {}", order);
         BigDecimal taxRate = order.getTaxRateOnOrdering() != null
                 ? order.getTaxRateOnOrdering()
                 : BigDecimal.ZERO;
@@ -312,6 +322,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BigDecimal toBD(Object val) {
+        log.debug("Entering toBD - {}", val);
         if (val == null) return BigDecimal.ZERO;
         if (val instanceof BigDecimal bd) return bd;
         return new BigDecimal(val.toString());

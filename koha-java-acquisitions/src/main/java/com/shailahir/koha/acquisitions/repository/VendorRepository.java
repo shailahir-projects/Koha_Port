@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Optional;
  * JDBC repository for vendor (bookseller) queries needed by booksellers.pl.
  * Mirrors GetBasketsInfosByBookseller(), vendor counts, and basket group lookup.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class VendorRepository {
@@ -24,6 +26,7 @@ public class VendorRepository {
     // ── Vendor info ────────────────────────────────────────────────────────────
 
     public Optional<Map<String, Object>> findVendorById(Long booksellerid) {
+        log.debug("Entering findVendorById - {}", booksellerid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqbooksellers WHERE id = ?", booksellerid));
@@ -33,12 +36,14 @@ public class VendorRepository {
     }
 
     public int countBaskets(Long booksellerid) {
+        log.debug("Entering countBaskets - {}", booksellerid);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM aqbasket WHERE booksellerid = ?", Integer.class, booksellerid);
         return c != null ? c : 0;
     }
 
     public int countSubscriptions(Long booksellerid) {
+        log.debug("Entering countSubscriptions - {}", booksellerid);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM subscription WHERE aqbooksellerid = ?", Integer.class, booksellerid);
         return c != null ? c : 0;
@@ -59,6 +64,7 @@ public class VendorRepository {
      * </ul>
      */
     public List<BasketInfoDto> findBasketsInfoByVendor(Long booksellerid, boolean allBaskets) {
+        log.debug("Entering findBasketsInfoByVendor - {}, {}", booksellerid, allBaskets);
         String closedFilter = allBaskets ? "" : "AND b.closedate IS NULL";
 
         String sql = """
@@ -116,6 +122,7 @@ public class VendorRepository {
 
     /** Returns true if at least one active budget exists (mirrors has_budgets in booksellers.pl). */
     public boolean hasActiveBudgets() {
+        log.debug("Entering hasActiveBudgets");
         Integer c = jdbc.queryForObject(
                 """
                 SELECT COUNT(*) FROM aqbudgets b

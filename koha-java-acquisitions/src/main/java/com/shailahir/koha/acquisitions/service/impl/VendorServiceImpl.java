@@ -53,6 +53,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public List<BasketInfoDto> getBasketInfos(Long booksellerid, boolean allBaskets) {
+        log.debug("Entering getBasketInfos - {}, {}", booksellerid, allBaskets);
         return vendorRepo.findBasketsInfoByVendor(booksellerid, allBaskets);
     }
 }

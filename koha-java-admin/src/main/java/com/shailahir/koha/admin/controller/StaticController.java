@@ -18,6 +18,7 @@ public class StaticController {
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> getById(@PathVariable Long id) {
+        log.debug("Entering getById - {}", id);
         return ResponseEntity.ok(Collections.emptyMap());
     }
 }

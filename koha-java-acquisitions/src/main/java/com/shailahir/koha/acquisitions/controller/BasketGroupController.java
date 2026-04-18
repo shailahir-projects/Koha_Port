@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import com.shailahir.koha.acquisitions.service.BasketGroupService;
@@ -32,6 +33,7 @@ import java.util.Map;
  * belong in dedicated rendering / EDI microservices. Those endpoints are documented
  * but return 501 Not Implemented here.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BasketGroupController {
@@ -45,6 +47,7 @@ public class BasketGroupController {
     @GetMapping("/acquisitions/basket-groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupPageDto> getPage(
             @RequestParam("booksellerid") Long booksellerid) {
+        log.debug("Entering getPage - {}", booksellerid);
         return ResponseEntity.ok(basketGroupService.getPage(booksellerid));
     }
 
@@ -53,6 +56,7 @@ public class BasketGroupController {
      */
     @GetMapping("/acquisitions/basket-groups/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupDto> getBasketGroup(@PathVariable Long id) {
+        log.debug("Entering getBasketGroup - {}", id);
         return ResponseEntity.ok(basketGroupService.getBasketGroup(id));
     }
 
@@ -63,6 +67,7 @@ public class BasketGroupController {
     @PostMapping("/acquisitions/basket-groups", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<BasketGroupDto> createBasketGroup(
             @RequestBody BasketGroupRequest request) {
+        log.debug("Entering createBasketGroup - {}", request);
         BasketGroupDto created = basketGroupService.saveBasketGroup(null, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -75,6 +80,7 @@ public class BasketGroupController {
     public ResponseEntity<BasketGroupDto> updateBasketGroup(
             @PathVariable Long id,
             @RequestBody BasketGroupRequest request) {
+        log.debug("Entering updateBasketGroup - {}, {}", id, request);
         return ResponseEntity.ok(basketGroupService.saveBasketGroup(id, request));
     }
 
@@ -85,6 +91,7 @@ public class BasketGroupController {
      */
     @DeleteMapping("/acquisitions/basket-groups/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> deleteBasketGroup(@PathVariable Long id) {
+        log.debug("Entering deleteBasketGroup - {}", id);
         basketGroupService.deleteBasketGroup(id);
         return ResponseEntity.noContent().build();
     }
@@ -97,6 +104,7 @@ public class BasketGroupController {
      */
     @PostMapping("/acquisitions/basket-groups/{id}/close", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> closeBasketGroup(@PathVariable Long id) {
+        log.debug("Entering closeBasketGroup - {}", id);
         basketGroupService.closeBasketGroup(id);
         return ResponseEntity.ok(Map.of("closed", true, "basketgroupid", id));
     }
@@ -107,6 +115,7 @@ public class BasketGroupController {
      */
     @PostMapping("/acquisitions/basket-groups/{id}/reopen", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> reopenBasketGroup(@PathVariable Long id) {
+        log.debug("Entering reopenBasketGroup - {}", id);
         basketGroupService.reopenBasketGroup(id);
         return ResponseEntity.noContent().build();
     }
@@ -119,6 +128,7 @@ public class BasketGroupController {
     public ResponseEntity<Void> assignBasket(
             @PathVariable Long id,
             @PathVariable Long basketno) {
+        log.debug("Entering assignBasket - {}, {}", id, basketno);
         basketGroupService.assignBasketToGroup(basketno, id);
         return ResponseEntity.noContent().build();
     }
@@ -129,6 +139,7 @@ public class BasketGroupController {
      */
     @GetMapping("/acquisitions/basket-groups/{id}/export", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<byte[]> exportAsCsv(@PathVariable Long id) {
+        log.debug("Entering exportAsCsv - {}", id);
         String csv = basketGroupService.exportAsCsv(id);
         byte[] bytes = csv.getBytes(StandardCharsets.UTF_8);
         HttpHeaders headers = new HttpHeaders();
@@ -144,6 +155,7 @@ public class BasketGroupController {
      */
     @GetMapping("/acquisitions/basket-groups/{id}/print", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> printPdf(@PathVariable Long id) {
+        log.debug("Entering printPdf - {}", id);
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of("error", "pdf_not_implemented",
                         "message", "PDF generation is handled by a dedicated rendering service"));
@@ -155,6 +167,7 @@ public class BasketGroupController {
      */
     @PostMapping("/acquisitions/basket-groups/{id}/ediprint", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Map<String, Object>> ediPrint(@PathVariable Long id) {
+        log.debug("Entering ediPrint - {}", id);
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
                 .body(Map.of("error", "edi_not_implemented",
                         "message", "EDI order generation is handled by the EDI microservice"));

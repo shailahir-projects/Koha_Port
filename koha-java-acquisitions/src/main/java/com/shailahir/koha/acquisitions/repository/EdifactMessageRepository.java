@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.EdifactMessageDto;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
  * JDBC repository for EDIFACT message operations.
  * Mirrors the EdifactMessage resultset operations in edifactmsgs.pl.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class EdifactMessageRepository {
@@ -37,6 +39,7 @@ public class EdifactMessageRepository {
 
     /** Returns all non-deleted EDIFACT messages, newest first. */
     public List<EdifactMessageDto> findAll() {
+        log.debug("Entering findAll");
         return jdbc.query("""
                 SELECT m.*, v.name AS vendor_name
                   FROM edifact_messages m
@@ -54,6 +57,7 @@ public class EdifactMessageRepository {
     // ── Find by id ─────────────────────────────────────────────────────────────
 
     public Optional<EdifactMessageDto> findById(Long id) {
+        log.debug("Entering findById - {}", id);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -71,6 +75,7 @@ public class EdifactMessageRepository {
      * Mirrors: $msg->deleted(1); $msg->update;
      */
     public void softDelete(Long id) {
+        log.debug("Entering softDelete - {}", id);
         jdbc.update("UPDATE edifact_messages SET deleted = 1 WHERE id = ?", id);
     }
 
@@ -84,6 +89,7 @@ public class EdifactMessageRepository {
      * Mirrors the status change that process_invoice() applies.
      */
     public void markAsProcessed(Long id) {
+        log.debug("Entering markAsProcessed - {}", id);
         jdbc.update("UPDATE edifact_messages SET status = 'processed' WHERE id = ?", id);
     }
 
@@ -91,6 +97,7 @@ public class EdifactMessageRepository {
      * Returns the raw EDI message content needed by process_invoice().
      */
     public Optional<String> getRawMsg(Long id) {
+        log.debug("Entering getRawMsg - {}", id);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(

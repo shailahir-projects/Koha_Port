@@ -39,6 +39,7 @@ public class MarcImportOrderServiceImpl implements MarcImportOrderService {
 
     @Override
     public List<ImportBatchDto> listImportBatches() {
+        log.debug("Entering listImportBatches");
         return marcImportRepo.findImportBatches();
     }
 
@@ -46,6 +47,7 @@ public class MarcImportOrderServiceImpl implements MarcImportOrderService {
 
     @Override
     public ImportBatchDetailDto getBatchDetail(Long importBatchId) {
+        log.debug("Entering getBatchDetail - {}", importBatchId);
         ImportBatchDto batch = marcImportRepo.findBatchById(importBatchId)
                 .orElseThrow(() -> new NoSuchElementException("Import batch not found: " + importBatchId));
 
@@ -89,6 +91,7 @@ public class MarcImportOrderServiceImpl implements MarcImportOrderService {
     @Override
     @Transactional
     public MarcImportResult importAndCreateOrders(Long basketno, MarcImportOrderRequest request) {
+        log.debug("Entering importAndCreateOrders - {}, {}", basketno, request);
 
         Long importBatchId = request.getImportBatchId();
 
@@ -262,6 +265,7 @@ public class MarcImportOrderServiceImpl implements MarcImportOrderService {
      * (tax is applied later on receive). Mirrors populate_with_prices_for_ordering.
      */
     private void derivePrices(OrderDto order) {
+        log.debug("Entering derivePrices - {}", order);
         BigDecimal price = order.getEcost() != null ? order.getEcost() : BigDecimal.ZERO;
         order.setEcostTaxExcluded(price);
         order.setEcostTaxIncluded(price);

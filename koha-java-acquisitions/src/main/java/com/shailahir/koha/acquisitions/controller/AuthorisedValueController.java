@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.AuthorisedValueDto;
 import com.shailahir.koha.acquisitions.repository.AuthorisedValueRepository;
@@ -24,6 +25,7 @@ import java.util.List;
  * The {@code default} parameter is echoed back in each item's {@code selected}
  * flag so the consumer knows which value should be pre-selected.
  */
+@Slf4j
 @RestController
 @RequestMapping("/acquisitions/authorised-values")
 @RequiredArgsConstructor
@@ -58,6 +60,7 @@ public class AuthorisedValueController {
             @RequestParam("category") String category,
             @RequestParam(value = "branchcode", required = false) String branchcode,
             @RequestParam(value = "default", required = false) String defaultVal) {
+        log.debug("Entering getAuthorisedValues - {}, {}, {}", category, branchcode, defaultVal);
 
         List<AuthorisedValueDto> values = authorisedValueRepository.findByCategory(category, branchcode);
 
@@ -84,6 +87,7 @@ public class AuthorisedValueController {
             String lib_opac,
             String image_url,
             boolean selected) {
+        log.debug("Entering AuthorisedValueResponse - {}, {}, {}, {}, {}, {}, {}", id, category, authorised_value, lib, lib_opac, image_url, selected);
     }
 }
 

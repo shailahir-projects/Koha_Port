@@ -32,6 +32,7 @@ public class ReceiveOrderServiceImpl implements ReceiveOrderService {
 
     @Override
     public Optional<OrderDto> getOrderForReceive(Long ordernumber) {
+        log.debug("Entering getOrderForReceive - {}", ordernumber);
         return extRepo.findOrderForReceive(ordernumber);
     }
 

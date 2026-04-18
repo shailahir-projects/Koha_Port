@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Optional;
  *        parcels.pl, showorder.pl, spent.pl, transferorder.pl,
  *        uncertainprice.pl, vendor_issues.pl, vendors.pl, z3950_search.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AcquisitionsExtRepository {
@@ -44,6 +46,7 @@ public class AcquisitionsExtRepository {
             .build();
 
     public List<VendorSummaryDto> findVendors(String name, Boolean active) {
+        log.debug("Entering findVendors - {}, {}", name, active);
         StringBuilder sql = new StringBuilder("""
                 SELECT v.id, v.name, v.active, v.url, v.phone, v.accountnumber,
                        v.address1, v.postal, v.currency, v.discount,
@@ -69,6 +72,7 @@ public class AcquisitionsExtRepository {
     // ── Order notes (modordernotes.pl) ─────────────────────────────────────────
 
     public int updateOrderNotes(Long ordernumber, String internalnote, String vendornote) {
+        log.debug("Entering updateOrderNotes - {}, {}, {}", ordernumber, internalnote, vendornote);
         return jdbc.update(
                 "UPDATE aqorders SET order_internalnote = ?, order_vendornote = ? WHERE ordernumber = ?",
                 internalnote, vendornote, ordernumber);
@@ -77,6 +81,7 @@ public class AcquisitionsExtRepository {
     // ── New order seed data (neworderempty.pl) ─────────────────────────────────
 
     public Optional<NewOrderSeedDto> getNewOrderSeed(Long basketno, Long biblionumber) {
+        log.debug("Entering getNewOrderSeed - {}, {}", basketno, biblionumber);
         try {
             String sql = """
                     SELECT b.basketno, b.basketname, v.id AS booksellerid, v.name AS booksellername,
@@ -108,6 +113,7 @@ public class AcquisitionsExtRepository {
     // ── New order from subscription (newordersubscription.pl) ─────────────────
 
     public Optional<NewOrderSeedDto> getNewOrderSeedFromSubscription(Long basketno, Long subscriptionid) {
+        log.debug("Entering getNewOrderSeedFromSubscription - {}, {}", basketno, subscriptionid);
         try {
             String sql = """
                     SELECT b.basketno, b.basketname, v.id AS booksellerid, v.name AS booksellername,
@@ -134,6 +140,7 @@ public class AcquisitionsExtRepository {
     // ── New order from suggestion (newordersuggestion.pl) ─────────────────────
 
     public Optional<NewOrderSeedDto> getNewOrderSeedFromSuggestion(Long basketno, Long suggestionid) {
+        log.debug("Entering getNewOrderSeedFromSuggestion - {}, {}", basketno, suggestionid);
         try {
             String sql = """
                     SELECT b.basketno, b.basketname, v.id AS booksellerid, v.name AS booksellername,
@@ -168,6 +175,7 @@ public class AcquisitionsExtRepository {
     // ── Ordered items per fund (ordered.pl) ───────────────────────────────────
 
     public List<OrderedItemDto> findOrderedByBudget(Long budgetId) {
+        log.debug("Entering findOrderedByBudget - {}", budgetId);
         String sql = """
                 SELECT o.ordernumber, o.biblionumber, bib.title, bib.author,
                        o.quantity, o.quantityreceived, o.ecost,
@@ -202,6 +210,7 @@ public class AcquisitionsExtRepository {
     // ── Parcel list for vendor (parcels.pl) ───────────────────────────────────
 
     public List<ParcelSummaryDto> findParcelsByVendor(Long booksellerid, String fromDate, String toDate) {
+        log.debug("Entering findParcelsByVendor - {}, {}, {}", booksellerid, fromDate, toDate);
         StringBuilder sql = new StringBuilder("""
                 SELECT i.invoiceid, i.invoicenumber, i.shipmentdate, i.billingdate, i.closedate,
                        SUM(o.quantity) AS total_quantity,
@@ -229,6 +238,7 @@ public class AcquisitionsExtRepository {
     // ── Single parcel detail (parcel.pl) ──────────────────────────────────────
 
     public Optional<ParcelDetailDto> findParcelById(Long invoiceid) {
+        log.debug("Entering findParcelById - {}", invoiceid);
         try {
             String headerSql = """
                     SELECT i.invoiceid, i.invoicenumber, i.booksellerid, v.name AS booksellername,
@@ -312,6 +322,7 @@ public class AcquisitionsExtRepository {
     // ── Spent amounts per fund (spent.pl) ─────────────────────────────────────
 
     public List<SpentDto> findSpentByPeriod(Long budgetPeriodId) {
+        log.debug("Entering findSpentByPeriod - {}", budgetPeriodId);
         String sql = """
                 SELECT b.budget_id, b.budget_code, b.budget_name, b.budget_amount,
                        bp.budget_period_id, bp.budget_period_description,
@@ -353,6 +364,7 @@ public class AcquisitionsExtRepository {
     // ── Transfer order (transferorder.pl) ─────────────────────────────────────
 
     public int transferOrder(Long ordernumber, Long toBasketno) {
+        log.debug("Entering transferOrder - {}, {}", ordernumber, toBasketno);
         return jdbc.update(
                 "UPDATE aqorders SET basketno = ? WHERE ordernumber = ?",
                 toBasketno, ordernumber);
@@ -361,6 +373,7 @@ public class AcquisitionsExtRepository {
     // ── Uncertain prices (uncertainprice.pl) ──────────────────────────────────
 
     public List<OrderDto> findUncertainPriceOrders(Long booksellerid) {
+        log.debug("Entering findUncertainPriceOrders - {}", booksellerid);
         StringBuilder sql = new StringBuilder("""
                 SELECT o.ordernumber, o.basketno, o.biblionumber, o.invoiceid, o.budget_id,
                        o.quantity, o.quantityreceived, o.currency, o.listprice, o.uncertainprice,
@@ -401,6 +414,7 @@ public class AcquisitionsExtRepository {
     // ── Vendor issues / claims (vendor_issues.pl) ─────────────────────────────
 
     public List<VendorIssueDto> findVendorIssues(Long booksellerid) {
+        log.debug("Entering findVendorIssues - {}", booksellerid);
         String sql = """
                 SELECT vi.issue_id, vi.booksellerid, v.name AS booksellername,
                        vi.type, vi.title, vi.issue_date, vi.notes
@@ -423,6 +437,7 @@ public class AcquisitionsExtRepository {
     // ── Order receive context (orderreceive.pl) ────────────────────────────────
 
     public Optional<OrderDto> findOrderForReceive(Long ordernumber) {
+        log.debug("Entering findOrderForReceive - {}", ordernumber);
         try {
             String sql = """
                     SELECT o.ordernumber, o.basketno, o.biblionumber, o.invoiceid, o.budget_id,

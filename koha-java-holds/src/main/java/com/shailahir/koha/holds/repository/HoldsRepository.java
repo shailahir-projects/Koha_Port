@@ -1,4 +1,5 @@
 package com.shailahir.koha.holds.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.holds.dto.HoldDto;
 import com.shailahir.koha.holds.dto.LibraryDto;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * Mirrors: reserve/placerequest.pl, reserve/cancelrequest.pl,
  *          reserve/modrequest.pl, reserve/request.pl, circ/waitingreserves.pl
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class HoldsRepository {
@@ -51,6 +53,7 @@ public class HoldsRepository {
     };
 
     public Page<HoldDto> findAll(String query, Pageable pageable) {
+        log.debug("Entering findAll - {}, {}", query, pageable);
         String where = query != null && !query.isBlank() ? " WHERE borrowernumber::text = ?" : "";
         Object[] params = query != null && !query.isBlank() ? new Object[]{query} : new Object[]{};
         int total = jdbc.queryForObject("SELECT COUNT(*) FROM reserves" + where, Integer.class, params);
@@ -65,6 +68,7 @@ public class HoldsRepository {
     }
 
     public Optional<HoldDto> findById(Long holdId) {
+        log.debug("Entering findById - {}", holdId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                 "SELECT * FROM reserves WHERE reserve_id = ?", HOLD_MAPPER, holdId));
@@ -74,6 +78,7 @@ public class HoldsRepository {
     }
 
     public HoldDto insert(HoldDto dto) {
+        log.debug("Entering insert - {}", dto);
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement("""
@@ -98,6 +103,7 @@ public class HoldsRepository {
     }
 
     public HoldDto update(Long holdId, HoldDto dto) {
+        log.debug("Entering update - {}, {}", holdId, dto);
         jdbc.update("""
             UPDATE reserves SET branchcode=?, priority=?, expirationdate=?, notes=?,
                 suspend=?, suspend_until=?, lowestPriority=?
@@ -113,30 +119,37 @@ public class HoldsRepository {
     }
 
     public void delete(Long holdId) {
+        log.debug("Entering delete - {}", holdId);
         jdbc.update("DELETE FROM reserves WHERE reserve_id = ?", holdId);
     }
 
     public void updatePriority(Long holdId, Integer priority) {
+        log.debug("Entering updatePriority - {}, {}", holdId, priority);
         jdbc.update("UPDATE reserves SET priority = ? WHERE reserve_id = ?", priority, holdId);
     }
 
     public void suspend(Long holdId, LocalDateTime suspendUntil) {
+        log.debug("Entering suspend - {}, {}", holdId, suspendUntil);
         jdbc.update("UPDATE reserves SET suspend = true, suspend_until = ? WHERE reserve_id = ?", suspendUntil, holdId);
     }
 
     public void resume(Long holdId) {
+        log.debug("Entering resume - {}", holdId);
         jdbc.update("UPDATE reserves SET suspend = false, suspend_until = NULL WHERE reserve_id = ?", holdId);
     }
 
     public void toggleLowestPriority(Long holdId) {
+        log.debug("Entering toggleLowestPriority - {}", holdId);
         jdbc.update("UPDATE reserves SET lowestPriority = NOT lowestPriority WHERE reserve_id = ?", holdId);
     }
 
     public void updatePickupLocation(Long holdId, String pickupLibraryId) {
+        log.debug("Entering updatePickupLocation - {}, {}", holdId, pickupLibraryId);
         jdbc.update("UPDATE reserves SET branchcode = ? WHERE reserve_id = ?", pickupLibraryId, holdId);
     }
 
     public List<LibraryDto> findPickupLocations() {
+        log.debug("Entering findPickupLocations");
         return jdbc.query(
             "SELECT branchcode, branchname FROM branches WHERE pickup_location = true ORDER BY branchname",
             (rs, rn) -> LibraryDto.builder()
@@ -146,16 +159,19 @@ public class HoldsRepository {
     }
 
     public void cancelArticleRequest(Long articleRequestId) {
+        log.debug("Entering cancelArticleRequest - {}", articleRequestId);
         jdbc.update("UPDATE article_requests SET status = 'CANCELLED' WHERE id = ?", articleRequestId);
     }
 
     public void suspendBulk(List<Long> holdIds, LocalDateTime suspendUntil) {
+        log.debug("Entering suspendBulk - {}, {}", holdIds, suspendUntil);
         for (Long holdId : holdIds) {
             suspend(holdId, suspendUntil);
         }
     }
 
     public void cancelBulk(List<Long> holdIds) {
+        log.debug("Entering cancelBulk - {}", holdIds);
         for (Long holdId : holdIds) {
             delete(holdId);
         }

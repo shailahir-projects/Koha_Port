@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.config;
+import lombok.extern.slf4j.Slf4j;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Primary;
  *   <li>XmlMapper for XML content-type support</li>
  * </ul>
  */
+@Slf4j
 @Configuration
 public class AcquisitionsConfig {
 
@@ -27,6 +29,7 @@ public class AcquisitionsConfig {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
+        log.debug("Entering objectMapper");
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -38,6 +41,7 @@ public class AcquisitionsConfig {
      */
     @Bean
     public XmlMapper xmlMapper() {
+        log.debug("Entering xmlMapper");
         XmlMapper mapper = new XmlMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);

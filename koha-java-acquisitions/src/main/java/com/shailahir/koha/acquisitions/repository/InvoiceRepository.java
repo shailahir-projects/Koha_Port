@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.*;
  * Mirrors CloseInvoice, ReopenInvoice, ModInvoice, MergeInvoices, DelInvoice,
  * GetInvoiceDetails, and aqinvoice_adjustments CRUD from invoice.pl.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class InvoiceRepository {
@@ -58,6 +60,7 @@ public class InvoiceRepository {
             String publisher,   String publicationyear,
             String branchcode,  Long messageId,
             List<Map<String, Object>> additionalFields) {
+        log.debug("Entering searchInvoices - {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}", invoicenumber, supplierid, shipmentdatefrom, shipmentdateto, billingdatefrom, billingdateto, isbneanissn, title, author, publisher, publicationyear, branchcode, messageId, additionalFields);
 
         StringBuilder sql = new StringBuilder("""
                 SELECT DISTINCT i.invoiceid, i.invoicenumber, i.booksellerid,
@@ -145,6 +148,7 @@ public class InvoiceRepository {
     // ── Invoice lookup (GetInvoiceDetails) ────────────────────────────────────
 
     public Optional<Map<String, Object>> findInvoice(Long invoiceid) {
+        log.debug("Entering findInvoice - {}", invoiceid);
         try {
             return Optional.ofNullable(jdbc.queryForMap("""
                     SELECT i.*, v.name AS suppliername, v.invoiceincgst
@@ -158,6 +162,7 @@ public class InvoiceRepository {
     }
 
     public List<InvoiceOrderLineDto> findOrdersByInvoice(Long invoiceid) {
+        log.debug("Entering findOrdersByInvoice - {}", invoiceid);
         String sql = """
                 SELECT o.ordernumber, o.parent_ordernumber, o.biblionumber,
                        bib.title, bib.author,
@@ -220,11 +225,13 @@ public class InvoiceRepository {
 
     /** Mirrors CloseInvoice($invoiceid). */
     public void closeInvoice(Long invoiceid) {
+        log.debug("Entering closeInvoice - {}", invoiceid);
         jdbc.update("UPDATE aqinvoices SET closedate = NOW() WHERE invoiceid = ?", invoiceid);
     }
 
     /** Mirrors ReopenInvoice($invoiceid). */
     public void reopenInvoice(Long invoiceid) {
+        log.debug("Entering reopenInvoice - {}", invoiceid);
         jdbc.update("UPDATE aqinvoices SET closedate = NULL WHERE invoiceid = ?", invoiceid);
     }
 
@@ -232,6 +239,7 @@ public class InvoiceRepository {
 
     public void modifyInvoice(Long invoiceid, String invoicenumber, LocalDate shipmentdate,
                               LocalDate billingdate, BigDecimal shipmentcost, Long shipmentBudgetId) {
+        log.debug("Entering modifyInvoice - {}, {}, {}, {}, {}, {}", invoiceid, invoicenumber, shipmentdate, billingdate, shipmentcost, shipmentBudgetId);
         jdbc.update("""
                 UPDATE aqinvoices
                    SET invoicenumber         = ?,
@@ -252,6 +260,7 @@ public class InvoiceRepository {
      * Reassigns all orders from source invoices to the target, then deletes sources.
      */
     public void mergeInvoices(Long targetInvoiceid, List<Long> sourceIds) {
+        log.debug("Entering mergeInvoices - {}, {}", targetInvoiceid, sourceIds);
         for (Long sourceId : sourceIds) {
             if (sourceId.equals(targetInvoiceid)) continue;
             jdbc.update("UPDATE aqorders SET invoiceid = ? WHERE invoiceid = ?", targetInvoiceid, sourceId);
@@ -265,6 +274,7 @@ public class InvoiceRepository {
 
     /** Mirrors DelInvoice($invoiceid). */
     public void deleteInvoice(Long invoiceid) {
+        log.debug("Entering deleteInvoice - {}", invoiceid);
         jdbc.update("DELETE FROM aqinvoice_adjustments WHERE invoiceid = ?", invoiceid);
         jdbc.update("UPDATE aqorders SET invoiceid = NULL WHERE invoiceid = ?", invoiceid);
         jdbc.update("DELETE FROM aqinvoices WHERE invoiceid = ?", invoiceid);
@@ -273,6 +283,7 @@ public class InvoiceRepository {
     // ── Adjustments ────────────────────────────────────────────────────────────
 
     public List<InvoiceAdjustmentDto> findAdjustments(Long invoiceid) {
+        log.debug("Entering findAdjustments - {}", invoiceid);
         return jdbc.query(
                 "SELECT * FROM aqinvoice_adjustments WHERE invoiceid = ? ORDER BY adjustment_id",
                 (rs, rn) -> InvoiceAdjustmentDto.builder()
@@ -288,6 +299,7 @@ public class InvoiceRepository {
     }
 
     public Optional<InvoiceAdjustmentDto> findAdjustmentById(Long adjustmentId) {
+        log.debug("Entering findAdjustmentById - {}", adjustmentId);
         try {
             return Optional.ofNullable(jdbc.queryForObject(
                     "SELECT * FROM aqinvoice_adjustments WHERE adjustment_id = ?",
@@ -308,6 +320,7 @@ public class InvoiceRepository {
 
     /** Creates a new adjustment. Returns the new adjustment_id. */
     public Long createAdjustment(InvoiceAdjustmentDto dto) {
+        log.debug("Entering createAdjustment - {}", dto);
         String sql = """
                 INSERT INTO aqinvoice_adjustments
                     (invoiceid, adjustment, reason, note, budget_id, encumber_open)
@@ -329,6 +342,7 @@ public class InvoiceRepository {
 
     /** Updates an existing adjustment. */
     public void updateAdjustment(InvoiceAdjustmentDto dto) {
+        log.debug("Entering updateAdjustment - {}", dto);
         jdbc.update("""
                 UPDATE aqinvoice_adjustments
                    SET adjustment    = ?,
@@ -345,12 +359,14 @@ public class InvoiceRepository {
 
     /** Deletes a single adjustment. */
     public void deleteAdjustment(Long adjustmentId) {
+        log.debug("Entering deleteAdjustment - {}", adjustmentId);
         jdbc.update("DELETE FROM aqinvoice_adjustments WHERE adjustment_id = ?", adjustmentId);
     }
 
     // ── Log helper ─────────────────────────────────────────────────────────────
 
     public void logAction(String action, Long objectId, String info) {
+        log.debug("Entering logAction - {}, {}, {}", action, objectId, info);
         jdbc.update("""
                 INSERT INTO action_logs (timestamp, user, module, action, object, info)
                 VALUES (NOW(), 0, 'ACQUISITIONS', ?, ?, ?)
@@ -360,6 +376,7 @@ public class InvoiceRepository {
     // ── Vendor invoiceincgst ────────────────────────────────────────────────────
 
     public boolean vendorInvoiceIncGst(Long booksellerid) {
+        log.debug("Entering vendorInvoiceIncGst - {}", booksellerid);
         try {
             Integer v = jdbc.queryForObject(
                     "SELECT invoiceincgst FROM aqbooksellers WHERE id = ?", Integer.class, booksellerid);
@@ -372,6 +389,7 @@ public class InvoiceRepository {
     // ── Util ───────────────────────────────────────────────────────────────────
 
     private BigDecimal round(BigDecimal v) {
+        log.debug("Entering round - {}", v);
         return v == null ? BigDecimal.ZERO : v.setScale(2, RoundingMode.HALF_UP);
     }
 }

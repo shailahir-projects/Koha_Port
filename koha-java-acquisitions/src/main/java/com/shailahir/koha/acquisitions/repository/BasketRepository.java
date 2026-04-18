@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.BasketDto;
 import com.shailahir.koha.acquisitions.dto.BasketOrderLineDto;
@@ -21,6 +22,7 @@ import java.util.Optional;
 /**
  * JDBC repository for basket-centric operations needed by basket.pl.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BasketRepository {
@@ -90,6 +92,7 @@ public class BasketRepository {
     // ── Basket CRUD ────────────────────────────────────────────────────────────
 
     public Optional<BasketDto> findById(Long basketno) {
+        log.debug("Entering findById - {}", basketno);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT * FROM aqbasket WHERE basketno = ?", BASKET_MAPPER, basketno));
@@ -99,12 +102,14 @@ public class BasketRepository {
     }
 
     public List<BasketDto> findAll(int offset, int limit) {
+        log.debug("Entering findAll - {}, {}", offset, limit);
         return jdbc.query(
                 "SELECT * FROM aqbasket ORDER BY basketno DESC LIMIT ? OFFSET ?",
                 BASKET_MAPPER, limit, offset);
     }
 
     public Long insert(BasketDto dto) {
+        log.debug("Entering insert - {}", dto);
         String sql = """
                 INSERT INTO aqbasket
                     (basketname, booksellerid, authorisedby, is_standing, create_items,
@@ -135,6 +140,7 @@ public class BasketRepository {
      * Mirrors Koha::Acquisition::Baskets->find($basketno)->close.
      */
     public void close(Long basketno) {
+        log.debug("Entering close - {}", basketno);
         jdbc.update("UPDATE aqbasket SET closedate = NOW() WHERE basketno = ?", basketno);
     }
 
@@ -143,6 +149,7 @@ public class BasketRepository {
      * Mirrors ReopenBasket().
      */
     public void reopen(Long basketno) {
+        log.debug("Entering reopen - {}", basketno);
         jdbc.update("UPDATE aqbasket SET closedate = NULL WHERE basketno = ?", basketno);
     }
 
@@ -151,6 +158,7 @@ public class BasketRepository {
      * Mirrors the cud-delete op in basket.pl.
      */
     public void delete(Long basketno) {
+        log.debug("Entering delete - {}", basketno);
         // Cancel non-cancelled orders
         jdbc.update("""
                 UPDATE aqorders SET orderstatus = 'cancelled'
@@ -164,6 +172,7 @@ public class BasketRepository {
      * Mirrors ModBasket({ basketno => ..., branch => ... }).
      */
     public void updateBranch(Long basketno, String branch) {
+        log.debug("Entering updateBranch - {}, {}", basketno, branch);
         jdbc.update("UPDATE aqbasket SET branch = ? WHERE basketno = ?", branch, basketno);
     }
 
@@ -171,6 +180,7 @@ public class BasketRepository {
      * Assign basket to a basket group.
      */
     public void updateBasketgroup(Long basketno, Long basketgroupid) {
+        log.debug("Entering updateBasketgroup - {}, {}", basketno, basketgroupid);
         jdbc.update("UPDATE aqbasket SET basketgroupid = ? WHERE basketno = ?", basketgroupid, basketno);
     }
 
@@ -179,6 +189,7 @@ public class BasketRepository {
      * Mirrors the cud-delete-order op in basket.pl.
      */
     public void deleteCancelledOrderWithoutBiblio(Long ordernumber) {
+        log.debug("Entering deleteCancelledOrderWithoutBiblio - {}", ordernumber);
         jdbc.update(
                 "DELETE FROM aqorders WHERE ordernumber = ? AND orderstatus = 'cancelled' AND biblionumber IS NULL",
                 ordernumber);
@@ -187,6 +198,7 @@ public class BasketRepository {
     // ── Basket users ───────────────────────────────────────────────────────────
 
     public List<Long> getBasketUsers(Long basketno) {
+        log.debug("Entering getBasketUsers - {}", basketno);
         return jdbc.queryForList(
                 "SELECT borrowernumber FROM aqbasketusers WHERE basketno = ?", Long.class, basketno);
     }
@@ -196,6 +208,7 @@ public class BasketRepository {
      * Mirrors ModBasketUsers().
      */
     public void setBasketUsers(Long basketno, List<Long> userIds) {
+        log.debug("Entering setBasketUsers - {}, {}", basketno, userIds);
         jdbc.update("DELETE FROM aqbasketusers WHERE basketno = ?", basketno);
         for (Long uid : userIds) {
             jdbc.update("INSERT INTO aqbasketusers (basketno, borrowernumber) VALUES (?,?)", basketno, uid);
@@ -208,6 +221,7 @@ public class BasketRepository {
      * Returns all active (non-cancelled) orders for the basket joined with biblio data.
      */
     public List<BasketOrderLineDto> findActiveOrders(Long basketno) {
+        log.debug("Entering findActiveOrders - {}", basketno);
         String sql = """
                 SELECT o.*,
                        b.title, b.author,
@@ -226,6 +240,7 @@ public class BasketRepository {
      * Returns all cancelled orders for the basket.
      */
     public List<BasketOrderLineDto> findCancelledOrders(Long basketno) {
+        log.debug("Entering findCancelledOrders - {}", basketno);
         String sql = """
                 SELECT o.*,
                        b.title, b.author,
@@ -243,6 +258,7 @@ public class BasketRepository {
     // ── Budget/biblio enrichment helpers ──────────────────────────────────────
 
     public Optional<Map<String, Object>> findBudget(Long budgetId) {
+        log.debug("Entering findBudget - {}", budgetId);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqbudgets WHERE budget_id = ?", budgetId));
@@ -252,6 +268,7 @@ public class BasketRepository {
     }
 
     public Optional<Map<String, Object>> findContract(Long contractnumber) {
+        log.debug("Entering findContract - {}", contractnumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForMap("SELECT * FROM aqcontract WHERE contractnumber = ?", contractnumber));
@@ -261,6 +278,7 @@ public class BasketRepository {
     }
 
     public Optional<String> findVendorName(Long booksellerid) {
+        log.debug("Entering findVendorName - {}", booksellerid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT name FROM aqbooksellers WHERE id = ?", String.class, booksellerid));
@@ -271,6 +289,7 @@ public class BasketRepository {
 
     /** Returns vendor deliverytime (days) for estimating delivery date. */
     public Optional<Integer> findVendorDeliverytime(Long booksellerid) {
+        log.debug("Entering findVendorDeliverytime - {}", booksellerid);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT deliverytime FROM aqbooksellers WHERE id = ?",
@@ -282,6 +301,7 @@ public class BasketRepository {
 
     /** Counts uncancelled orders for a biblio (to decide if safe to delete). */
     public int countUncancelledOrdersForBiblio(Long biblionumber) {
+        log.debug("Entering countUncancelledOrdersForBiblio - {}", biblionumber);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM aqorders WHERE biblionumber = ? AND orderstatus != 'cancelled'",
                 Integer.class, biblionumber);
@@ -289,24 +309,28 @@ public class BasketRepository {
     }
 
     public int countItemsForBiblio(Long biblionumber) {
+        log.debug("Entering countItemsForBiblio - {}", biblionumber);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM items WHERE biblionumber = ?", Integer.class, biblionumber);
         return c != null ? c : 0;
     }
 
     public int countItemsForOrder(Long ordernumber) {
+        log.debug("Entering countItemsForOrder - {}", ordernumber);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM aqorders_items WHERE ordernumber = ?", Integer.class, ordernumber);
         return c != null ? c : 0;
     }
 
     public int countSubscriptionsForBiblio(Long biblionumber) {
+        log.debug("Entering countSubscriptionsForBiblio - {}", biblionumber);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM subscription WHERE biblionumber = ?", Integer.class, biblionumber);
         return c != null ? c : 0;
     }
 
     public int countHoldsForBiblio(Long biblionumber) {
+        log.debug("Entering countHoldsForBiblio - {}", biblionumber);
         Integer c = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM reserves WHERE biblionumber = ? AND found IS NULL",
                 Integer.class, biblionumber);
@@ -314,6 +338,7 @@ public class BasketRepository {
     }
 
     public int countItemHoldsForOrder(Long biblionumber, Long ordernumber) {
+        log.debug("Entering countItemHoldsForOrder - {}, {}", biblionumber, ordernumber);
         Integer c = jdbc.queryForObject(
                 """
                 SELECT COUNT(*) FROM reserves r
@@ -326,6 +351,7 @@ public class BasketRepository {
 
     /** Returns the suggestion_id linked to a biblionumber, or null. */
     public Optional<Long> findSuggestionForBiblio(Long biblionumber) {
+        log.debug("Entering findSuggestionForBiblio - {}", biblionumber);
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject(
@@ -344,6 +370,7 @@ public class BasketRepository {
      */
     public Long createBasketGroup(String name, Long booksellerid, String deliveryplace,
                                   String billingplace, boolean closed) {
+        log.debug("Entering createBasketGroup - {}, {}, {}, {}, {}", name, booksellerid, deliveryplace, billingplace, closed);
         String sql = """
                 INSERT INTO aqbasketgroups (name, booksellerid, deliveryplace, billingplace, closed)
                 VALUES (?,?,?,?,?)
@@ -364,6 +391,7 @@ public class BasketRepository {
     // ── Active currency ────────────────────────────────────────────────────────
 
     public Optional<String> getActiveCurrency() {
+        log.debug("Entering getActiveCurrency");
         try {
             return Optional.ofNullable(
                     jdbc.queryForObject("SELECT currency FROM currency WHERE active = 1 LIMIT 1", String.class));
@@ -375,6 +403,7 @@ public class BasketRepository {
     // ── Active budgets check ───────────────────────────────────────────────────
 
     public boolean hasActiveBudgets() {
+        log.debug("Entering hasActiveBudgets");
         Integer c = jdbc.queryForObject(
                 """
                 SELECT COUNT(*) FROM aqbudgets b

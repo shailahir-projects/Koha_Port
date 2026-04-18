@@ -54,6 +54,7 @@ public class FinishReceiveController {
     public ResponseEntity<ReceiveOrderResult> finishReceive(
             @PathVariable Long ordernumber,
             @RequestBody ReceiveOrderRequest req) {
+        log.debug("Entering finishReceive - {}, {}", ordernumber, req);
 
         // ── 1. Load order ──────────────────────────────────────────────────────
         Map<String, Object> order = receiveRepo.findOrder(ordernumber)
@@ -162,6 +163,7 @@ public class FinishReceiveController {
     }
 
     private Long toLong(Object v) {
+        log.debug("Entering toLong - {}", v);
         if (v == null) return null;
         if (v instanceof Long l) return l;
         if (v instanceof Number n) return n.longValue();

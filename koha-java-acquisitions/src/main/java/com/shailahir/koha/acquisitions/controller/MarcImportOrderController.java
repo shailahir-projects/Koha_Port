@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.*;
 import com.shailahir.koha.acquisitions.service.MarcImportOrderService;
@@ -19,6 +20,7 @@ import java.util.List;
  *  Step 3  POST /acquisitions/marc-import/baskets/{basketno}/import
  * </pre>
  */
+@Slf4j
 @RestController
 @RequestMapping("/acquisitions/marc-import")
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class MarcImportOrderController {
      */
     @GetMapping("/batches", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<ImportBatchDto>> listImportBatches() {
+        log.debug("Entering listImportBatches");
         return ResponseEntity.ok(marcImportOrderService.listImportBatches());
     }
 
@@ -51,6 +54,7 @@ public class MarcImportOrderController {
      */
     @GetMapping("/batches/{batch_id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<ImportBatchDetailDto> getBatchDetail(@PathVariable("batch_id") Long batchId) {
+        log.debug("Entering getBatchDetail - {}", batchId);
         return ResponseEntity.ok(marcImportOrderService.getBatchDetail(batchId));
     }
 
@@ -76,6 +80,7 @@ public class MarcImportOrderController {
     public ResponseEntity<MarcImportResult> importAndCreateOrders(
             @PathVariable("basketno") Long basketno,
             @RequestBody MarcImportOrderRequest request) {
+        log.debug("Entering importAndCreateOrders - {}, {}", basketno, request);
         MarcImportResult result = marcImportOrderService.importAndCreateOrders(basketno, request);
         return ResponseEntity.ok(result);
     }

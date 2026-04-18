@@ -1,4 +1,5 @@
 package com.shailahir.koha.acquisitions.controller;
+import lombok.extern.slf4j.Slf4j;
 
 import com.shailahir.koha.acquisitions.dto.AcquisitionsHomeDto;
 import com.shailahir.koha.acquisitions.dto.BudgetDto;
@@ -28,6 +29,7 @@ import java.util.List;
  * <p>Budget permission filtering (equivalent to {@code CanUserUseBudget}) and
  * branch-scoped suggestion counting are delegated to {@link AcquisitionsHomeService}.
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AcquisitionsHomeController {
@@ -57,6 +59,7 @@ public class AcquisitionsHomeController {
             @RequestParam("patron_id") Long patronId,
             @RequestParam("branch_code") String branchCode,
             @RequestParam(value = "only_my_library", defaultValue = "false") boolean onlyMyLibrary) {
+        log.debug("Entering getAcquisitionsHome - {}, {}, {}", patronId, branchCode, onlyMyLibrary);
         return ResponseEntity.ok(
                 acquisitionsHomeService.getAcquisitionsHome(patronId, branchCode, onlyMyLibrary));
     }
@@ -75,6 +78,7 @@ public class AcquisitionsHomeController {
     public ResponseEntity<List<BudgetDto>> getBudgetHierarchy(
             @RequestParam(value = "budget_period_id", required = false) Long budgetPeriodId,
             @RequestParam("patron_id") Long patronId) {
+        log.debug("Entering getBudgetHierarchy - {}, {}", budgetPeriodId, patronId);
         return ResponseEntity.ok(acquisitionsHomeService.getBudgetHierarchy(budgetPeriodId, patronId));
     }
 
@@ -87,6 +91,7 @@ public class AcquisitionsHomeController {
      */
     @GetMapping("/acquisitions/budget_periods", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<BudgetPeriodDto>> getBudgetPeriods() {
+        log.debug("Entering getBudgetPeriods");
         return ResponseEntity.ok(acquisitionsHomeService.getBudgetPeriods());
     }
 }
