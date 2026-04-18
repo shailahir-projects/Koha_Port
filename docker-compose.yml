@@ -1,0 +1,191 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: koha
+      POSTGRES_USER: koha_user
+      POSTGRES_PASSWORD: koha_pass
+    ports:
+      - '5432:5432'
+  koha-java-database:
+    build: ./koha-java-database
+    ports:
+      - '8076:8076'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-opac-gateway:
+    build: ./koha-java-opac-gateway
+    ports:
+      - '8079:8079'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-intranet-gateway:
+    build: ./koha-java-intranet-gateway
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-acquisitions:
+    build: ./koha-java-acquisitions
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+      SPRING_LIQUIBASE_ENABLED: 'false'
+    depends_on:
+      - koha-java-database
+  koha-java-patron:
+    build: ./koha-java-patron
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-admin:
+    build: ./koha-java-admin
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-circulation:
+    build: ./koha-java-circulation
+    ports:
+      - '8084:8084'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-holds:
+    build: ./koha-java-holds
+    ports:
+      - '8085:8085'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-search:
+    build: ./koha-java-search
+    ports:
+      - '8086:8086'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-finance:
+    build: ./koha-java-finance
+    ports:
+      - '8087:8087'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-reporting:
+    build: ./koha-java-reporting
+    ports:
+      - '8088:8088'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-ill:
+    build: ./koha-java-ill
+    ports:
+      - '8089:8089'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-serials:
+    build: ./koha-java-serials
+    ports:
+      - '8090:8090'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-notification:
+    build: ./koha-java-notification
+    ports:
+      - '8091:8091'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-batch:
+    build: ./koha-java-batch
+    ports:
+      - '8092:8092'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-erm:
+    build: ./koha-java-erm
+    ports:
+      - '8093:8093'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-catalog:
+    build: ./koha-java-catalog
+    ports:
+      - '8094:8094'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres
+  koha-java-auth:
+    build: ./koha-java-auth
+    ports:
+      - '8095:8095'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/koha
+      SPRING_DATASOURCE_USERNAME: koha_user
+      SPRING_DATASOURCE_PASSWORD: koha_pass
+    depends_on:
+      - postgres

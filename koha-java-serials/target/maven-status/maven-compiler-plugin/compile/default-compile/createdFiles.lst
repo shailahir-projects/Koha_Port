@@ -1,0 +1,3 @@
+com\shailahir\koha\serials\controller\GlobalExceptionHandler.class
+com\shailahir\koha\serials\controller\SerialsController.class
+com\shailahir\koha\serials\KohaJavaSerialsApplication.class

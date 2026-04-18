@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.shailahir.koha.patron.KohaJavaPatronApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.183 s -- in com.shailahir.koha.patron.KohaJavaPatronApplicationTests

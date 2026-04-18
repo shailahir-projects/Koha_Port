@@ -1,0 +1,10 @@
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\controller\GlobalExceptionHandler.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\controller\HoldsController.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\dto\ArticleRequestDto.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\dto\ErrorResponse.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\dto\HoldDto.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\dto\LibraryDto.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\KohaJavaHoldsApplication.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\repository\HoldsRepository.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\service\HoldsService.java
+C:\PHASE2\Koha_Port\koha-java-holds\src\main\java\com\shailahir\koha\holds\service\impl\HoldsServiceImpl.java
