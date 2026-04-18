@@ -1,0 +1,17 @@
+package com.shailahir.koha.acquisitions.dto;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@JacksonXmlRootElement
+public class ErrorResponse {
+    private int status;
+    private String error;
+    private String message;
+    private String timestamp;
+}

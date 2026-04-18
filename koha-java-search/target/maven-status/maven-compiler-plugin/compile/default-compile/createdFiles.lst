@@ -1,0 +1,8 @@
+com\shailahir\koha\search\service\SearchFilterService.class
+com\shailahir\koha\search\dto\ErrorResponse.class
+com\shailahir\koha\search\dto\ErrorResponse$ErrorResponseBuilder.class
+com\shailahir\koha\search\service\impl\SearchFilterServiceImpl.class
+com\shailahir\koha\search\dto\SearchFilterDto.class
+com\shailahir\koha\search\KohaJavaSearchApplication.class
+com\shailahir\koha\search\controller\SearchFilterController.class
+com\shailahir\koha\search\dto\SearchFilterDto$SearchFilterDtoBuilder.class

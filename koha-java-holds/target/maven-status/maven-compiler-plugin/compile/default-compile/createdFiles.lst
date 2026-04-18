@@ -1,0 +1,14 @@
+com\shailahir\koha\holds\dto\ErrorResponse$ErrorResponseBuilder.class
+com\shailahir\koha\holds\dto\LibraryDto.class
+com\shailahir\koha\holds\KohaJavaHoldsApplication.class
+com\shailahir\koha\holds\repository\HoldsRepository.class
+com\shailahir\koha\holds\controller\HoldsController.class
+com\shailahir\koha\holds\dto\ErrorResponse.class
+com\shailahir\koha\holds\controller\GlobalExceptionHandler.class
+com\shailahir\koha\holds\dto\HoldDto$HoldDtoBuilder.class
+com\shailahir\koha\holds\dto\HoldDto.class
+com\shailahir\koha\holds\dto\LibraryDto$LibraryDtoBuilder.class
+com\shailahir\koha\holds\service\HoldsService.class
+com\shailahir\koha\holds\dto\ArticleRequestDto.class
+com\shailahir\koha\holds\dto\ArticleRequestDto$ArticleRequestDtoBuilder.class
+com\shailahir\koha\holds\service\impl\HoldsServiceImpl.class

@@ -1,0 +1,21 @@
+server:
+  port: 8076
+
+spring:
+  application:
+    name: koha-java-database
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/koha}
+    username: ${SPRING_DATASOURCE_USERNAME:koha_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:koha_pass}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,liquibase
+

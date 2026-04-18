@@ -1,0 +1,3 @@
+com\shailahir\koha\finance\controller\FinanceController.class
+com\shailahir\koha\finance\controller\GlobalExceptionHandler.class
+com\shailahir\koha\finance\KohaJavaFinanceApplication.class

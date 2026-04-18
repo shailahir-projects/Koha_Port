@@ -1,0 +1,13 @@
+server:
+  port: 8091
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: koha-java-notification
+  datasource:
+    url:     username:     password: management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

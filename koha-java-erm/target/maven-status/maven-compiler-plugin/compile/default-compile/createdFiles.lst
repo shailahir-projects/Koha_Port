@@ -1,0 +1,3 @@
+com\shailahir\koha\erm\controller\GlobalExceptionHandler.class
+com\shailahir\koha\erm\KohaJavaErmApplication.class
+com\shailahir\koha\erm\controller\ErmController.class

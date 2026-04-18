@@ -1,0 +1,3 @@
+com\shailahir\koha\reporting\controller\ReportingController.class
+com\shailahir\koha\reporting\KohaJavaReportingApplication.class
+com\shailahir\koha\reporting\controller\GlobalExceptionHandler.class
