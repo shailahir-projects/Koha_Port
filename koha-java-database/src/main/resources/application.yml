@@ -12,10 +12,16 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,liquibase
+  endpoint:
+    health:
+      show-details: always
 

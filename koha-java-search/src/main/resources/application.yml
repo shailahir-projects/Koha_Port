@@ -6,8 +6,18 @@ spring:
   application:
     name: koha-java-search
   datasource:
-    url:     username:     password: management:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/koha}
+    username: ${SPRING_DATASOURCE_USERNAME:koha_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:koha_pass}
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
