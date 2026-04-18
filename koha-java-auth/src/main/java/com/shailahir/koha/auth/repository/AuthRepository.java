@@ -202,7 +202,7 @@ public class AuthRepository {
     // ── Password validation ───────────────────────────────────────────────────
 
     public boolean validatePassword(String userid, String password) {
-        log.debug("Entering validatePassword - {}, {}", userid, password);
+        log.debug("Entering validatePassword - {}, [REDACTED]", userid);
         try {
             Integer count = jdbc.queryForObject(
                     "SELECT COUNT(*) FROM borrowers WHERE userid = ? AND password = crypt(?, password)",

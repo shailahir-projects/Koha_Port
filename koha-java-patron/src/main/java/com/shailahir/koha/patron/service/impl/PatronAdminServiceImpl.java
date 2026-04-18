@@ -145,7 +145,7 @@ public class PatronAdminServiceImpl implements PatronAdminService {
     @Override
     @Transactional
     public Map<String, Object> enrollTwoFactorAuth(Long patronId, String secret, String pin) {
-        log.debug("Entering enrollTwoFactorAuth - {}, {}, {}", patronId, secret, pin);
+        log.debug("Entering enrollTwoFactorAuth - {}, [REDACTED], [REDACTED]", patronId);
         ensurePatronExists(patronId);
         jdbc.update("UPDATE borrowers SET secret = ? WHERE borrowernumber = ?", secret, patronId);
         Map<String, Object> result = new HashMap<>();
