@@ -25,5 +25,10 @@ public interface SerialsService {
     NumberingPatternDto getNumberingPattern(Long id);
     NumberingPatternDto updateNumberingPattern(Long id, NumberingPatternDto dto);
     void deleteNumberingPattern(Long id);
+
+    Page<SubscriptionDto> searchSubscriptions(String query, Pageable pageable);
+    List<SerialDto> getSubscriptionHistory(Long subscriptionId);
+    SubscriptionDto renewSubscription(Long subscriptionId, SubscriptionDto dto);
+    List<SerialDto> listClaims(Pageable pageable);
 }
 

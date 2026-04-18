@@ -285,6 +285,19 @@ public class SerialsRepository {
         jdbc.update("DELETE FROM subscription_numberpatterns WHERE id = ?", id);
     }
 
+    public SubscriptionDto renewSubscription(Long id, SubscriptionDto dto) {
+        jdbc.update("""
+                UPDATE subscription SET enddate=?, notes=?, internalnotes=? WHERE subscriptionid=?
+                """, dto.getEndDate(), dto.getNotes(), dto.getInternalnotes(), id);
+        return findSubscriptionById(id).orElse(dto);
+    }
+
+    public List<SerialDto> findClaimedSerials(Pageable pageable) {
+        return jdbc.query(
+                "SELECT * FROM serial WHERE status ILIKE 'CLAIMED%' ORDER BY serialid DESC LIMIT ? OFFSET ?",
+                SERIAL_MAPPER, pageable.getPageSize(), pageable.getOffset());
+    }
+
     private Object[] appendPaging(Object[] params, Pageable pageable) {
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);

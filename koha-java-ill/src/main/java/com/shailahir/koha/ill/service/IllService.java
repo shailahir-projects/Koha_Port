@@ -14,5 +14,22 @@ public interface IllService {
     void deleteRequest(Long id);
     List<IllRequestCommentDto> listComments(Long requestId);
     IllRequestCommentDto addComment(Long requestId, IllRequestCommentDto dto);
+
+    Page<IllBatchDto> listBatches(String query, Pageable pageable);
+    IllBatchDto createBatch(IllBatchDto dto);
+    IllBatchDto getBatch(Long id);
+    IllBatchDto updateBatch(Long id, IllBatchDto dto);
+    void deleteBatch(Long id);
+
+    List<IllBatchStatusDto> listBatchStatuses();
+    IllBatchStatusDto createBatchStatus(IllBatchStatusDto dto);
+    IllBatchStatusDto getBatchStatus(String code);
+    IllBatchStatusDto updateBatchStatus(String code, IllBatchStatusDto dto);
+    void deleteBatchStatus(String code);
+
+    List<IllBackendDto> listBackends();
+    IllBackendDto getBackend(String id);
+
+    Page<IllUserDto> listUsers(String query, Pageable pageable);
 }
 

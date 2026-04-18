@@ -139,6 +139,184 @@ public class IllRepository {
         return dto;
     }
 
+    // ── Batches ───────────────────────────────────────────────────────────────
+
+    private static final RowMapper<IllBatchDto> BATCH_MAPPER = (rs, rn) -> {
+        IllBatchDto dto = new IllBatchDto();
+        dto.setIllBatchId(rs.getLong("ill_batch_id"));
+        dto.setName(rs.getString("name"));
+        dto.setBackend(rs.getString("backend"));
+        dto.setPatronId(rs.getObject("patron_id", Long.class));
+        dto.setLibraryId(rs.getString("library_id"));
+        dto.setStatusCode(rs.getString("status_code"));
+        return dto;
+    };
+
+    public Page<IllBatchDto> findAllBatches(String query, Pageable pageable) {
+        String where = (query != null && !query.isBlank()) ? " WHERE name ILIKE ? OR backend ILIKE ?" : "";
+        Object[] params = (query != null && !query.isBlank())
+                ? new Object[]{"%" + query + "%", "%" + query + "%"} : new Object[]{};
+        Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM illbatches" + where, Integer.class, params);
+        Object[] pageParams = appendPaging(params, pageable);
+        List<IllBatchDto> list = jdbc.query(
+                "SELECT * FROM illbatches" + where + " ORDER BY ill_batch_id DESC LIMIT ? OFFSET ?",
+                BATCH_MAPPER, pageParams);
+        return new PageImpl<>(list, pageable, total != null ? total : 0);
+    }
+
+    public Optional<IllBatchDto> findBatchById(Long id) {
+        try {
+            return Optional.ofNullable(jdbc.queryForObject(
+                    "SELECT * FROM illbatches WHERE ill_batch_id = ?", BATCH_MAPPER, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public IllBatchDto insertBatch(IllBatchDto dto) {
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement("""
+                    INSERT INTO illbatches (name, backend, patron_id, library_id, status_code)
+                    VALUES (?,?,?,?,?)
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, dto.getName());
+            ps.setString(2, dto.getBackend());
+            ps.setObject(3, dto.getPatronId());
+            ps.setString(4, dto.getLibraryId());
+            ps.setString(5, dto.getStatusCode());
+            return ps;
+        }, kh);
+        dto.setIllBatchId(((Number) kh.getKeys().get("ill_batch_id")).longValue());
+        return dto;
+    }
+
+    public IllBatchDto updateBatch(Long id, IllBatchDto dto) {
+        jdbc.update("""
+                UPDATE illbatches SET name=?, backend=?, patron_id=?, library_id=?, status_code=?
+                WHERE ill_batch_id=?
+                """, dto.getName(), dto.getBackend(), dto.getPatronId(), dto.getLibraryId(), dto.getStatusCode(), id);
+        dto.setIllBatchId(id);
+        return dto;
+    }
+
+    public void deleteBatch(Long id) {
+        jdbc.update("DELETE FROM illbatches WHERE ill_batch_id = ?", id);
+    }
+
+    // ── Batch Statuses ────────────────────────────────────────────────────────
+
+    private static final RowMapper<IllBatchStatusDto> BATCH_STATUS_MAPPER = (rs, rn) -> {
+        IllBatchStatusDto dto = new IllBatchStatusDto();
+        dto.setId(rs.getLong("id"));
+        dto.setName(rs.getString("name"));
+        dto.setCode(rs.getString("code"));
+        dto.setSystem(rs.getBoolean("is_system"));
+        return dto;
+    };
+
+    public List<IllBatchStatusDto> findAllBatchStatuses() {
+        return jdbc.query("SELECT * FROM illbatch_statuses ORDER BY id", BATCH_STATUS_MAPPER);
+    }
+
+    public Optional<IllBatchStatusDto> findBatchStatusByCode(String code) {
+        try {
+            return Optional.ofNullable(jdbc.queryForObject(
+                    "SELECT * FROM illbatch_statuses WHERE code = ?", BATCH_STATUS_MAPPER, code));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public IllBatchStatusDto insertBatchStatus(IllBatchStatusDto dto) {
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement("""
+                    INSERT INTO illbatch_statuses (name, code, is_system)
+                    VALUES (?,?,?)
+                    """, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, dto.getName());
+            ps.setString(2, dto.getCode());
+            ps.setObject(3, dto.getSystem());
+            return ps;
+        }, kh);
+        dto.setId(((Number) kh.getKeys().get("id")).longValue());
+        return dto;
+    }
+
+    public IllBatchStatusDto updateBatchStatus(String code, IllBatchStatusDto dto) {
+        jdbc.update("UPDATE illbatch_statuses SET name=?, is_system=? WHERE code=?",
+                dto.getName(), dto.getSystem(), code);
+        dto.setCode(code);
+        return dto;
+    }
+
+    public void deleteBatchStatus(String code) {
+        jdbc.update("DELETE FROM illbatch_statuses WHERE code = ?", code);
+    }
+
+    // ── Backends ──────────────────────────────────────────────────────────────
+
+    private static final RowMapper<IllBackendDto> BACKEND_MAPPER = (rs, rn) -> {
+        IllBackendDto dto = new IllBackendDto();
+        dto.setBackendId(rs.getString("backend"));
+        dto.setName(rs.getString("backend"));
+        dto.setRequestCount(rs.getLong("request_count"));
+        return dto;
+    };
+
+    public List<IllBackendDto> findAllBackends() {
+        return jdbc.query("""
+                SELECT backend, COUNT(*) AS request_count
+                FROM illrequests
+                WHERE backend IS NOT NULL AND backend <> ''
+                GROUP BY backend
+                ORDER BY backend
+                """, BACKEND_MAPPER);
+    }
+
+    public Optional<IllBackendDto> findBackendById(String id) {
+        try {
+            return Optional.ofNullable(jdbc.queryForObject("""
+                    SELECT backend, COUNT(*) AS request_count
+                    FROM illrequests
+                    WHERE backend = ?
+                    GROUP BY backend
+                    """, BACKEND_MAPPER, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+
+    private static final RowMapper<IllUserDto> USER_MAPPER = (rs, rn) -> {
+        IllUserDto dto = new IllUserDto();
+        dto.setPatronId(rs.getLong("borrowernumber"));
+        dto.setCardnumber(rs.getString("cardnumber"));
+        dto.setFirstname(rs.getString("firstname"));
+        dto.setSurname(rs.getString("surname"));
+        dto.setEmail(rs.getString("email"));
+        dto.setLibraryId(rs.getString("branchcode"));
+        return dto;
+    };
+
+    public Page<IllUserDto> findAllUsers(String query, Pageable pageable) {
+        String where = "";
+        Object[] params = new Object[]{};
+        if (query != null && !query.isBlank()) {
+            where = " WHERE cardnumber ILIKE ? OR firstname ILIKE ? OR surname ILIKE ?";
+            params = new Object[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
+        }
+        Integer total = jdbc.queryForObject("SELECT COUNT(*) FROM borrowers" + where, Integer.class, params);
+        Object[] pageParams = appendPaging(params, pageable);
+        List<IllUserDto> list = jdbc.query(
+                "SELECT borrowernumber, cardnumber, firstname, surname, email, branchcode FROM borrowers"
+                        + where + " ORDER BY borrowernumber DESC LIMIT ? OFFSET ?",
+                USER_MAPPER, pageParams);
+        return new PageImpl<>(list, pageable, total != null ? total : 0);
+    }
+
     private Object[] appendPaging(Object[] params, Pageable pageable) {
         Object[] pageParams = new Object[params.length + 2];
         System.arraycopy(params, 0, pageParams, 0, params.length);

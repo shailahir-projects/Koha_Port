@@ -106,5 +106,27 @@ public class SerialsServiceImpl implements SerialsService {
     public void deleteNumberingPattern(Long id) {
         repo.deleteNumberingPattern(id);
     }
+
+    @Override
+    public Page<SubscriptionDto> searchSubscriptions(String query, Pageable pageable) {
+        return repo.findAllSubscriptions(query, pageable);
+    }
+
+    @Override
+    public List<SerialDto> getSubscriptionHistory(Long subscriptionId) {
+        return repo.findSerialsBySubscriptionId(subscriptionId);
+    }
+
+    @Override
+    public SubscriptionDto renewSubscription(Long subscriptionId, SubscriptionDto dto) {
+        repo.findSubscriptionById(subscriptionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription not found"));
+        return repo.renewSubscription(subscriptionId, dto);
+    }
+
+    @Override
+    public List<SerialDto> listClaims(Pageable pageable) {
+        return repo.findClaimedSerials(pageable);
+    }
 }
 

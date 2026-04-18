@@ -61,6 +61,71 @@ public class IllController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // Other endpoints (batches, batchstatuses, backends, users) remain TODO
+    @GetMapping("/ill/batches")
+    public ResponseEntity<Page<IllBatchDto>> listBatches(@RequestParam(value = "q", required = false) String q, Pageable pageable) {
+        return ResponseEntity.ok(service.listBatches(q, pageable));
+    }
+
+    @PostMapping("/ill/batches")
+    public ResponseEntity<IllBatchDto> addBatch(@RequestBody IllBatchDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createBatch(dto));
+    }
+
+    @GetMapping("/ill/batches/{ill_batch_id}")
+    public ResponseEntity<IllBatchDto> getBatch(@PathVariable("ill_batch_id") Long id) {
+        return ResponseEntity.ok(service.getBatch(id));
+    }
+
+    @PutMapping("/ill/batches/{ill_batch_id}")
+    public ResponseEntity<IllBatchDto> updateBatch(@PathVariable("ill_batch_id") Long id, @RequestBody IllBatchDto dto) {
+        return ResponseEntity.ok(service.updateBatch(id, dto));
+    }
+
+    @DeleteMapping("/ill/batches/{ill_batch_id}")
+    public ResponseEntity<Void> deleteBatch(@PathVariable("ill_batch_id") Long id) {
+        service.deleteBatch(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/ill/batchstatuses")
+    public ResponseEntity<List<IllBatchStatusDto>> listBatchStatuses() {
+        return ResponseEntity.ok(service.listBatchStatuses());
+    }
+
+    @PostMapping("/ill/batchstatuses")
+    public ResponseEntity<IllBatchStatusDto> addBatchStatus(@RequestBody IllBatchStatusDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createBatchStatus(dto));
+    }
+
+    @GetMapping("/ill/batchstatuses/{ill_batchstatus_code}")
+    public ResponseEntity<IllBatchStatusDto> getBatchStatus(@PathVariable("ill_batchstatus_code") String code) {
+        return ResponseEntity.ok(service.getBatchStatus(code));
+    }
+
+    @PutMapping("/ill/batchstatuses/{ill_batchstatus_code}")
+    public ResponseEntity<IllBatchStatusDto> updateBatchStatus(@PathVariable("ill_batchstatus_code") String code, @RequestBody IllBatchStatusDto dto) {
+        return ResponseEntity.ok(service.updateBatchStatus(code, dto));
+    }
+
+    @DeleteMapping("/ill/batchstatuses/{ill_batchstatus_code}")
+    public ResponseEntity<Void> deleteBatchStatus(@PathVariable("ill_batchstatus_code") String code) {
+        service.deleteBatchStatus(code);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/ill/backends")
+    public ResponseEntity<List<IllBackendDto>> listBackends() {
+        return ResponseEntity.ok(service.listBackends());
+    }
+
+    @GetMapping("/ill/backends/{ill_backend_id}")
+    public ResponseEntity<IllBackendDto> getBackend(@PathVariable("ill_backend_id") String id) {
+        return ResponseEntity.ok(service.getBackend(id));
+    }
+
+    @GetMapping("/ill/users")
+    public ResponseEntity<Page<IllUserDto>> listUsers(@RequestParam(value = "q", required = false) String q, Pageable pageable) {
+        return ResponseEntity.ok(service.listUsers(q, pageable));
+    }
 }
 

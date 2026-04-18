@@ -55,5 +55,77 @@ public class IllServiceImpl implements IllService {
     public IllRequestCommentDto addComment(Long requestId, IllRequestCommentDto dto) {
         return repo.insertComment(requestId, dto);
     }
+
+    @Override
+    public Page<IllBatchDto> listBatches(String query, Pageable pageable) {
+        return repo.findAllBatches(query, pageable);
+    }
+
+    @Override
+    public IllBatchDto createBatch(IllBatchDto dto) {
+        return repo.insertBatch(dto);
+    }
+
+    @Override
+    public IllBatchDto getBatch(Long id) {
+        return repo.findBatchById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ILL batch not found"));
+    }
+
+    @Override
+    public IllBatchDto updateBatch(Long id, IllBatchDto dto) {
+        repo.findBatchById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ILL batch not found"));
+        return repo.updateBatch(id, dto);
+    }
+
+    @Override
+    public void deleteBatch(Long id) {
+        repo.deleteBatch(id);
+    }
+
+    @Override
+    public List<IllBatchStatusDto> listBatchStatuses() {
+        return repo.findAllBatchStatuses();
+    }
+
+    @Override
+    public IllBatchStatusDto createBatchStatus(IllBatchStatusDto dto) {
+        return repo.insertBatchStatus(dto);
+    }
+
+    @Override
+    public IllBatchStatusDto getBatchStatus(String code) {
+        return repo.findBatchStatusByCode(code)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ILL batch status not found"));
+    }
+
+    @Override
+    public IllBatchStatusDto updateBatchStatus(String code, IllBatchStatusDto dto) {
+        repo.findBatchStatusByCode(code)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ILL batch status not found"));
+        return repo.updateBatchStatus(code, dto);
+    }
+
+    @Override
+    public void deleteBatchStatus(String code) {
+        repo.deleteBatchStatus(code);
+    }
+
+    @Override
+    public List<IllBackendDto> listBackends() {
+        return repo.findAllBackends();
+    }
+
+    @Override
+    public IllBackendDto getBackend(String id) {
+        return repo.findBackendById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ILL backend not found"));
+    }
+
+    @Override
+    public Page<IllUserDto> listUsers(String query, Pageable pageable) {
+        return repo.findAllUsers(query, pageable);
+    }
 }
 
